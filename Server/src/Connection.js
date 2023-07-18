@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 dotenv.config({path: '../.env'})
 
 mongoose.set('strictQuery', true)
+//el strict query estaba en principio en true
 
 const uri = process.env.URI_DB 
     ? process.env.URI_DB 
@@ -16,6 +17,7 @@ export async function connect(){
         const db = await mongoose.connect(uri)
         console.log("connected with ", db.connection.name)
     } catch (error) {
+        console.error("error de conexión")
         console.error(error)
     }
 }
