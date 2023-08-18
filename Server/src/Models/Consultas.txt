@@ -1,0 +1,64 @@
+//agregar proveedores
+db.proveedors.insertMany ([
+    {"razonsocial":"Rickard Darbishire","cuit":"2718498641","email":"rdarbishire0@pcworld.com","direccion":"00 Sachtjen Way","localidad":"Changshengqiao","telefono":"779-358-7777"},
+    {"razonsocial":"Lesli Rolfs","cuit":"0222316756","email":"lrolfs1@discovery.com","direccion":"3 Bonner Point","localidad":"Babahoyo","telefono":"114-286-2424"},
+    {"razonsocial":"Chantal Tollady","cuit":"9062343090","email":"ctollady2@smugmug.com","direccion":"286 Sachtjen Trail","localidad":"Antigonish","telefono":"998-356-0641"},
+    {"razonsocial":"Rubi Pighills","cuit":"7840432549","email":"rpighills3@merriam-webster.com","direccion":"81 Hintze Street","localidad":"Patrol","telefono":"570-774-4493"},
+    {"razonsocial":"Karyl Lee","cuit":"7548540604","email":"klee4@hubpages.com","direccion":"828 Springs Parkway","localidad":"Łysomice","telefono":"969-430-3633"},
+    {"razonsocial":"Gabriele Lanceter","cuit":"4242452942","email":"glanceter5@phoca.cz","direccion":"79 Dakota Street","localidad":"Setro","telefono":"532-972-5830"},
+    {"razonsocial":"Nessi Maseres","cuit":"3755310058","email":"nmaseres6@thetimes.co.uk","direccion":"700 Farmco Drive","localidad":"Catriel","telefono":"659-191-9786"},
+    {"razonsocial":"Dom Cotterill","cuit":"9495915201","email":"dcotterill7@aol.com","direccion":"4067 Iowa Place","localidad":"Buenavista","telefono":"707-663-5283"},
+    {"razonsocial":"Lian Foottit","cuit":"1711793841","email":"lfoottit8@princeton.edu","direccion":"4273 Riverside Drive","localidad":"Świdnica","telefono":"666-246-2979"},
+    {"razonsocial":"Krispin Whelband","cuit":"8427443889","email":"kwhelband9@paypal.com","direccion":"6 Emmet Place","localidad":"Inglewood","telefono":"310-811-5158"},
+    {"razonsocial":"Panchito Stoate","cuit":"0672016419","email":"pstoatea@hubpages.com","direccion":"5000 Hoffman Pass","localidad":"Velikooktyabr’skiy","telefono":"553-225-2114"},
+    {"razonsocial":"Clarabelle Shapter","cuit":"9061928583","email":"cshapterb@state.tx.us","direccion":"3 Straubel Avenue","localidad":"Jiaomingsi","telefono":"232-823-7249"},
+    {"razonsocial":"Peter O'Dempsey","cuit":"8715324559","email":"podempseyc@washington.edu","direccion":"57447 Hovde Way","localidad":"Chengkan","telefono":"244-541-2725"},
+    {"razonsocial":"Carlene Ewer","cuit":"9554042558","email":"cewerd@hud.gov","direccion":"7 Reinke Circle","localidad":"Lens","telefono":"310-947-4067"},
+    {"razonsocial":"Isis Manass","cuit":"6121839732","email":"imanasse@amazon.de","direccion":"4 Pawling Avenue","localidad":"Meadow Lake","telefono":"663-839-7069"},
+    {"razonsocial":"Phelia Chasteney","cuit":"6371358189","email":"pchasteneyf@angelfire.com","direccion":"06 Toban Plaza","localidad":"Kista","telefono":"656-917-1932"},
+    {"razonsocial":"Olenolin Lonsdale","cuit":"1115085328","email":"olonsdaleg@imgur.com","direccion":"843 Tony Alley","localidad":"Phước An","telefono":"804-930-4891"},
+    {"razonsocial":"Clarissa Anster","cuit":"3411650257","email":"cansterh@gov.uk","direccion":"9 Lillian Parkway","localidad":"Guancangping","telefono":"230-960-1264"},
+    {"razonsocial":"Allyce Fulford","cuit":"3552192484","email":"afulfordi@artisteer.com","direccion":"84 Golf Course Plaza","localidad":"Yaté-Barrage","telefono":"913-407-9319"},
+    {"razonsocial":"Fernandina Eyden","cuit":"2624747583","email":"feydenj@qq.com","direccion":"5101 Blue Bill Park Alley","localidad":"Lusk","telefono":"535-524-9158"},
+    {"razonsocial":"Evangelin Dudney","cuit":"2323080784","email":"edudneyk@diigo.com","direccion":"29183 Nelson Park","localidad":"Zagórnik","telefono":"194-216-1633"},
+    {"razonsocial":"Neils Pounder","cuit":"7823001551","email":"npounderl@lycos.com","direccion":"9 Holy Cross Circle","localidad":"Laraos","telefono":"679-632-6443"},
+    {"razonsocial":"Alanson Aleksic","cuit":"1160328935","email":"aaleksicm@amazon.de","direccion":"0 Lake View Junction","localidad":"Sanxi","telefono":"296-559-5630"},
+    {"razonsocial":"Alexina Delion","cuit":"1172226512","email":"adelionn@auda.org.au","direccion":"5 Charing Cross Court","localidad":"Teminabuan","telefono":"306-451-9056"},
+    {"razonsocial":"Giovanni Bessett","cuit":"4293139974","email":"gbessetto@google.co.jp","direccion":"00966 Wayridge Court","localidad":"Gabao","telefono":"381-157-6202"}
+])
+
+db.productos.insertMany([
+    {
+        "descripcion" : "teclado gamer",
+        "categoria": ObjectId("64c2bf3aa28de85ae2d0c5ae"),
+        "marca": ObjectId("64c1d365dc53e708badd9597"),
+        "proveedor": ObjectId("64c2176487d2b5b781a5e2fa"),
+        "codigo": 1,
+        "preciocompra": 50,
+        "precioventa": 80,
+        "puntopedido": 5,
+        "stock": 2
+    },
+    {
+        "descripcion" : "mouse inalambrico",
+        "categoria": ObjectId("64c2bf3aa28de85ae2d0c5ae"),
+        "marca": ObjectId("64c1d365dc53e708badd9597"),
+        "proveedor": ObjectId("64c2176487d2b5b781a5e300"),
+        "codigo": 1,
+        "preciocompra": 50,
+        "precioventa": 80,
+        "puntopedido": 5,
+        "stock": 2
+    },
+    {
+        "descripcion" : "mouse optico",
+        "categoria": "64c2bf3aa28de85ae2d0c5ae",
+        "marca": "64c1bd07c0c4177f1a791fcc",
+        "proveedor": "64c2176487d2b5b781a5e2ff",
+        "codigo": 2,
+        "preciocompra": 20,
+        "precioventa": 30,
+        "puntopedido": 6,
+        "stock": 9
+    }
+])

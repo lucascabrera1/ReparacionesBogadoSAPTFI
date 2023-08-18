@@ -15,7 +15,7 @@ const port = process.env.PORT
 app.use(cors())
 app.use(express.json())
 app.use('/', router)
-app.set('appName', 'Recuperatorio MCGA 2021 back-end')
+app.set('appName', 'Reparaciones Bogado')
 
 app.use((req, res, next) => {
     res.send("paso por la funcion app.use")
@@ -26,3 +26,4 @@ app.use((req, res, next) => {
 app.listen(port, () =>{
     console.log(`aplicacion ${app.get('appName')} corriendo en localhost puerto ${port}`)
 })
+
