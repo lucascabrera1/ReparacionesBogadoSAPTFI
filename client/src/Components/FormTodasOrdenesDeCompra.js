@@ -1,20 +1,27 @@
 import { useEffect } from 'react'
 import {useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
-import {SeleccionarTodosLosProveedores, RecuperarProveedores, EstadoProveedores} from '../Features/OrdenCompraSlice'
-/* import Button from './Common/Button';
-import styles from './style.module.css' */
+import {SeleccionarTodosLosProveedores,RecuperarProveedores, EstadoProveedores, EstadoMarcas, 
+SeleccionarTodasLasMarcas, RecuperarMarcas} from '../Features/OrdenCompraSlice'
 function DevolverProveedores() {
 
   const dispatch = useDispatch()
+  
   const proveedores = useSelector(SeleccionarTodosLosProveedores)
-  console.log(proveedores)
+  const marcas = useSelector(SeleccionarTodasLasMarcas)
   const estadoproveedores = useSelector(EstadoProveedores)
+  const estadomarcas = useSelector(EstadoMarcas)
 
   useEffect(()=>{
-      if (estadoproveedores==="idle")
+      if (estadoproveedores==="idle"){
         dispatch(RecuperarProveedores())
+      }
     },[estadoproveedores])
+  
+  useEffect (() => {
+    if (estadomarcas === "idle"){
+      dispatch(RecuperarMarcas())
+    }
+  }, [estadomarcas])
 
     return (
         <div>
