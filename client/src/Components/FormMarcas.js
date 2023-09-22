@@ -1,51 +1,58 @@
 import { useDispatch, useSelector } from 'react-redux'
-import {NavLink, useNavigate, useParams} from 'react-router-dom'
-import {useForm} from 'react-hook-form'
-import Button from './Common/Button'
-import Link from './Common/Link'
-import Input from './Common/Input'
-import {RecuperarMarcas, EstadoMarcas, SeleccionarTodasLasMarcas} from '../Features/OrdenCompraSlice.js'
+import {NavLink, useNavigate} from 'react-router-dom'
 import { useEffect } from 'react'
+import Button from 'react-bootstrap/Button'
+import Table from 'react-bootstrap/Table'
+import {RecuperarMarcas, EstadoMarcas, SeleccionarTodasLasMarcas, EliminarMarca} from '../Features/OrdenCompraSlice.js'
 
 function FormMarcas() {
+
+    const navigate = useNavigate()
     const dispatch = useDispatch()
     const marcas = useSelector(SeleccionarTodasLasMarcas)
     const estadomarcas = useSelector(EstadoMarcas)
-    const navigate = useNavigate()
-
-    console.log(estadomarcas)
 
     useEffect(()=> {
         if (estadomarcas === "idle") {dispatch(RecuperarMarcas())}
     }, [estadomarcas])
 
-    console.log(estadomarcas)
+    const handleDelete = (_id, nombre) => {
+        let ok = window.confirm(`¿Está seguro de que quiere eliminar a la marca: ${nombre}?`)
+        if (ok) {dispatch(EliminarMarca(_id))}
+    }
 
     return (<div>
         <h2>Marcas Recuperadas</h2>
         {
-            <table style={{border: "5px solid black"}}>
+            <Table className= 'table-success table-bordered border-dark'>
                 <thead>
-                    <tr style={{border: "2px solid black"}}>
-                        <th style={{border: "2px solid black"}}>Nombre</th>
-                        <th style={{border: "2px solid black"}}>Pais de Origen</th>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Pais de Origen</th>
                     </tr>
                 </thead>
-                <tbody style={{border: "2px solid black"}}>
+                <tbody>
                     { 
                         marcas.map(marca => {
-                            return <tr key={marca._id} style={{border: "2px solid black"}}>
-                                <td style={{border: "2px solid black"}}>{marca.nombre}</td>
-                                <td style={{border: "2px solid black"}}>{marca.paisorigen}</td>
+                            return <tr key={marca._id}>
+                                <td>{marca.nombre}</td>
+                                <td>{marca.paisorigen}</td>
+                                <td><Button variant='danger' size='lg' 
+                                    onClick={()=> handleDelete(marca._id, marca.nombre)}>
+                                        Eliminar
+                                    </Button> {' '}
+                                </td>
                             </tr>
                         })
                     }
                 </tbody>
-            </table>
+            </Table>
         }
-        <Button onClick={ e => { e.preventDefault(); navigate('/nuevamarca')}}>Agregar</Button>
-        <Button>Modificar</Button>
-        <Button>Eliminar</Button>
+        <Button 
+        onClick={ e => { e.preventDefault(); navigate('/nuevamarca')}}
+        variant='info' size='lg'>
+            Agregar
+        </Button> {' '}
         <NavLink onClick={e => { e.preventDefault(); navigate('/ordenesdecompra')}}>...Atrás</NavLink>
     </div>)
 }

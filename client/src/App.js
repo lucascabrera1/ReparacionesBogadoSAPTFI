@@ -1,6 +1,6 @@
 import {BrowserRouter, Routes, Route} from 'react-router-dom'
 import ProtectedRoute from '../src/Util/ProtectedRoute.js'
-import FormTodasLasOC from './Components/FormTodasOrdenesDeCompra'
+import FormProveedores from './Components/FormProveedores.js'
 import NotFoundPage from './Components/NotFoundPage'
 import NavBarPrincipal from './Components/Common/NavBarPrincipal.js'
 import './App.css';
@@ -24,6 +24,7 @@ function App() {
             <Route path='/nuevamarca' element={<FormMarca/>} />
             <Route path='*' element= {<NotFoundPage/>}/>
             <Route path='/todaslasmarcas' element={<FormMarcas/>}/>
+            <Route path='/proveedores' element={<FormProveedores/>}/>
             {/*<Route path='/' element={<FormTodasLasOC/>} />
             <Route path='/home' element={<Home/>} />
             

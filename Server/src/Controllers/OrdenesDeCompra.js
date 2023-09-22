@@ -80,7 +80,39 @@ const AgregarMarca = async (req, res) => {
         console.log(marcasaved)
         return res.send(marcasaved)
     } catch (error) {
-        console.error(err)
+        console.error(error)
+        return res.status(500).json({message : message.error})
+    }
+}
+
+const EliminarMarca = async (req, res) => {
+    try {
+        const marcaencontrada = await Marca.findOneAndRemove({_id: req.params.id})
+        if (!marcaencontrada || marcaencontrada.length === 0){
+            return res.status(404).json({
+                error: true,
+                message: "Marca no encontrada"
+            })
+        }
+        return res.status(200).json(marcaencontrada)
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({message : message.error})
+    }
+}
+
+const EliminarProveedor = async (req, res) => {
+    try {
+        const proveedorencontrado = await Proveedor.findOneAndRemove({_id: req.params.id})
+        if (!proveedorencontrado || proveedorencontrado.length === 0){
+            return res.status(404).json({
+                error: true,
+                message: "Proveedor no encontrado"
+            })
+        }
+        return res.status(200).json(proveedorencontrado)
+    } catch (error) {
+        console.error(error)
         return res.status(500).json({message : message.error})
     }
 }
@@ -155,5 +187,7 @@ export default {GenerarOrdenDeCompra,
     ObtenerMarcas,
     AgregarProducto,
     AgregarLineaCompra,
-    RecuperarProveedores
+    RecuperarProveedores,
+    EliminarMarca,
+    EliminarProveedor
 }
