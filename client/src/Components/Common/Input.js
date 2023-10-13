@@ -5,8 +5,9 @@ function Input({type,
     classname = ` `,
     disabled = false,
     name, 
-    label, 
-    register, 
+    label,
+    register,
+    placeholder,
     registerOptions, 
     errors, 
     optionMsgErrors,
@@ -15,9 +16,10 @@ function Input({type,
   return (
     <div>
         <label>{label}</label>
-        <input 
+        <input
+            style={{width: '300px'}}
             type={type} 
-            placeholder={label}
+            placeholder={placeholder}
             className={classname}
             name={name}
             {...register(name, registerOptions)}

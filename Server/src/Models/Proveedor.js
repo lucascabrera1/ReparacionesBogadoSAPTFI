@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const schemaProveedor = new mongoose.Schema({
+let schemaProveedor = new mongoose.Schema({
     cuit:{
         type: Number, 
         required: true, 

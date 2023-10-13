@@ -42,6 +42,19 @@ export const AgregarMarca = createAsyncThunk('ordenCompra/AgregarMarca', async (
     }
 })
 
+export const AgregarProveedor = createAsyncThunk('/ordenCompra/AgregarProveedor', async (proveedorInicial) => {
+    try {
+        console.log('entra al guardar proveedor')
+        console.log(proveedorInicial)
+        const response = await axios.post(URL_BASE_PROVEEDORES, proveedorInicial)
+        console.log(response.data)
+        return response.data
+    } catch (error) {
+        console.error(error.message)
+        return error.message
+    }
+})
+
 export const RecuperarOrdenesDeCompra = createAsyncThunk ('ordenCompra/RecuperarOrdenesDeCompra', async ()=> {
     try {
         const response = await axios.get(URL_BASE_OC)
@@ -94,15 +107,27 @@ export const EliminarProveedor = createAsyncThunk('ordenCompra/EliminarProveedor
     }
 })
 
+export const ModificarProveedor = createAsyncThunk('ordenCompra/ModificarProveedor', async(initialProveedor) => {
+    try {
+        console.log(URL_BASE_PROVEEDORES + initialProveedor)
+        console.log(initialProveedor.id)
+        console.log(initialProveedor)
+        const response = await axios.patch(URL_BASE_PROVEEDORES + initialProveedor.id, initialProveedor)
+        return response.data
+    } catch (error) {
+        console.error(error.message)
+        return error.message
+    }
+})
+
 export const OrdenCompraSlice = createSlice({
     name: "ordenCompra",
     initialState,
     reducers: {},
     extraReducers: (builder) =>{ builder
         .addCase(RecuperarProveedores.fulfilled, (state, action) => {
-            console.log("state")
-            console.log(state.ordenesDeCompra.proveedores)
-            console.log("end state")
+            console.log(action)
+            console.log(state.proveedores)
             state.status = "completed"
             state.proveedores = action.payload
         })
@@ -117,6 +142,10 @@ export const OrdenCompraSlice = createSlice({
             state.status = "completed"
             state.marcas.push(action.payload)
         })
+        .addCase(AgregarProveedor.fulfilled, (state, action) => {
+            state.status = "completed"
+            state.proveedores.push(action.payload)
+        })
         .addCase(EliminarMarca.fulfilled, (state, action) => {
             state.marcas = state.marcas.filter( (elem)=> {
                 return elem._id !== action.payload._id
@@ -127,6 +156,15 @@ export const OrdenCompraSlice = createSlice({
                 return elem._id !== action.payload._id
             })
         })
+        .addCase(ModificarProveedor.fulfilled, (state, action) => {
+            state.proveedores = state.proveedores.map(item => {
+                if (item._id === action.payload._id){
+                    return action.payload
+                } else {
+                    return item
+                }
+            })
+        })
     }
 })
 
@@ -134,7 +172,7 @@ export default OrdenCompraSlice.reducer
 
 export const SeleccionarTodosLosProveedores = (state) => { 
     console.log(state)
-    console.log(state.proveedores)
+    //console.log(state.proveedores) da undefined
     console.log(state.ordenesDeCompra.proveedores)
     return state.ordenesDeCompra.proveedores
 }

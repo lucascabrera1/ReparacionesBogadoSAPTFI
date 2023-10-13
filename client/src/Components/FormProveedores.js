@@ -29,7 +29,7 @@ function FormProveedores() {
 
   return (
     <div>
-        <Table className= 'table-success table-bordered border-dark'>
+        <Table className= 'table table-success table-bordered border-dark'>
           <thead>
               <tr>
                 <th>Razón Social</th>
@@ -51,9 +51,12 @@ function FormProveedores() {
                   <td>{proveedor.email}</td>
                   <td>{proveedor.localidad}</td>
                   <td>{proveedor.telefono}</td>
-                  <td><Button variant='secondary' size='lg' >
+                  <td><NavLink
+                        className="button"
+                        style={{backgroundColor: 'yellow'}}
+                        to={`/proveedores/${proveedor._id}`} >
                           Modificar
-                      </Button> {' '}
+                      </NavLink> {' '}
                       <Button variant='danger' size='lg' 
                         onClick={()=> handleDelete(proveedor._id, proveedor.razonsocial)}>
                         Eliminar
@@ -65,6 +68,10 @@ function FormProveedores() {
             }
           </tbody>
       </Table>
+      <Button variant='primary' size='md'
+        onClick={(e)=> { e.preventDefault(); navigate('/proveedor')}}>
+        Agregar nuevo
+      </Button>
       <NavLink 
         onClick={e => { e.preventDefault(); navigate('/ordenesdecompra')}}>
         ...Atrás

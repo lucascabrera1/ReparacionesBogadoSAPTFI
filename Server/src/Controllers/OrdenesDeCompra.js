@@ -143,6 +143,31 @@ const AgregarProducto = async (req, res) => {
     }
 }
 
+const AgregarProveedor = async (req, res) => {
+    try {
+        const proveedor = new Proveedor(req.body)
+        console.log(proveedor)
+        const proveedorsaved = await proveedor.save()
+        console.log(proveedorsaved)
+        return res.send(proveedorsaved)
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({message : message.error})
+    }
+}
+
+const ModificarProveedor = async (req, res) => {
+    try {
+       //const proveedor =  new Proveedor(req.body)
+       console.log(req.body)
+       const updatedProveedor = await Proveedor.findByIdAndUpdate({_id: req.params.id}, req.body, {new: true})
+       console.log(updatedProveedor)
+       return res.send(updatedProveedor)
+   } catch (error) {
+       return res.status(500).json({message: error})
+   }
+}
+
 const AgregarLineaCompra = async (req, res) => {
     try {
         const lc = new LineaCompra(req.body)
@@ -182,12 +207,14 @@ const RecuperarProveedores = async (req, res) => {
 
 export default {GenerarOrdenDeCompra, 
     ObtenerOrdenesDeCompra, 
-    AgregarMarca, 
+    AgregarMarca,
+    AgregarProveedor,
     AgregarFormaDePago,
     ObtenerMarcas,
     AgregarProducto,
     AgregarLineaCompra,
     RecuperarProveedores,
     EliminarMarca,
-    EliminarProveedor
+    EliminarProveedor,
+    ModificarProveedor
 }
