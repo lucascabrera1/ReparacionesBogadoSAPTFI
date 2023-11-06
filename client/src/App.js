@@ -8,6 +8,8 @@ import FormMarca from './Components/FormMarca.js'
 import FormMarcas from './Components/FormMarcas.js'
 import FormGestionOC from './Components/FormGestionOC.js'
 import FormProveedor from './Components/FormProveedor.js'
+import FormProducto from './Components/FormProducto.js'
+import FormProductos from './Components/FormProductos.js'
 
 function App() {
   return <div>
@@ -26,6 +28,9 @@ function App() {
             <Route path='*' element= {<NotFoundPage/>}/>
             <Route path='/todaslasmarcas' element={<FormMarcas/>}/>
             <Route path='/proveedores' element={<FormProveedores/>}/>
+            <Route path='/productos' element={<FormProductos/>}/>
+            <Route path='/producto' element={<FormProducto/>} />
+            <Route path='/productos/:id' element={<FormProducto/>} />
             <Route path='/proveedor' element= {<FormProveedor/>}/>
             <Route path='/proveedores/:id' element= {<FormProveedor/>}/>
             {/*<Route path='/' element={<FormTodasLasOC/>} />

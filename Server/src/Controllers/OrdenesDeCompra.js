@@ -4,6 +4,7 @@ import LineaCompra from '../Models/LineaCompra.js'
 import Marca from '../Models/Marca.js'
 import Producto from '../Models/Producto.js'
 import Proveedor from '../Models/Proveedor.js'
+import Categoria from '../Models/Categoria.js'
 
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
@@ -101,6 +102,22 @@ const EliminarMarca = async (req, res) => {
     }
 }
 
+const EliminarProducto = async (req, res) => {
+    try {
+        const productoencontrado = await Producto.findOneAndRemove({_id: req.params.id})
+        if (!productoencontrado || productoencontrado.length === 0){
+            return res.status(404).json({
+                error: true,
+                message: "Marca no encontrada"
+            })
+        }
+        return res.status(200).json(productoencontrado)
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({message : message.error})
+    }
+}
+
 const EliminarProveedor = async (req, res) => {
     try {
         const proveedorencontrado = await Proveedor.findOneAndRemove({_id: req.params.id})
@@ -168,6 +185,18 @@ const ModificarProveedor = async (req, res) => {
    }
 }
 
+const ModificarProducto = async (req, res) => {
+    try {
+        //const proveedor =  new Proveedor(req.body)
+        console.log(req.body)
+        const updatedProducto = await Producto.findByIdAndUpdate({_id: req.params.id}, req.body, {new: true})
+        console.log(updatedProducto)
+        return res.send(updatedProducto)
+    } catch (error) {
+        return res.status(500).json({message: error})
+    }
+}
+
 const AgregarLineaCompra = async (req, res) => {
     try {
         const lc = new LineaCompra(req.body)
@@ -205,6 +234,55 @@ const RecuperarProveedores = async (req, res) => {
     }
 } 
 
+const RecuperarProductos = async (req, res) => {
+    try {
+        const productos = await Producto.find({})
+        let productosdevueltos = []
+        for (const elem of productos) {
+            let proveedorencontrado = await Proveedor.findById(elem.proveedor)
+            let marcaencontrada = await Marca.findById(elem.marca)
+            let categoriaencontrada = await Categoria.findById(elem.categoria)
+            let newElem = {
+                _id: elem._id,
+                descripcion : elem.descripcion,
+                categoria : categoriaencontrada.descripcion,
+                proveedor: proveedorencontrado.razonsocial,
+                marca: marcaencontrada.nombre,
+                codigo: elem.codigo,
+                preciocompra: elem.preciocompra,
+                precioventa: elem.precioventa,
+                puntopedido: elem.puntopedido,
+                stock: elem.stock
+            }
+            productosdevueltos.push(newElem)
+        }
+        console.log(productosdevueltos)
+        return res.send(productosdevueltos)
+    } catch (error) {
+        console.error(error.message)
+        return res.status(500).json({message: error.message})
+    }
+}
+
+const RecuperarCategorias = async (req, res) => {
+    try {
+        const categorias = await Categoria.find({})
+        let categoriasdevueltas = []
+        for (const elem of categorias) {
+            let newElem = {
+                _id: elem._id,
+                descripcion : elem.descripcion,
+            }
+            categoriasdevueltas.push(newElem)
+        }
+        console.log(categoriasdevueltas)
+        return res.send(categoriasdevueltas)
+    } catch (error) {
+        console.error(error.message)
+        return res.status(500).json({message: error.message})
+    }
+} 
+
 export default {GenerarOrdenDeCompra, 
     ObtenerOrdenesDeCompra, 
     AgregarMarca,
@@ -216,5 +294,9 @@ export default {GenerarOrdenDeCompra,
     RecuperarProveedores,
     EliminarMarca,
     EliminarProveedor,
-    ModificarProveedor
+    ModificarProveedor,
+    ModificarProducto,
+    EliminarProducto,
+    RecuperarProductos,
+    RecuperarCategorias
 }
