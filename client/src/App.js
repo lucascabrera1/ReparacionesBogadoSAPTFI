@@ -10,6 +10,8 @@ import FormGestionOC from './Components/FormGestionOC.js'
 import FormProveedor from './Components/FormProveedor.js'
 import FormProducto from './Components/FormProducto.js'
 import FormProductos from './Components/FormProductos.js'
+import FormOrdenesCompra from './Components/FormOrdenesCompra.js'
+import FormOrdenCompra from './Components/FormOrdenCompra.js'
 
 function App() {
   return <div>
@@ -21,7 +23,6 @@ function App() {
     <div className='items-center justify-center'>
       <BrowserRouter>
         <NavBarPrincipal/>
-        
           <Routes>
             <Route path='/ordenesdecompra' element={<FormGestionOC/>}/>
             <Route path='/nuevamarca' element={<FormMarca/>} />
@@ -33,6 +34,8 @@ function App() {
             <Route path='/productos/:id' element={<FormProducto/>} />
             <Route path='/proveedor' element= {<FormProveedor/>}/>
             <Route path='/proveedores/:id' element= {<FormProveedor/>}/>
+            <Route path='/todaslasordenesdecompra' element= {<FormOrdenesCompra/>}/>
+            <Route path='/nuevaordendecompra' element={<FormOrdenCompra/>}/>
             {/*<Route path='/' element={<FormTodasLasOC/>} />
             <Route path='/home' element={<Home/>} />
             

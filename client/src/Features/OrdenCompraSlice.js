@@ -68,6 +68,19 @@ export const AgregarProducto = createAsyncThunk('/ordenCompra/AgregarProducto', 
     }
 })
 
+export const AgregarOrdenDeCompra = createAsyncThunk('/ordenCompra/AgregarOrdenDeCompra', async (ocInicial) => {
+    try {
+        console.log('entra al guardar orden de compra')
+        console.log(ocInicial)
+        const response = await axios.post(URL_BASE_OC, ocInicial)
+        console.log(response.data)
+        return response.data
+    } catch (error) {
+        console.error(error.message)
+        return error.message
+    }
+})
+
 export const RecuperarOrdenesDeCompra = createAsyncThunk ('ordenCompra/RecuperarOrdenesDeCompra', async ()=> {
     try {
         const response = await axios.get(URL_BASE_OC)
@@ -111,6 +124,17 @@ export const RecuperarMarcas = createAsyncThunk ("ordenCompra/RecuperarMarcas", 
 export const RecuperarProductos = createAsyncThunk ("ordenCompra/RecuperarProductos", async () => {
     try {
         const response = await axios.get(URL_BASE_PRODUCTOS)
+        return [...response.data]
+    } catch (error) {
+        console.log(console.error(error))
+        return error.message
+    }
+})
+
+export const RecuperarProductosPorProveedor = createAsyncThunk ("ordenCompra/RecuperarProductosPorProveedor", async (idProveedor) => {
+    try {
+        console.log(idProveedor)
+        const response = await axios.get(URL_BASE_PRODUCTOS + idProveedor)
         return [...response.data]
     } catch (error) {
         console.log(console.error(error))
@@ -198,6 +222,10 @@ export const OrdenCompraSlice = createSlice({
             state.status = "completed"
             state.productos = action.payload
         })
+        .addCase(RecuperarProductosPorProveedor.fulfilled, (state, action) => {
+            state.status = "completed"
+            state.productos = action.payload
+        })
         .addCase(AgregarMarca.fulfilled, (state, action) => {
             state.status = "completed"
             state.marcas.push(action.payload)
@@ -209,6 +237,10 @@ export const OrdenCompraSlice = createSlice({
         .addCase(AgregarProducto.fulfilled, (state, action) => {
             state.status = "completed"
             state.productos.push(action.payload)
+        })
+        .addCase(AgregarOrdenDeCompra.fulfilled, (state, action) => {
+            state.status = "completed"
+            state.ordenesDeCompra.push(action.payload)
         })
         .addCase(EliminarMarca.fulfilled, (state, action) => {
             state.marcas = state.marcas.filter( (elem)=> {

@@ -40,33 +40,38 @@ function FormProductos() {
                         <th>Precio de Venta</th>
                         <th>Punto de Pedido</th>
                         <th>Stock</th>
-                        <th>Modificar / Eliminar</th>
+                        <th>Modificar</th>
+                        <th>Eliminar</th>
                     </tr>
                 </thead>
                 <tbody>
                     {
                       productos.map( producto => { 
                           return <tr key={producto._id}>
-                          <td>{producto.descripcion}</td>
-                          <td>{producto.categoria}</td>
-                          <td>{producto.proveedor}</td>
-                          <td>{producto.marca}</td>
-                          <td>{producto.codigo}</td>
-                          <td>{producto.preciocompra}</td>
-                          <td>{producto.precioventa}</td>
-                          <td>{producto.puntopedido}</td>
-                          <td>{producto.stock}</td>
-                          <td><NavLink
-                                  className="button"
-                                  style={{backgroundColor: 'yellow'}}
-                                  to={`/productos/${producto._id}`} >
+                            <td>{producto.descripcion}</td>
+                            <td>{producto.categoria}</td>
+                            <td>{producto.proveedor}</td>
+                            <td>{producto.marca}</td>
+                            <td>{producto.codigo}</td>
+                            <td>{producto.preciocompra}</td>
+                            <td>{producto.precioventa}</td>
+                            <td>{producto.puntopedido}</td>
+                            <td>{producto.stock}</td>
+                            <td>
+                              <NavLink
+                                className="button"
+                                style={{backgroundColor: 'yellow'}}
+                                to={`/productos/${producto._id}`} >
                                   Modificar
                               </NavLink> {' '}
-                              <Button variant='danger' size='lg' 
+                            </td>
+                            <td>
+                              <Button 
+                                  variant='danger' size='lg' 
                                   onClick={()=> handleDelete(producto._id, producto.descripcion)}>
-                                  Eliminar
-                              </Button> {' '}
-                          </td>
+                                    Eliminar
+                                </Button> {' '}
+                            </td>
                           </tr>
                         }
                       )

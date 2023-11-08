@@ -264,6 +264,37 @@ const RecuperarProductos = async (req, res) => {
     }
 }
 
+const RecuperarProductosPorProveedor = async (req, res) => {
+    try {
+        console.log(req.params)
+        const productos = await Producto.find({proveedor : req.params.idProveedor})
+        let productosdevueltos = []
+        for (const elem of productos) {
+            let proveedorencontrado = await Proveedor.findById(elem.proveedor)
+            let marcaencontrada = await Marca.findById(elem.marca)
+            let categoriaencontrada = await Categoria.findById(elem.categoria)
+            let newElem = {
+                _id: elem._id,
+                descripcion : elem.descripcion,
+                categoria : categoriaencontrada.descripcion,
+                proveedor: proveedorencontrado.razonsocial,
+                marca: marcaencontrada.nombre,
+                codigo: elem.codigo,
+                preciocompra: elem.preciocompra,
+                precioventa: elem.precioventa,
+                puntopedido: elem.puntopedido,
+                stock: elem.stock
+            }
+            productosdevueltos.push(newElem)
+        }
+        console.log(productosdevueltos)
+        return res.send(productosdevueltos)
+    } catch (error) {
+        console.error(error.message)
+        return res.status(500).json({message: error.message})
+    }
+}
+
 const RecuperarCategorias = async (req, res) => {
     try {
         const categorias = await Categoria.find({})
@@ -298,5 +329,6 @@ export default {GenerarOrdenDeCompra,
     ModificarProducto,
     EliminarProducto,
     RecuperarProductos,
-    RecuperarCategorias
+    RecuperarCategorias,
+    RecuperarProductosPorProveedor
 }
