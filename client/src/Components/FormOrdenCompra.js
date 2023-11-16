@@ -17,17 +17,35 @@ function FormOrdenCompra() {
   const proveedores = useSelector(SeleccionarTodosLosProveedores)
   const estadoproveedores = useSelector(EstadoProveedores)
   const productos = useSelector(SeleccionarTodosLosProductos)
-  const [idProveedor, setIdProveedor] = useState("")
   const {register, handleSubmit, formState : {errors}} = useForm()
-  const [producto, setProducto] = useState()
-  const [total, setTotal] = useState()
+  const [descripcion, setDescripcion] = useState("")
+  const [preciocompra, setPreciocompra] = useState()
+  const [total, setTotal] = useState(0)
   const [cantidad, setCantidad] = useState()
+  const [oc,setOC] = useState({
+    lineasCompra: [{
+      descripcion, preciocompra, cantidad
+    }]
+  })
 
+  /* useEffect((producto)=> {
+    setProducto(producto)
+    console.log('producto seteado despues de pasar por el use effect')
+    console.log(productoSeleccionado)
+  }, [productoSeleccionado])
+ */
   useEffect(()=>{
     if (estadoproveedores==="idle"){
       dispatch(RecuperarProveedores())
     }
   },[estadoproveedores])
+
+   /* useEffect(()=> {
+    console.log(idProducto)
+    console.log(productos)
+    setProductoSeleccionado(productos.filter(p => p._id === idProducto))
+    console.log(productoSeleccionado)
+  }, [idProducto]) */  
  
   const optionProveedores = proveedores.map(p => (<option
     value={p._id} 
@@ -35,23 +53,39 @@ function FormOrdenCompra() {
     >{p.razonsocial}
   </option>))
 
-  const AgregarLineaCompra = (producto, cantidad) => {
+  const AgregarLineaCompra = (descripcion, preciocompra, cantidad) => {
     console.log(cantidad)
-    console.log(producto)
-    let lineaCompra = {
-      producto: producto,
-      cantidad: cantidad,
-      subtotal : producto.preciocompra * cantidad
+    console.log(descripcion)
+    console.log(preciocompra)
+    const lineaCompra = {
+      descripcion: descripcion,
+      cantidad: parseInt(cantidad),
+      subtotal : parseFloat(preciocompra * cantidad)
     }
-    setTotal(total + lineaCompra.subtotal)
     console.log(lineaCompra)
+    //console.log(total)
+    
+    oc.lineasCompra.push(lineaCompra)
+
+    
+    
+    console.log(lineaCompra.subtotal)
+    console.log(oc)
+    /* oc.lineasCompra.forEach(lc => {
+      console.log(lc)
+      let subtotal = parseInt(lc.cantidad * lc.preciocompra)
+      console.log(subtotal)
+      setTotal(total + subtotal)
+    }) */
+    setTotal(total + lineaCompra.subtotal)
     console.log(total)
+    console.log(oc)
   }
 
   const handleSubmitLC = (data) => {
     console.log(data)
     console.log('handle submit linea compra')
-    setCantidad(data.cantidad)
+    setCantidad(parseInt(data.cantidad))
     console.log(cantidad)
   }
 
@@ -109,11 +143,17 @@ function FormOrdenCompra() {
             </tr>
         </thead>
         <tbody>
-          {productos.map( producto => { 
-            return <tr key={producto._id} onClick={e=> {
-              e.preventDefault()
-              console.log(producto)
-              setProducto(producto)
+          {productos.map( producto => {
+            return <tr 
+              key={producto._id} 
+              onClick={e=> {
+                console.log('se ejecuta el onclick del tr')
+                console.log(producto)
+                e.preventDefault()
+                console.log('ejectuta algo despues del set producto')
+                setDescripcion(producto.descripcion)
+                setPreciocompra(producto.preciocompra)
+                //AgregarLineaCompra(producto, cantidad)
             }}>
               <td>{producto.descripcion}</td>
               <td>{producto.categoria}</td>
@@ -129,7 +169,7 @@ function FormOrdenCompra() {
         </tbody>
       </Table>
       
-      <p>Producto seleccionado: {producto._id}</p>
+      <p>Producto seleccionado: {descripcion}</p>
       <Input
         type="number"
         name="cantidad"
@@ -145,8 +185,19 @@ function FormOrdenCompra() {
       <Button
         onClick={(e)=>{
           e.preventDefault()
-          AgregarLineaCompra(producto, cantidad);
-          console.log(producto)
+
+          /* console.log('producto antes del setProducto')
+          console.log(productoSeleccionado)
+          console.log('fin producto antes del set producto')
+          
+          setProductoSeleccionado(productoSeleccionado)
+          console.log('producto seteado')
+          console.log(productoSeleccionado)
+          console.log('fin producto') */
+          setCantidad(cantidad)
+          console.log(descripcion, preciocompra, cantidad)
+          AgregarLineaCompra(descripcion, preciocompra, cantidad);
+          console.log(descripcion)
       }}
         >Agregar línea de compra
       </Button>
