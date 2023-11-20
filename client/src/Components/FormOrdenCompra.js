@@ -9,24 +9,38 @@ import {RecuperarProveedores, RecuperarProductosPorProveedor, AgregarOrdenDeComp
   SeleccionarTodosLosProductos, SeleccionarTodosLosProveedores,
   EstadoProveedores} from '../Features/OrdenCompraSlice.js'
 import Table from 'react-bootstrap/esm/Table.js'
+import {v4 as uuidv4, v4} from 'uuid'
 
 function FormOrdenCompra() {
+  //hooks
   const params = useParams()
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  //state with redux
   const proveedores = useSelector(SeleccionarTodosLosProveedores)
   const estadoproveedores = useSelector(EstadoProveedores)
   const productos = useSelector(SeleccionarTodosLosProductos)
+  //form tools
   const {register, handleSubmit, formState : {errors}} = useForm()
+  //hook useState
   const [descripcion, setDescripcion] = useState("")
   const [preciocompra, setPreciocompra] = useState()
   const [total, setTotal] = useState(0)
   const [cantidad, setCantidad] = useState()
-  const [oc,setOC] = useState({
-    lineasCompra: [{
-      descripcion, preciocompra, cantidad
-    }]
+  /* const [oc,setOC] = useState({
+    lineasCompra :[{
+      descripcion,
+      preciocompra,
+      cantidad,
+      subtotal: parseFloat(preciocompra*cantidad)
+    }], 
+    total: total
   })
+   */
+  let items = {
+    arreglo : [],
+    total : 0
+  }
 
   /* useEffect((producto)=> {
     setProducto(producto)
@@ -64,22 +78,20 @@ function FormOrdenCompra() {
     }
     console.log(lineaCompra)
     //console.log(total)
-    
-    oc.lineasCompra.push(lineaCompra)
-
-    
-    
-    console.log(lineaCompra.subtotal)
-    console.log(oc)
+    console.log(items)
+    //setOC(oc.lineasCompra.push(lineaCompra))
+    items.arreglo.push(lineaCompra)
+    items.total = items.total + lineaCompra.subtotal
+    console.log(items)
+    //console.log(oc)
     /* oc.lineasCompra.forEach(lc => {
       console.log(lc)
       let subtotal = parseInt(lc.cantidad * lc.preciocompra)
       console.log(subtotal)
       setTotal(total + subtotal)
     }) */
-    setTotal(total + lineaCompra.subtotal)
-    console.log(total)
-    console.log(oc)
+    //setTotal(parseFloat(total + lineaCompra.subtotal))
+    
   }
 
   const handleSubmitLC = (data) => {
@@ -87,6 +99,7 @@ function FormOrdenCompra() {
     console.log('handle submit linea compra')
     setCantidad(parseInt(data.cantidad))
     console.log(cantidad)
+    
   }
 
   const handleSubmitOC = (data) => {
@@ -153,7 +166,6 @@ function FormOrdenCompra() {
                 console.log('ejectuta algo despues del set producto')
                 setDescripcion(producto.descripcion)
                 setPreciocompra(producto.preciocompra)
-                //AgregarLineaCompra(producto, cantidad)
             }}>
               <td>{producto.descripcion}</td>
               <td>{producto.categoria}</td>
@@ -194,16 +206,17 @@ function FormOrdenCompra() {
           console.log('producto seteado')
           console.log(productoSeleccionado)
           console.log('fin producto') */
-          setCantidad(cantidad)
+          //setCantidad(cantidad)
           console.log(descripcion, preciocompra, cantidad)
           AgregarLineaCompra(descripcion, preciocompra, cantidad);
+
           console.log(descripcion)
       }}
         >Agregar línea de compra
       </Button>
 
       <p>Descripción de la orden de compra al momento</p>
-      { <Table className= 'table table-success table-bordered border-dark'>
+       <Table className= 'table table-success table-bordered border-dark'>
         <thead>
             <tr>
               <th>Producto</th>
@@ -213,19 +226,15 @@ function FormOrdenCompra() {
             </tr>
         </thead>
         <tbody>
-            {
-              productos.map( producto => { 
-                  return <tr key={producto._id}>
-                    <td>Producto</td>
-                    <td>Precio de Compra</td>
-                    <td>precio Unitario</td>
-                    <td>Subtotal</td>
-                  </tr>
-                }
-              )
-            }
+          {items.arreglo.map( item => {
+            return <tr key={uuidv4()}>
+              <td>{item.descripcion}</td>
+              <td>{item.cantidad}</td>
+              <td>{item.subtotal}</td>
+            </tr>
+          })}
         </tbody>
-      </Table>}
+      </Table>
       <NavLink 
         onClick={e => { e.preventDefault(); navigate('/todaslasordenesdecompra')}}>
         ...Atrás
