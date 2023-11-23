@@ -37,11 +37,11 @@ function FormOrdenCompra() {
     total: total
   })
    */
-  let items = {
+  let itemsInicial = {
     arreglo : [],
     total : 0
   }
-
+  const [items, setItems] = useState(itemsInicial)
   /* useEffect((producto)=> {
     setProducto(producto)
     console.log('producto seteado despues de pasar por el use effect')
@@ -73,6 +73,7 @@ function FormOrdenCompra() {
     console.log(preciocompra)
     const lineaCompra = {
       descripcion: descripcion,
+      preciocompra: preciocompra,
       cantidad: parseInt(cantidad),
       subtotal : parseFloat(preciocompra * cantidad)
     }
@@ -83,6 +84,7 @@ function FormOrdenCompra() {
     items.arreglo.push(lineaCompra)
     items.total = items.total + lineaCompra.subtotal
     console.log(items)
+    setItems(items);
     //console.log(oc)
     /* oc.lineasCompra.forEach(lc => {
       console.log(lc)
@@ -182,7 +184,18 @@ function FormOrdenCompra() {
       </Table>
       
       <p>Producto seleccionado: {descripcion}</p>
-      <Input
+      <input
+            style={{width: '300px'}}
+            type="number" 
+            placeholder="ingrese la cantidad"
+            name="cantidad"
+            defaultValue={cantidad}
+            onChange={(e)=>{
+              e.preventDefault()
+              setCantidad(e.target.value)
+            }}
+        />
+      {/* <Input
         type="number"
         name="cantidad"
         placeholder="ingrese la cantidad"
@@ -193,7 +206,7 @@ function FormOrdenCompra() {
           min: "minimo 1 producto"
         }}
         errors={errors}
-      />
+      /> */}
       <Button
         onClick={(e)=>{
           e.preventDefault()
@@ -230,6 +243,7 @@ function FormOrdenCompra() {
             return <tr key={uuidv4()}>
               <td>{item.descripcion}</td>
               <td>{item.cantidad}</td>
+              <td>{item.preciocompra}</td>
               <td>{item.subtotal}</td>
             </tr>
           })}
