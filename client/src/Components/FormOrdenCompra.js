@@ -81,10 +81,20 @@ function FormOrdenCompra() {
     //console.log(total)
     console.log(items)
     //setOC(oc.lineasCompra.push(lineaCompra))
+    /* items.arreglo.forEach( lc => {
+      lc.descripcion == lineaCompra.descripcion ? 
+        lc.cantidad = {...cantidad}
+        :
+        items.arreglo.push
+
+    }) */
     items.arreglo.push(lineaCompra)
     items.total = items.total + lineaCompra.subtotal
     console.log(items)
-    setItems(items);
+    setItems({
+      
+    })
+    setItems({ ...items, ...total});
     //console.log(oc)
     /* oc.lineasCompra.forEach(lc => {
       console.log(lc)
@@ -249,6 +259,7 @@ function FormOrdenCompra() {
           })}
         </tbody>
       </Table>
+      <h3>total acumulado: $ {items.total}</h3>
       <NavLink 
         onClick={e => { e.preventDefault(); navigate('/todaslasordenesdecompra')}}>
         ...Atrás
