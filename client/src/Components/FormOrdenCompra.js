@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import {useNavigate, NavLink, useParams} from 'react-router-dom'
-import {useForm} from 'react-hook-form'
+import {useForm, useFieldArray} from 'react-hook-form'
 import Button from 'react-bootstrap/esm/Button'
 import Input from './Common/Input'
 import Form from 'react-bootstrap/Form'
@@ -21,7 +21,15 @@ function FormOrdenCompra() {
   const estadoproveedores = useSelector(EstadoProveedores)
   const productos = useSelector(SeleccionarTodosLosProductos)
   //form tools
-  const {register, handleSubmit, formState : {errors}} = useForm()
+  const {register, handleSubmit, formState : {errors}, control, reset, getValues} = useForm({
+    proveedor: "",
+    total: 0
+  })
+
+  const {fields, append, remove} = useFieldArray({
+    control,
+    name: "detalles"
+  })
   //hook useState
   const [descripcion, setDescripcion] = useState("")
   const [preciocompra, setPreciocompra] = useState()
@@ -91,28 +99,14 @@ function FormOrdenCompra() {
 
     items.total = items.total + lineaCompra.subtotal
     console.log(items)
-    setItems((items) => {
     const lineaencontrada = items.arreglo.find((item) => item.descripcion === lineaCompra.descripcion)
     if (lineaencontrada) {
-      return items.arreglo.map(item => {
-        if (item.descripcion === lineaCompra.descripcion){
-          return {...item, 
-            cantidad : item.cantidad += lineaCompra.cantidad, 
-            subtotal: item.subtotal += lineaCompra.subtotal
-          }, 
-          console.log(`
-            editado con lineacompra.cantidad ${lineaCompra.cantidad} y 
-            item.cantidad ${item.cantidad} y 
-            cantidad ${cantidad} 
-          `)
-        } else {
-          return item, console.log('item')
-        }
-      })
+      lineaencontrada.cantidad += lineaCompra.cantidad;
+      lineaencontrada.subtotal += lineaCompra.subtotal;
     } else {
-      return [...items.arreglo, items.arreglo.push(lineaCompra)], console.log('agregado')
-  }})
-  setItems({...items ,...total});
+      items.arreglo.push(lineaCompra)
+    }
+    setItems({...items ,...total});
 
     //console.log(oc)
     /* oc.lineasCompra.forEach(lc => {
