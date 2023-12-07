@@ -68,9 +68,8 @@ function FormOrdenCompra() {
   </option>))
 
   const AgregarLineaCompra = (descripcion, preciocompra, cantidad) => {
-    console.log(cantidad)
-    console.log(descripcion)
-    console.log(preciocompra)
+      
+    
     const lineaCompra = {
       descripcion: descripcion,
       preciocompra: preciocompra,
@@ -88,13 +87,33 @@ function FormOrdenCompra() {
         items.arreglo.push
 
     }) */
-    items.arreglo.push(lineaCompra)
+    //items.arreglo.push(lineaCompra)
+
     items.total = items.total + lineaCompra.subtotal
     console.log(items)
-    setItems({
-      
-    })
-    setItems({ ...items, ...total});
+    setItems((items) => {
+    const lineaencontrada = items.arreglo.find((item) => item.descripcion === lineaCompra.descripcion)
+    if (lineaencontrada) {
+      return items.arreglo.map(item => {
+        if (item.descripcion === lineaCompra.descripcion){
+          return {...item, 
+            cantidad : item.cantidad += lineaCompra.cantidad, 
+            subtotal: item.subtotal += lineaCompra.subtotal
+          }, 
+          console.log(`
+            editado con lineacompra.cantidad ${lineaCompra.cantidad} y 
+            item.cantidad ${item.cantidad} y 
+            cantidad ${cantidad} 
+          `)
+        } else {
+          return item, console.log('item')
+        }
+      })
+    } else {
+      return [...items.arreglo, items.arreglo.push(lineaCompra)], console.log('agregado')
+  }})
+  setItems({...items ,...total});
+
     //console.log(oc)
     /* oc.lineasCompra.forEach(lc => {
       console.log(lc)
@@ -202,7 +221,7 @@ function FormOrdenCompra() {
             defaultValue={cantidad}
             onChange={(e)=>{
               e.preventDefault()
-              setCantidad(e.target.value)
+              setCantidad(parseInt(e.target.value))
             }}
         />
       {/* <Input
@@ -250,7 +269,7 @@ function FormOrdenCompra() {
         </thead>
         <tbody>
           {items.arreglo.map( item => {
-            return <tr key={uuidv4()}>
+            return <tr key={item.descripcion}>
               <td>{item.descripcion}</td>
               <td>{item.cantidad}</td>
               <td>{item.preciocompra}</td>
