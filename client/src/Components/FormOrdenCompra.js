@@ -169,7 +169,19 @@ function FormOrdenCompra() {
         total : total_anterior - subtotal
       })
     }
-    
+  }
+
+  const LimpiarGrilla = (id_proveedor) => {
+    remove()
+    setDescripcion("")
+    setPreciocompra()
+    setId("")
+    reset({
+      ...getValues(),
+      total : 0,
+      proveedor: id_proveedor
+    })
+
   }
 
   const handleSubmitLC = (data) => {
@@ -205,6 +217,7 @@ function FormOrdenCompra() {
           {...register('proveedor')}
           onChange={(e) => {
             e.preventDefault()
+            LimpiarGrilla(e.target.value)
             console.log(e.target.value)
             dispatch(RecuperarProductosPorProveedor(e.target.value))
           }}
