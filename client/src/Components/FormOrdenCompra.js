@@ -21,19 +21,19 @@ function FormOrdenCompra() {
   const estadoproveedores = useSelector(EstadoProveedores)
   const productos = useSelector(SeleccionarTodosLosProductos)
   //form tools
-  const {register, handleSubmit, formState : {errors}, control, reset, getValues} = useForm({
-    proveedor: "",
+  const {register, watch, handleSubmit, formState : {errors}, control, reset, getValues} = useForm({
+    proveedor: {},
     total: 0
   })
 
-  const {fields, append, remove} = useFieldArray({
+  const {fields, append, remove, replace, prepend, update, insert} = useFieldArray({
     control,
     name: "detalles"
   })
   //hook useState
   const [descripcion, setDescripcion] = useState("")
   const [preciocompra, setPreciocompra] = useState()
-  const [total, setTotal] = useState(0)
+  const [id, setId] = useState("")
   const [cantidad, setCantidad] = useState()
   /* const [oc,setOC] = useState({
     lineasCompra :[{
@@ -75,7 +75,7 @@ function FormOrdenCompra() {
     >{p.razonsocial}
   </option>))
 
-  const AgregarLineaCompra = (descripcion, preciocompra, cantidad) => {
+ /* const AgregarLineaCompra = (descripcion, preciocompra, cantidad) => {
       
     
     const lineaCompra = {
@@ -97,7 +97,7 @@ function FormOrdenCompra() {
     }) */
     //items.arreglo.push(lineaCompra)
 
-    items.total = items.total + lineaCompra.subtotal
+    /*items.total = items.total + lineaCompra.subtotal
     console.log(items)
     const lineaencontrada = items.arreglo.find((item) => item.descripcion === lineaCompra.descripcion)
     if (lineaencontrada) {
@@ -106,7 +106,7 @@ function FormOrdenCompra() {
     } else {
       items.arreglo.push(lineaCompra)
     }
-    setItems({...items ,...total});
+    setItems({...items ,...total}); */
 
     //console.log(oc)
     /* oc.lineasCompra.forEach(lc => {
@@ -114,9 +114,38 @@ function FormOrdenCompra() {
       let subtotal = parseInt(lc.cantidad * lc.preciocompra)
       console.log(subtotal)
       setTotal(total + subtotal)
-    }) */
+    }) 
     //setTotal(parseFloat(total + lineaCompra.subtotal))
     
+  } */
+
+  const AgregarLineaCompra = (id, descripcion, preciocompra, cantidad) => {
+    console.log(...fields)
+    console.log(id)
+    let subtotal = parseFloat(preciocompra * cantidad)
+    let item = fields.find(x => x.id_producto === id)
+    if (item === undefined) {
+      append({
+        id_producto: id,
+        descripcion : descripcion, 
+        preciocompra: preciocompra, 
+        cantidad : parseInt(cantidad), 
+        subtotal: subtotal
+      })
+    } else {
+      item.cantidad = parseInt(item.cantidad += cantidad)
+      item.subtotal += subtotal
+      replace([...fields])
+    }
+    let total = (getValues()["total"]===undefined?0.0:getValues()["total"])
+    let proveedor = (getValues()["proveedor"]===undefined?{}:getValues()["proveedor"])
+    reset({
+      ...getValues(),
+      total : total + cantidad * preciocompra,
+      proveedor : proveedor
+    })
+    console.log( typeof(getValues().proveedor))
+    console.log(getValues()["total"])
   }
 
   const handleSubmitLC = (data) => {
@@ -159,8 +188,7 @@ function FormOrdenCompra() {
           {optionProveedores}
         </Form.Select>
       
-      <Table
-        className= 'table table-success table-bordered border-dark'
+      <Table className= 'table table-success table-bordered border-dark'
         /* onClick={(e)=> {
           console.log(e)
           setProducto(e.target)
@@ -191,6 +219,7 @@ function FormOrdenCompra() {
                 console.log('ejectuta algo despues del set producto')
                 setDescripcion(producto.descripcion)
                 setPreciocompra(producto.preciocompra)
+                setId(producto._id)
             }}>
               <td>{producto.descripcion}</td>
               <td>{producto.categoria}</td>
@@ -233,46 +262,72 @@ function FormOrdenCompra() {
       <Button
         onClick={(e)=>{
           e.preventDefault()
-
-          /* console.log('producto antes del setProducto')
-          console.log(productoSeleccionado)
-          console.log('fin producto antes del set producto')
-          
-          setProductoSeleccionado(productoSeleccionado)
-          console.log('producto seteado')
-          console.log(productoSeleccionado)
-          console.log('fin producto') */
-          //setCantidad(cantidad)
           console.log(descripcion, preciocompra, cantidad)
-          AgregarLineaCompra(descripcion, preciocompra, cantidad);
-
+          AgregarLineaCompra(id, descripcion, preciocompra, cantidad);
           console.log(descripcion)
       }}
         >Agregar línea de compra
       </Button>
 
       <p>Descripción de la orden de compra al momento</p>
-       <Table className= 'table table-success table-bordered border-dark'>
+      <Table className= 'table table-success table-bordered border-dark'>
         <thead>
-            <tr>
-              <th>Producto</th>
-              <th>Cantidad</th>
-              <th>Precio Unitario</th>
-              <th>Subtotal</th>
-            </tr>
+          <tr>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Precio Unitario</th>
+            <th>Subtotal</th>
+          </tr>
         </thead>
         <tbody>
-          {items.arreglo.map( item => {
-            return <tr key={item.descripcion}>
-              <td>{item.descripcion}</td>
-              <td>{item.cantidad}</td>
-              <td>{item.preciocompra}</td>
-              <td>{item.subtotal}</td>
+          {fields.map((item,index) => (
+            <tr key={item.id}>
+              <td>
+                <Input type="text"
+                    disabled={true}
+                    name={`detalles.${index}.descripcion`}
+                    register={register} errors={errors}>
+                </Input>
+                <Input
+                  type="hidden"
+                  name={`detalles.${index}.id_producto`}
+                  register={register}
+                  errors={errors}
+                ></Input>
+              </td>
+              <td>
+                <Input type="number"
+                    disabled={true}
+                    name={`detalles.${index}.cantidad`}
+                    register={register} errors={errors}>
+                </Input>
+              </td>
+              <td>
+                <Input type="number"
+                    disabled={true}
+                    name={`detalles.${index}.preciocompra`}
+                    register={register} errors={errors}>
+                </Input>
+              </td>
+              <td>
+                <Input type="text"
+                    disabled={true}
+                    name={`detalles.${index}.subtotal`}
+                    register={register} errors={errors}>
+                </Input>
+              </td>
+              <td>
+                <Button variant='danger'>Quitar</Button>
+              </td>
             </tr>
-          })}
+          ))}
         </tbody>
+        <tfoot>
+          <h3>total acumulado: $ {getValues()["total"]}</h3>
+          <Button variant='danger'>Vaciar Lista de ítems</Button>
+        </tfoot>
       </Table>
-      <h3>total acumulado: $ {items.total}</h3>
+      
       <NavLink 
         onClick={e => { e.preventDefault(); navigate('/todaslasordenesdecompra')}}>
         ...Atrás
