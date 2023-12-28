@@ -125,13 +125,13 @@ function FormOrdenCompra() {
     let subtotal = parseFloat(preciocompra * cantidad)
     let item = fields.find(x => x.id_producto === id)
     if (item === undefined) {
-      append({
-        id_producto: id,
-        descripcion : descripcion, 
-        preciocompra: preciocompra, 
-        cantidad : parseInt(cantidad), 
-        subtotal: subtotal
-      })
+    append({
+      id_producto: id,
+      descripcion : descripcion, 
+      preciocompra: preciocompra, 
+      cantidad : parseInt(cantidad), 
+      subtotal: subtotal
+    })
     } else {
       item.cantidad = parseInt(item.cantidad += cantidad)
       item.subtotal += subtotal
@@ -146,6 +146,30 @@ function FormOrdenCompra() {
     })
     console.log( typeof(getValues().proveedor))
     console.log(getValues()["total"])
+  }
+
+  const QuitarLineaCompra = id_producto => {
+    console.log(id_producto)
+    let index = -1
+    let subtotal = 0
+    for(let i = 0; i<fields.length; i++) {
+      if (fields[i].id_producto === id_producto){
+        index = i
+        subtotal = fields[i].subtotal
+        break
+      }
+    }
+    console.log(index)
+    if (index !== -1) {
+      console.log("linea 164")
+      remove(index)
+      let total_anterior = getValues()["total"]
+      reset({
+        ...getValues(),
+        total : total_anterior - subtotal
+      })
+    }
+    
   }
 
   const handleSubmitLC = (data) => {
@@ -317,7 +341,13 @@ function FormOrdenCompra() {
                 </Input>
               </td>
               <td>
-                <Button variant='danger'>Quitar</Button>
+                <Button 
+                  variant='danger'
+                  onClick={(e)=> {
+                    e.preventDefault()
+                    QuitarLineaCompra(item.id_producto)
+                  }}
+                >Quitar</Button>
               </td>
             </tr>
           ))}
