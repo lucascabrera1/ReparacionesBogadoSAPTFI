@@ -23,9 +23,13 @@ function FormOrdenCompra() {
   //form tools
   const {register, watch, handleSubmit, formState : {errors}, control, reset, getValues} = useForm({
     proveedor: {},
-    total: 0
+    total: 0,
+    fechaemision: Date(),
+    fechaentrega: "",
+    formadepago: ""
   })
 
+  console.log(Date())
   const {fields, append, remove, replace, prepend, update, insert} = useFieldArray({
     control,
     name: "detalles"
@@ -35,39 +39,19 @@ function FormOrdenCompra() {
   const [preciocompra, setPreciocompra] = useState()
   const [id, setId] = useState("")
   const [cantidad, setCantidad] = useState()
-  /* const [oc,setOC] = useState({
-    lineasCompra :[{
-      descripcion,
-      preciocompra,
-      cantidad,
-      subtotal: parseFloat(preciocompra*cantidad)
-    }], 
-    total: total
-  })
-   */
+  
   let itemsInicial = {
     arreglo : [],
     total : 0
   }
+
   const [items, setItems] = useState(itemsInicial)
-  /* useEffect((producto)=> {
-    setProducto(producto)
-    console.log('producto seteado despues de pasar por el use effect')
-    console.log(productoSeleccionado)
-  }, [productoSeleccionado])
- */
+  
   useEffect(()=>{
     if (estadoproveedores==="idle"){
       dispatch(RecuperarProveedores())
     }
   },[estadoproveedores])
-
-   /* useEffect(()=> {
-    console.log(idProducto)
-    console.log(productos)
-    setProductoSeleccionado(productos.filter(p => p._id === idProducto))
-    console.log(productoSeleccionado)
-  }, [idProducto]) */  
  
   const optionProveedores = proveedores.map(p => (<option
     value={p._id} 
@@ -75,53 +59,15 @@ function FormOrdenCompra() {
     >{p.razonsocial}
   </option>))
 
- /* const AgregarLineaCompra = (descripcion, preciocompra, cantidad) => {
-      
-    
-    const lineaCompra = {
-      descripcion: descripcion,
-      preciocompra: preciocompra,
-      cantidad: parseInt(cantidad),
-      subtotal : parseFloat(preciocompra * cantidad)
-    }
-    console.log(lineaCompra)
-    //console.log(total)
-    console.log(items)
-    //setOC(oc.lineasCompra.push(lineaCompra))
-    /* items.arreglo.forEach( lc => {
-      lc.descripcion == lineaCompra.descripcion ? 
-        lc.cantidad = {...cantidad}
-        :
-        items.arreglo.push
-
-    }) */
-    //items.arreglo.push(lineaCompra)
-
-    /*items.total = items.total + lineaCompra.subtotal
-    console.log(items)
-    const lineaencontrada = items.arreglo.find((item) => item.descripcion === lineaCompra.descripcion)
-    if (lineaencontrada) {
-      lineaencontrada.cantidad += lineaCompra.cantidad;
-      lineaencontrada.subtotal += lineaCompra.subtotal;
-    } else {
-      items.arreglo.push(lineaCompra)
-    }
-    setItems({...items ,...total}); */
-
-    //console.log(oc)
-    /* oc.lineasCompra.forEach(lc => {
-      console.log(lc)
-      let subtotal = parseInt(lc.cantidad * lc.preciocompra)
-      console.log(subtotal)
-      setTotal(total + subtotal)
-    }) 
-    //setTotal(parseFloat(total + lineaCompra.subtotal))
-    
-  } */
-
   const AgregarLineaCompra = (id, descripcion, preciocompra, cantidad) => {
-    console.log(...fields)
-    console.log(id)
+    if (!cantidad || cantidad< 1) {
+      alert("la cantidad es obligatoria y debe ser mayor o igual a 1")
+      return false
+    }
+    if (!descripcion) {
+      alert("no hay ningun producto seleccionado")
+      return false
+    }
     let subtotal = parseFloat(preciocompra * cantidad)
     let item = fields.find(x => x.id_producto === id)
     if (item === undefined) {
@@ -144,12 +90,9 @@ function FormOrdenCompra() {
       total : total + cantidad * preciocompra,
       proveedor : proveedor
     })
-    console.log( typeof(getValues().proveedor))
-    console.log(getValues()["total"])
   }
 
   const QuitarLineaCompra = id_producto => {
-    console.log(id_producto)
     let index = -1
     let subtotal = 0
     for(let i = 0; i<fields.length; i++) {
@@ -159,9 +102,7 @@ function FormOrdenCompra() {
         break
       }
     }
-    console.log(index)
     if (index !== -1) {
-      console.log("linea 164")
       remove(index)
       let total_anterior = getValues()["total"]
       reset({
@@ -181,15 +122,10 @@ function FormOrdenCompra() {
       total : 0,
       proveedor: id_proveedor
     })
-
   }
 
   const handleSubmitLC = (data) => {
-    console.log(data)
-    console.log('handle submit linea compra')
     setCantidad(parseInt(data.cantidad))
-    console.log(cantidad)
-    
   }
 
   const handleSubmitOC = (data) => {
@@ -207,7 +143,7 @@ function FormOrdenCompra() {
       </Form>
       <br/>
       Acá voy a generar UNA orden de compra
-      <Form onSubmit={handleSubmit(handleSubmitLC)} style={{border: '2px solid black'}}>
+      <Form onSubmit={handleSubmit(handleSubmitOC)} style={{border: '2px solid black'}}>
         <label>Proveedor</label>
         <Form.Select
           aria-label='Proveedor'
@@ -217,21 +153,14 @@ function FormOrdenCompra() {
           {...register('proveedor')}
           onChange={(e) => {
             e.preventDefault()
+            alert("No se pueden ordenar productos de otros proveedores")
             LimpiarGrilla(e.target.value)
-            console.log(e.target.value)
             dispatch(RecuperarProductosPorProveedor(e.target.value))
           }}
         >
           {optionProveedores}
         </Form.Select>
-      
-      <Table className= 'table table-success table-bordered border-dark'
-        /* onClick={(e)=> {
-          console.log(e)
-          setProducto(e.target)
-          console.log(producto)
-        }} */
-      >
+      <Table className= 'table table-success table-bordered border-dark'>
         <thead>
             <tr>
               <th>Descripción</th>
@@ -250,10 +179,7 @@ function FormOrdenCompra() {
             return <tr 
               key={producto._id} 
               onClick={e=> {
-                console.log('se ejecuta el onclick del tr')
-                console.log(producto)
                 e.preventDefault()
-                console.log('ejectuta algo despues del set producto')
                 setDescripcion(producto.descripcion)
                 setPreciocompra(producto.preciocompra)
                 setId(producto._id)
@@ -274,38 +200,26 @@ function FormOrdenCompra() {
       
       <p>Producto seleccionado: {descripcion}</p>
       <input
-            style={{width: '300px'}}
-            type="number" 
-            placeholder="ingrese la cantidad"
-            name="cantidad"
-            defaultValue={cantidad}
-            onChange={(e)=>{
-              e.preventDefault()
-              setCantidad(parseInt(e.target.value))
-            }}
-        />
-      {/* <Input
-        type="number"
-        name="cantidad"
+        style={{width: '300px'}}
+        type="number" 
         placeholder="ingrese la cantidad"
-        register = {register}
-        registerOptions={{required: true, min: 1}}
-        optionMsgErrors={{
-          required: "La cantidad es requerida",
-          min: "minimo 1 producto"
+        name="cantidad"
+        //defaultValue={cantidad}
+        min="1"
+        step="1"
+        required = ""
+        onChange={(e)=>{
+          e.preventDefault()
+          setCantidad(parseInt(e.target.value))
         }}
-        errors={errors}
-      /> */}
+      />
       <Button
         onClick={(e)=>{
           e.preventDefault()
-          console.log(descripcion, preciocompra, cantidad)
           AgregarLineaCompra(id, descripcion, preciocompra, cantidad);
-          console.log(descripcion)
       }}
         >Agregar línea de compra
       </Button>
-
       <p>Descripción de la orden de compra al momento</p>
       <Table className= 'table table-success table-bordered border-dark'>
         <thead>
@@ -366,11 +280,10 @@ function FormOrdenCompra() {
           ))}
         </tbody>
         <tfoot>
-          <h3>total acumulado: $ {getValues()["total"]}</h3>
+          <p>total acumulado: $ {getValues()["total"]}</p>
           <Button variant='danger'>Vaciar Lista de ítems</Button>
         </tfoot>
       </Table>
-      
       <NavLink 
         onClick={e => { e.preventDefault(); navigate('/todaslasordenesdecompra')}}>
         ...Atrás
