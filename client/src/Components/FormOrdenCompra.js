@@ -5,11 +5,12 @@ import {useForm, useFieldArray} from 'react-hook-form'
 import Button from 'react-bootstrap/esm/Button'
 import Input from './Common/Input'
 import Form from 'react-bootstrap/Form'
-import {RecuperarProveedores, RecuperarProductosPorProveedor, AgregarOrdenDeCompra,
-  SeleccionarTodosLosProductos, SeleccionarTodosLosProveedores,
-  EstadoProveedores} from '../Features/OrdenCompraSlice.js'
+import {RecuperarProveedores, RecuperarProductosPorProveedor, RecuperarFormasDePago, AgregarOrdenDeCompra,
+  SeleccionarTodosLosProductos, SeleccionarTodosLosProveedores, SeleccionarTodasLasFormasDePago,
+  EstadoProveedores, EstadoFormasDePago} from '../Features/OrdenCompraSlice.js'
 import Table from 'react-bootstrap/esm/Table.js'
-import {v4 as uuidv4, v4} from 'uuid'
+import { toFormData } from 'axios'
+
 
 function FormOrdenCompra() {
   //hooks
@@ -20,17 +21,18 @@ function FormOrdenCompra() {
   const proveedores = useSelector(SeleccionarTodosLosProveedores)
   const estadoproveedores = useSelector(EstadoProveedores)
   const productos = useSelector(SeleccionarTodosLosProductos)
+  const formasdepago = useSelector(SeleccionarTodasLasFormasDePago)
+  const estadoformasdepago = useSelector(EstadoFormasDePago)
   //form tools
-  const {register, watch, handleSubmit, formState : {errors}, control, reset, getValues} = useForm({
+  const {register, handleSubmit, formState : {errors}, control, reset, getValues} = useForm({
     proveedor: {},
     total: 0,
-    fechaemision: Date(),
-    fechaentrega: "",
-    formadepago: ""
+    fechaEmision: Date(),
+    fechaEntrega: "",
+    formaDePago: ""
   })
 
-  console.log(Date())
-  const {fields, append, remove, replace, prepend, update, insert} = useFieldArray({
+  const {fields, append, remove, replace} = useFieldArray({
     control,
     name: "detalles"
   })
@@ -52,12 +54,27 @@ function FormOrdenCompra() {
       dispatch(RecuperarProveedores())
     }
   },[estadoproveedores])
+
+  useEffect (()=> {
+    if (estadoformasdepago === "idle") {
+      dispatch(RecuperarFormasDePago())
+    }
+  }, [estadoformasdepago])
  
   const optionProveedores = proveedores.map(p => (<option
     value={p._id} 
     key={p._id}
     >{p.razonsocial}
   </option>))
+
+  //optionProveedores.unshift(<option value="" key="">Seleccione</option>)
+
+  const optionFormasDePago = formasdepago.map(p => <option
+    value={p._id}
+    key={p._id}
+  >{p.descripcion}</option>)
+
+  optionFormasDePago.unshift(<option value="" key="">Seleccione</option>)
 
   const AgregarLineaCompra = (id, descripcion, preciocompra, cantidad) => {
     if (!cantidad || cantidad< 1) {
@@ -85,10 +102,12 @@ function FormOrdenCompra() {
     }
     let total = (getValues()["total"]===undefined?0.0:getValues()["total"])
     let proveedor = (getValues()["proveedor"]===undefined?{}:getValues()["proveedor"])
+    let fechaEmision = (getValues()["fechEemision"]===undefined?Date():Date())
     reset({
       ...getValues(),
       total : total + cantidad * preciocompra,
-      proveedor : proveedor
+      proveedor : proveedor,
+      fechaEmision : fechaEmision
     })
   }
 
@@ -128,9 +147,25 @@ function FormOrdenCompra() {
     setCantidad(parseInt(data.cantidad))
   }
 
-  const handleSubmitOC = (data) => {
+  const handleSubmitOC = async (data, e) =>  {
     console.log(data)
+    console.log(data.detalles.length)
     console.log('handle submit orden compra')
+    if (data.detalles.length === 0) {
+      alert("Al menos debe haber una linea de compra ingresada")
+      return false
+    }
+    try {
+      console.log('entra al agregar orden de compra')
+      console.log(data)
+      const result = await dispatch(AgregarOrdenDeCompra(data)).unwrap()
+      console.log(result)
+      alert('orden de compra guardada correctamente')
+      e.target.reset()
+      navigate('/ordenesdecompra')
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return (
@@ -281,15 +316,51 @@ function FormOrdenCompra() {
         </tbody>
         <tfoot>
           <p>total acumulado: $ {getValues()["total"]}</p>
-          <Button variant='danger'>Vaciar Lista de ítems</Button>
+          <Button variant='danger' onClick={()=>LimpiarGrilla()}>Vaciar Lista de ítems</Button>
         </tfoot>
       </Table>
-      <NavLink 
-        onClick={e => { e.preventDefault(); navigate('/todaslasordenesdecompra')}}>
-        ...Atrás
-      </NavLink>
+      <Input
+        type="date"
+        register={register}
+        name="fechaEntrega"
+        registerOptions={{
+          required: true,
+          validate: (value, formValues) => {
+            let fechaEntrega = new Date(value)
+            let fechaactual = new Date()
+            if (fechaEntrega<fechaactual) {
+              return false
+            } else return true
+          }
+        }}
+        optionMsgErrors={{
+          required : "La fecha de entrega es obligatoria",
+          validate: "La fecha debe ser posterior a hoy"
+        }}
+        errors={errors}
+        label="fecha esperada de entrega"
+      />
+      <label>Forma de Pago</label>
+      <Form.Select 
+        aria-label='FormaPago'
+        className='col-md-2'
+        size='sm'
+        name='formaDePago'
+        {...register('formaDePago', {required: true})}
+        onChange={(e) => {
+          e.preventDefault()
+          console.log(e.target.value)
+        }}>
+          {optionFormasDePago}
+      </Form.Select>
+      {errors["formaDePago"]?.type === "required" && <><span style={{color: "red"}} >Es obligatorio ingresar una forma de pago</span><br/></>}
       <Button type='submit'>Generar nueva orden de compra</Button>
       </Form>
+      <Button
+        variant='secondary'
+        onClick={e => { e.preventDefault(); navigate('/todaslasordenesdecompra')}}>
+        ...Atrás
+      </Button>
     </div>
   )
 }

@@ -8,18 +8,21 @@ const initialState = {
     categorias: [],
     lineasCompra: [],
     ordenesDeCompra: [],
+    formasdepago: [],
     estadoproveedores: "idle",
     estadomarcas: "idle",
     estadoproductos: "idle",
     estadolineascompra: "idle",
     estadocategorias: "idle",
     estadoordenesdecompra: "idle",
+    estadoformasdepago: "idle",
     errorproveedor: null,
     errorlineacompra: null,
     errorcategoria: null,
     errormarca: null,
     errorproducto: null,
-    errorordendencompra: null
+    errorordendencompra: null,
+    errorformadepago: null
 }
 
 const URL_BASE_OC = process.env.REACT_APP_URI_API + `/ordenesdecompra/`
@@ -28,6 +31,7 @@ const URL_BASE_MARCAS = process.env.REACT_APP_URI_API + `/marcas/`
 const URL_BASE_PRODUCTOS = process.env.REACT_APP_URI_API + `/productos/`
 const URL_BASE_LINEASCOMPRA = process.env.REACT_APP_URI_API + `/lineascompra/`
 const URL_BASE_CATEGORIAS = process.env.REACT_APP_URI_API + `/categorias/`
+const URL_BASE_FORMASDEPAGO = process.env.REACT_APP_URI_API + `/formasdepago`
 
 export const AgregarMarca = createAsyncThunk('ordenCompra/AgregarMarca', async (marcaInicial) => {
     try {
@@ -142,6 +146,16 @@ export const RecuperarProductosPorProveedor = createAsyncThunk ("ordenCompra/Rec
     }
 })
 
+export const RecuperarFormasDePago = createAsyncThunk ("ordenCompra/RecuperarFormasDePago", async () => {
+    try {
+        const response = await axios.get(URL_BASE_FORMASDEPAGO)
+        return [...response.data]
+    } catch (error) {
+        console.log(console.error(error))
+        return error.message
+    }
+})
+
 export const EliminarMarca = createAsyncThunk('ordenCompra/EliminarMarca', async (_id) => {
     try {
         const response = await axios.delete(URL_BASE_MARCAS + _id)
@@ -222,6 +236,14 @@ export const OrdenCompraSlice = createSlice({
             state.status = "completed"
             state.productos = action.payload
         })
+        .addCase(RecuperarFormasDePago.fulfilled, (state, action) => {
+            state.status = "completed"
+            state.formasdepago = action.payload
+        })
+        .addCase(RecuperarOrdenesDeCompra.fulfilled, (state, action) => {
+            state.status = "completed"
+            state.ordenesDeCompra = action.payload
+        })
         .addCase(RecuperarProductosPorProveedor.fulfilled, (state, action) => {
             state.status = "completed"
             state.productos = action.payload
@@ -281,9 +303,6 @@ export const OrdenCompraSlice = createSlice({
 export default OrdenCompraSlice.reducer
 
 export const SeleccionarTodosLosProveedores = (state) => { 
-    console.log(state)
-    //console.log(state.proveedores) da undefined
-    console.log(state.ordenesDeCompra.proveedores)
     return state.ordenesDeCompra.proveedores
 }
 
@@ -295,23 +314,23 @@ export const SeleccionarTodasLasMarcas = (state) => {
 }
 
 export const SeleccionarTodasLasCategorias = (state) => {
-    console.log(state.ordenesDeCompra.categorias)
     return state.ordenesDeCompra.categorias
 }
 
-export const SeleccionarTodosLosProductos = (state) => { 
-    console.log(state) 
+export const SeleccionarTodosLosProductos = (state) => {
     return state.ordenesDeCompra.productos
 }
 
 export const SeleccionarTodasLasLineasCompra = (state) => { 
-    console.log(state.ordenesDeCompra.lineasCompra)
     return state.ordenesDeCompra.lineasCompra
 }
 
 export const SeleccionarTodasLasOrdenesDeCompra = (state) => {
-    console.log(state.ordenesDeCompra.ordenesDeCompra)
     return state.ordenesDeCompra.ordenesDeCompra
+}
+
+export const SeleccionarTodasLasFormasDePago = (state) => {
+    return state.ordenesDeCompra.formasdepago
 }
 
 export const EstadoProveedores = (state) => state.ordenesDeCompra.estadoproveedores
@@ -320,6 +339,7 @@ export const EstadoCategorias = (state) => state.ordenesDeCompra.estadocategoria
 export const EstadoProductos = (state) => state.ordenesDeCompra.estadoproductos
 export const EstadoLineasCompra = (state) => state.ordenesDeCompra.estadolineascompra
 export const EstadoOrdenesDeCompra = (state) => state.ordenesDeCompra.estadoordenesdecompra
+export const EstadoFormasDePago = (state) => state.ordenesDeCompra.estadoformasdepago
 
 export const ErroresProveedores = (state) => state.ordenesDeCompra.errorproveedor
 export const ErroresMarcas = (state) => state.ordenesDeCompra.errormarca
@@ -327,3 +347,4 @@ export const ErroresCategorias = (state) => state.ordenesDeCompra.errorcategoria
 export const ErroresProductos = (state) => state.ordenesDeCompra.errorproducto
 export const ErroresLineasCompra = (state) => state.ordenesDeCompra.errorlineacompra
 export const ErroresOrdenesDeCompra = (state) => state.ordenesDeCompra.errorordendencompra
+export const ErroresFormasDePago = (state) => state.ordenesDeCompra.errorformadepago

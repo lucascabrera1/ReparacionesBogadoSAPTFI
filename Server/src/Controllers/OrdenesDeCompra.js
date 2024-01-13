@@ -16,25 +16,36 @@ console.log(port)
 
 const GenerarOrdenDeCompra = async(req, res, next) => {
     try {
+        let detalles = []
+        for(const elem of req.body.detalles) {
+            console.log(elem)
+            const lc = new LineaCompra()
+            lc.producto = elem.id_producto
+            lc.cantidad = elem.cantidad
+            lc.subtotal = elem.subtotal
+            const lcguardada = await lc.save()
+            detalles.push(lcguardada)
+        }
         const oc = new OrdenDeCompra(req.body)
+        oc.items = detalles
         console.log(oc)
         const ocsaved = await oc.save()
         return res.json(ocsaved)
     } catch (error) {
-        console.error(err)
+        console.error(error)
         return res.status(500).json({message : message.error})
     }
 }
 
-const ObtenerOrdenesDeCompra = async (req, res, next) => {
+const RecuperarOrdenesDeCompra = async (req, res, next) => {
     try {
         const ocs = await OrdenDeCompra.find({})
         let ocsdevueltas = []
         for (const elem of ocs) {
             let items = []
-            for (const newItem of elem.items){
-                let item = await LineaCompra.findById(item);
-                items.push(newItem)
+            for (let newItem of elem.items){
+                let item = await LineaCompra.findById(newItem);
+                items.push(item)
             }
             let newElem = {
                 _id : elem._id,
@@ -47,6 +58,7 @@ const ObtenerOrdenesDeCompra = async (req, res, next) => {
             }
             ocsdevueltas.push(newElem)
         }
+        return res.send(ocsdevueltas)
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
@@ -210,6 +222,30 @@ const AgregarLineaCompra = async (req, res) => {
     }
 }
 
+const RecuperarLineasCompra = async (req, res) => {
+    try {
+        const proveedores = await LineaCompra.find({})
+        let proveedoresdevueltos = []
+        for (const elem of proveedores) {
+            let newElem = {
+                _id: elem._id,
+                cuit : elem.cuit,
+                direccion : elem.direccion,
+                razonsocial: elem.razonsocial,
+                email: elem.email,
+                localidad: elem.localidad,
+                telefono: elem.telefono
+            }
+            proveedoresdevueltos.push(newElem)
+        }
+        console.log(proveedoresdevueltos)
+        return res.send(proveedoresdevueltos)
+    } catch (error) {
+        console.error(error.message)
+        return res.status(500).json({message: error.message})
+    }
+}
+
 const RecuperarProveedores = async (req, res) => {
     try {
         const proveedores = await Proveedor.find({})
@@ -232,7 +268,27 @@ const RecuperarProveedores = async (req, res) => {
         console.error(error.message)
         return res.status(500).json({message: error.message})
     }
-} 
+}
+
+const RecuperarFormasDePago = async (req, res) => {
+    try {
+        const formasdepago = await FormaDePago.find({})
+        let formasdepagodevueltas = []
+        for (const elem of formasdepago) {
+            let newElem = {
+                _id: elem._id,
+                descripcion : elem.descripcion,
+                codigo : elem.codigo
+            }
+            formasdepagodevueltas.push(newElem)
+        }
+        console.log(formasdepagodevueltas)
+        return res.send(formasdepagodevueltas)
+    } catch (error) {
+        console.error(error.message)
+        return res.status(500).json({message: error.message})
+    }
+}
 
 const RecuperarProductos = async (req, res) => {
     try {
@@ -315,7 +371,7 @@ const RecuperarCategorias = async (req, res) => {
 } 
 
 export default {GenerarOrdenDeCompra, 
-    ObtenerOrdenesDeCompra, 
+    RecuperarOrdenesDeCompra, 
     AgregarMarca,
     AgregarProveedor,
     AgregarFormaDePago,
@@ -330,5 +386,6 @@ export default {GenerarOrdenDeCompra,
     EliminarProducto,
     RecuperarProductos,
     RecuperarCategorias,
+    RecuperarFormasDePago,
     RecuperarProductosPorProveedor
 }

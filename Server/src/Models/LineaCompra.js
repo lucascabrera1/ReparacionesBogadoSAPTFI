@@ -7,7 +7,7 @@ const schemaLineaCompra = new mongoose.Schema({
     },
     faltante:{
         type: Number,
-        required: true
+        required: false
     },
     producto:{
         type: mongoose.Schema.Types.ObjectId,

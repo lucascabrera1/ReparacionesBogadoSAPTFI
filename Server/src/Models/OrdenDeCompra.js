@@ -10,7 +10,8 @@ const schemaOrdenCompra = new mongoose.Schema({
         required:true
     },
     formaDePago: {
-        type: Date,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Proveedor",
         required:true
     },
     items: [{
@@ -20,6 +21,7 @@ const schemaOrdenCompra = new mongoose.Schema({
     }],
     proveedor: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: "Proveedor",
         required: true
     },
     total: {

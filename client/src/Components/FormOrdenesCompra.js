@@ -9,11 +9,54 @@ import Button from 'react-bootstrap/Button'
 import { NavLink, useNavigate } from 'react-router-dom'
 
 function FormOrdenesCompra() {
+
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const ocs = useSelector(SeleccionarTodasLasOrdenesDeCompra)
+  const estadoocs = useSelector(EstadoOrdenesDeCompra)
+
+  console.log(ocs)
+
+  useEffect(()=>{
+    if (estadoocs==="idle"){
+      dispatch(RecuperarOrdenesDeCompra())
+    }
+  },[estadoocs])
+
   return (
     <div>aca devolvemos todas las ordenes de compra
       <ul><li><NavLink to={'/nuevaordendecompra'}>Generar una nueva orden de compra</NavLink></li></ul>
-      <Table>tabla con las ordenes de compra</Table>
-      <ul><li><NavLink to={'/ordenesdecompra'}>...Atrás</NavLink></li></ul>
+      <Table className= 'table table-success table-bordered border-dark'>
+        <thead>
+          <tr>
+            <th>Fecha de emisión</th>
+            <th>Fecha de Entrega</th>
+            <th>Proveedor</th>
+            <th>Forma de Pago</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            ocs.map( oc => {
+                return <tr key={oc._id}>
+                  <td>{oc.fechaemision}</td>
+                  <td>{oc.fechaentrega}</td>
+                  <td>{oc.proveedor}</td>
+                  <td>{oc.formapago}</td>
+                  <td>{oc.total}</td>
+                </tr>
+              }
+            )
+          }
+        </tbody>
+      </Table>
+      <Button 
+      variant='secondary' 
+      onClick={e => {
+        e.preventDefault() 
+        navigate('/ordenesdecompra')
+      }}>...Atrás</Button>
     </div>
   )
 }

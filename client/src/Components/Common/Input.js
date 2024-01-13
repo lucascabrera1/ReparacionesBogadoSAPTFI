@@ -32,6 +32,7 @@ function Input({type,
         {errors[name]?.type === "pattern" && <span style={{color: "red"}} >{optionMsgErrors.pattern}</span>}
         {errors[name]?.type === "min" && <span style={{color: "red"}} >{optionMsgErrors.min}</span>}
         {errors[name]?.type === "max" && <span style={{color: "red"}} >{optionMsgErrors.max}</span>}
+        {errors[name]?.type === "validate" && <span style={{color: "red"}} >{optionMsgErrors.validate}</span>}
     </div>
   )
 }
