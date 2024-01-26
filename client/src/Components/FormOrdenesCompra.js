@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {useDispatch, useSelector } from 'react-redux'
 import {SeleccionarTodasLasOrdenesDeCompra,
   RecuperarOrdenesDeCompra,
@@ -7,6 +7,7 @@ import {SeleccionarTodasLasOrdenesDeCompra,
 import Table from 'react-bootstrap/Table'
 import Button from 'react-bootstrap/Button'
 import { NavLink, useNavigate } from 'react-router-dom'
+import FormLineasCompra from './FormLineasCompra.js'
 
 function FormOrdenesCompra() {
 
@@ -14,6 +15,7 @@ function FormOrdenesCompra() {
   const navigate = useNavigate()
   const ocs = useSelector(SeleccionarTodasLasOrdenesDeCompra)
   const estadoocs = useSelector(EstadoOrdenesDeCompra)
+  const [oc, setoc] = useState({})
 
   console.log(ocs)
 
@@ -34,18 +36,20 @@ function FormOrdenesCompra() {
             <th>Proveedor</th>
             <th>Forma de Pago</th>
             <th>Total</th>
+            <th>Detalles</th>
           </tr>
         </thead>
         <tbody>
           {
             ocs.map( oc => {
-                return <tr key={oc._id}>
-                  <td>{oc.fechaemision}</td>
-                  <td>{oc.fechaentrega}</td>
-                  <td>{oc.proveedor}</td>
-                  <td>{oc.formapago}</td>
-                  <td>{oc.total}</td>
-                </tr>
+              return <tr key={oc._id}>
+                <td>{oc.fechaemision}</td>
+                <td>{oc.fechaentrega}</td>
+                <td>{oc.proveedor}</td>
+                <td>{oc.formapago}</td>
+                <td>{oc.total}</td>
+                <td><NavLink to={`/ordenesdecompra/${oc._id}`}> Ver Detalles...</NavLink></td>
+              </tr>
               }
             )
           }

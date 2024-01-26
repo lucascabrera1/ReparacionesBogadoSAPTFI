@@ -42,23 +42,68 @@ const RecuperarOrdenesDeCompra = async (req, res, next) => {
         const ocs = await OrdenDeCompra.find({})
         let ocsdevueltas = []
         for (const elem of ocs) {
+            let proveedorencontrado = await Proveedor.findById(elem.proveedor)
+            let formadepagoencontrada = await FormaDePago.findById(elem.formaDePago)
             let items = []
-            for (let newItem of elem.items){
-                let item = await LineaCompra.findById(newItem);
+            for (const newItem of elem.items){
+                let item = await LineaCompra.findById(newItem)
                 items.push(item)
             }
             let newElem = {
                 _id : elem._id,
-                formapago: elem.formaDePago,
+                formapago: formadepagoencontrada.descripcion,
                 fechaemision: elem.fechaEmision,
                 fechaentrega: elem.fechaEntrega,
-                proveedor: elem.proveedor._id,
+                proveedor: proveedorencontrado.razonsocial,
                 total: elem.total,
                 items: elem.items
             }
             ocsdevueltas.push(newElem)
         }
         return res.send(ocsdevueltas)
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+const RecuperarOrdenDeCompra = async (req, res, next) => {
+    try {
+        console.log('-----------------inicio req.params-----------------')
+        console.log(req.params)
+        console.log('-----------------fin req.params-----------------')
+        const oc = await OrdenDeCompra.findById({_id : req.params.id})
+        if (!oc){
+            return res.status(404).json({
+                error: true,
+                message: "Orden de Compra no encontrada"
+            })
+        }
+        let proveedorencontrado = await Proveedor.findById(oc.proveedor)
+        let formadepagoencontrada = await FormaDePago.findById(oc.formaDePago)
+        let items = []
+        for (const newItem of oc.items){
+            let item = await LineaCompra.findById(newItem)
+            let productorecuperado = await Producto.findById(item.producto)
+            let newElem = {
+                _id: newItem._id,
+                producto: productorecuperado.descripcion,
+                preciocompra: productorecuperado.preciocompra,
+                cantidad: item.cantidad,
+                subtotal: item.subtotal,
+                faltante: item.cantidad
+            }
+            items.push(newElem)
+        }
+        let ocDevuelta = {
+            _id : oc._id,
+            formapago: formadepagoencontrada.descripcion,
+            fechaemision: oc.fechaEmision,
+            fechaentrega: oc.fechaEntrega,
+            proveedor: proveedorencontrado.razonsocial,
+            total: oc.total,
+            items: items
+        }
+        return res.send(ocDevuelta)
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
@@ -224,7 +269,7 @@ const AgregarLineaCompra = async (req, res) => {
 
 const RecuperarLineasCompra = async (req, res) => {
     try {
-        const proveedores = await LineaCompra.find({})
+        const lcs = await LineaCompra.find({})
         let proveedoresdevueltos = []
         for (const elem of proveedores) {
             let newElem = {
@@ -386,6 +431,7 @@ export default {GenerarOrdenDeCompra,
     EliminarProducto,
     RecuperarProductos,
     RecuperarCategorias,
+    RecuperarOrdenDeCompra,
     RecuperarFormasDePago,
     RecuperarProductosPorProveedor
 }

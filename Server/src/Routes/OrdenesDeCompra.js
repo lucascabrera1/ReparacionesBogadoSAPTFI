@@ -42,4 +42,6 @@ router.route('/nuevaordendecompra')
     .post(ocs.GenerarOrdenDeCompra)
 router.route('/ordenesdecompra')
     .get(ocs.RecuperarOrdenesDeCompra)
+router.route('/ordenesdecompra/:id')
+    .get(ocs.RecuperarOrdenDeCompra)
 export default router

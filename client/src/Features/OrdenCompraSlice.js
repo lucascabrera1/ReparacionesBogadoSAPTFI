@@ -146,6 +146,17 @@ export const RecuperarProductosPorProveedor = createAsyncThunk ("ordenCompra/Rec
     }
 })
 
+export const RecuperarOrdenDeCompra = createAsyncThunk("ordenCompra/RecuperarOrdenDeCompra", async (id) => {
+    try {
+        console.log(URL_BASE_OC + id)
+        const response = await axios.get(URL_BASE_OC + id)
+        return response.data
+    } catch (error) {
+        console.log(console.error(error))
+        return error.message
+    }
+})
+
 export const RecuperarFormasDePago = createAsyncThunk ("ordenCompra/RecuperarFormasDePago", async () => {
     try {
         const response = await axios.get(URL_BASE_FORMASDEPAGO)
@@ -243,6 +254,15 @@ export const OrdenCompraSlice = createSlice({
         .addCase(RecuperarOrdenesDeCompra.fulfilled, (state, action) => {
             state.status = "completed"
             state.ordenesDeCompra = action.payload
+        })
+        .addCase(RecuperarOrdenDeCompra.fulfilled, (state, action) => {
+            state.ordenesDeCompra = state.ordenesDeCompra.map(item => {
+                if (item._id === action.payload._id) {
+                    return action.payload
+                } else {
+                    return item
+                }
+            })
         })
         .addCase(RecuperarProductosPorProveedor.fulfilled, (state, action) => {
             state.status = "completed"
