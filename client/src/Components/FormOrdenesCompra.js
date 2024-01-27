@@ -8,6 +8,7 @@ import Table from 'react-bootstrap/Table'
 import Button from 'react-bootstrap/Button'
 import { NavLink, useNavigate } from 'react-router-dom'
 import FormLineasCompra from './FormLineasCompra.js'
+import { formatHumanDateTime, formatHumanDate } from '../Util/DateFormat.js'
 
 function FormOrdenesCompra() {
 
@@ -43,8 +44,8 @@ function FormOrdenesCompra() {
           {
             ocs.map( oc => {
               return <tr key={oc._id}>
-                <td>{oc.fechaemision}</td>
-                <td>{oc.fechaentrega}</td>
+                <td>{oc.fechaemision ? formatHumanDateTime(oc.fechaemision) : "vacia"}</td>
+                <td>{oc.fechaentrega ?  formatHumanDate(oc.fechaentrega) : "vacia"}</td>
                 <td>{oc.proveedor}</td>
                 <td>{oc.formapago}</td>
                 <td>{oc.total}</td>

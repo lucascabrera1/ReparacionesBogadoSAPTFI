@@ -67,7 +67,7 @@ function FormOrdenCompra() {
     >{p.razonsocial}
   </option>))
 
-  //optionProveedores.unshift(<option value="" key="">Seleccione</option>)
+  optionProveedores.unshift(<option value="" key="">Seleccione</option>)
 
   const optionFormasDePago = formasdepago.map(p => <option
     value={p._id}
