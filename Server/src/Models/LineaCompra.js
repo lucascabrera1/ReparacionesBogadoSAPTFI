@@ -5,10 +5,10 @@ const schemaLineaCompra = new mongoose.Schema({
         type: Number,
         required: true
     },
-    faltante:{
+    /* faltante:{
         type: Number,
         required: false
-    },
+    }, */
     producto:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Producto",

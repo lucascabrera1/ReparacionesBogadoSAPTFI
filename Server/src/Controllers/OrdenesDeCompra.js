@@ -267,7 +267,7 @@ const AgregarLineaCompra = async (req, res) => {
     }
 }
 
-const RecuperarLineasCompra = async (req, res) => {
+/* const RecuperarLineasCompra = async (req, res) => {
     try {
         const lcs = await LineaCompra.find({})
         let proveedoresdevueltos = []
@@ -289,7 +289,7 @@ const RecuperarLineasCompra = async (req, res) => {
         console.error(error.message)
         return res.status(500).json({message: error.message})
     }
-}
+} */
 
 const RecuperarProveedores = async (req, res) => {
     try {
