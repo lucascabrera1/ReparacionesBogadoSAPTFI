@@ -45,6 +45,43 @@ const RecuperarOrdenesDeCompra = async (req, res, next) => {
     }
 }
 
+const RecuperarRemitos = async (req, res, next) => {
+    try {
+        const remitos = await Remito.find({})
+        let remitosdevueltos = []
+        for (const elem of remitos) {
+            let proveedorencontrado = await Proveedor.findById(elem.proveedor)
+            let ocencontrada = await OrdenDeCompra.findById(elem.ordenCompra)
+            let items = []
+            for (const newItem of elem.items){
+                let lr = await LineaRemito.findById({_id: newItem._id})
+                let lc = await LineaCompra.findById({_id: lr.lineaCompra})
+                let producto = await Producto.findById({_id: lc.producto})
+                let newLineaRemito = {
+                    producto : producto.descripcion,
+                    cantidadesperada : lc.cantidad,
+                    cantidadrecibida : lr.cantidadIngresada,
+                    subtotal: lc.subtotal,
+                    faltante: lc.cantidad - lr.cantidadIngresada
+                }
+                console.log(newLineaRemito)
+                items.push(newLineaRemito)
+            }
+            let newElem = {
+                _id : elem._id,
+                ordenCompra: ocencontrada._id,
+                fechaemision: elem.fechaEmision,
+                proveedor: proveedorencontrado.razonsocial,
+                items
+            }
+            remitosdevueltos.push(newElem)
+        }
+        return res.send(remitosdevueltos)
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
 const RecuperarOrdenDeCompra = async (req, res, next) => {
     try {
         const oc = await OrdenDeCompra.findById({_id : req.params.id})
@@ -65,8 +102,7 @@ const RecuperarOrdenDeCompra = async (req, res, next) => {
                 producto: productorecuperado.descripcion,
                 preciocompra: productorecuperado.preciocompra,
                 cantidad: item.cantidad,
-                subtotal: item.subtotal,
-                faltante: item.cantidad
+                subtotal: item.subtotal
             }
             items.push(newElem)
         }
@@ -84,6 +120,38 @@ const RecuperarOrdenDeCompra = async (req, res, next) => {
         return res.status(500).json({ message: error.message });
     }
 }
+
+const RecuperarLineasDeCompra = async (req, res) => {
+    try {
+        const oc = await OrdenDeCompra.findOne({_id: req.params.idoc})
+        if (!oc){
+            return res.status(404).json({
+                error: true,
+                message: "Orden de Compra no encontrada"
+            })
+        }
+        let lcsdevueltas = []
+        for (const elem of oc.items) {
+            let lc = await LineaCompra.findById({_id: elem})
+            let productorecuperado = await Producto.findById(lc.producto)
+            let newElem = {
+                _id: lc._id,
+                producto: productorecuperado.descripcion,
+                preciocompra: productorecuperado.preciocompra,
+                cantidad: lc.cantidad,
+                subtotal: lc.subtotal,
+                faltante: lc.cantidad
+            }
+            lcsdevueltas.push(newElem)
+        }
+        console.log(lcsdevueltas)
+        return res.send(lcsdevueltas)
+    } catch (error) {
+        console.error(error.message)
+        return res.status(500).json({message: error.message})
+    }
+}
+
 const AgregarLineaRemito = async (req, res) => {
     try {
         console.log("entra a agregar linea remito")
@@ -121,74 +189,14 @@ const AgregarRemito = async (req, res) => {
     }
 }
 
+
 const EliminarLineaRemito = async (req, res) => {
     try {
         const lre = await LineaRemito.findOneAndRemove({_id: req.params.idlinearemito})
-        /* console.log('linea remito')
-        console.log(lre)
-        console.log('fin linea remito')
-        const remitoasociado = await Remito.findOne({_id: req.params.idremito})
-        console.log('remito asociado') */
-        await Remito.updateOne({_id: req.params.idremito}, {$pull: {'items': req.params.idlinearemito}})
-        /*console.log('fin remito asociado')
-        console.log('inicio req.params')
-        console.log(req.params)
-        console.log('fin req.params')
-        console.log('inicio req.body')
-        console.log(req.body)
-        console.log('fin req.body')
-        const lre = req.params
-        let remitoasociado = await Remito.find({_id : req.params.idremito})
-        console.log('inicio remito asociado')
-        
-        console.log(remitoasociado)
-        console.log('fin remito asociado') */
-
-        /* console.log(req.body)
-        const lre = await LineaRemito.findOneAndRemove({_id: req.params.id})
-        const remitoasociado = await Remito.findOneAndUpdate(
-            {items: req.params.idremito},
-            {new: false},
-            {$pull: {items: req.params.idlinearemito}}
-        )
-        console.log(lre)
-        console.log('remito asociado')
-        console.log(remitoasociado)
-        console.log('fin remito asociado') */
-
-
-        /* const remitoasociado = await Remito.find(remito => {
-            remito.items.findById(x => {
-                x._id === lre._id
-            })
+        const remitomodificado = await Remito.updateOne(
+            {_id: req.params.idremito},
+            {$pull: {'items': req.params.idlinearemito}
         })
-        console.log(remitoasociado) */
-        /*console.log(remitos)
-        console.log(req.params)
-        const idremitoasociado = await Remito.find(
-            items.map(item => {
-                item === req.params.id
-            })
-        )
-        console.log('id remito asociado')
-        console.log(idremitoasociado)
-        console.log('id remito asociado') */
-        /* let idremitoasociado = remitos.map(remito => {
-            remito.items.map(item => {
-                req.params.id === item._id
-            })
-        }) */
-        /* remitos.map(remito => {
-            console.log('remito')
-            console.log(remito)
-            console.log('fin remito')
-            remito.items.splice(item => {
-                console.log('item linea 148')
-                console.log(item)
-                console.log('item linea 150')
-                req.params.id === item._id
-            })
-        }) */
         if (!lre){
             return res.status(404).json({
                 error: true,
@@ -201,7 +209,7 @@ const EliminarLineaRemito = async (req, res) => {
                 message: "Línea de Remito vacía"
             })
         }
-        return res.status(200).json(lre)
+        return res.status(200).json([{lre}, {remitomodificado}])
     } catch (error) {
         console.error(error)
         return res.status(500).json({message : error.message})
@@ -217,6 +225,11 @@ const EliminarRemito = async (req, res) => {
                 message: "Remito Inexistente"
             })
         }
+        console.log(remitoencontrado.items)
+        remitoencontrado.items.forEach(async(item) => {
+            let itemeliminado = await LineaRemito.findOneAndRemove(item)
+            console.log(itemeliminado)
+        })
         return res.status(200).json(remitoencontrado)
     } catch (error) {
         console.error(error)
@@ -227,8 +240,10 @@ const EliminarRemito = async (req, res) => {
 export default {
     RecuperarOrdenDeCompra,
     RecuperarOrdenesDeCompra,
+    RecuperarRemitos,
+    RecuperarLineasDeCompra,
     AgregarLineaRemito,
     AgregarRemito,
     EliminarRemito,
-    EliminarLineaRemito
+    EliminarLineaRemito,
 }

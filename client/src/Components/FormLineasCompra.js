@@ -6,24 +6,25 @@ import { RecuperarOrdenDeCompra} from '../Features/OrdenCompraSlice'
 import Table from 'react-bootstrap/Table'
 import { NavLink, useNavigate } from 'react-router-dom'
 
-function FormLineasCompra() {
+function FormLineasCompra(idOc) {
+  console.log(idOc)
   const navigate = useNavigate()
   const params = useParams()
   const dispatch = useDispatch()
   console.log(params)
-  //const [items, setItems] = useState("")
   const [oc, setOc] = useState({
     items: []
   })
 
   useEffect(()=> {
-    async function RecuperarUnaOrdenDeCompra(){
-    if (params.id){
+  async function RecuperarUnaOrdenDeCompra(){
+   if (params.id){
       const ocfounded = await (dispatch(RecuperarOrdenDeCompra(params.id)).unwrap())
       console.log(ocfounded.items)
       //setItems(ocfounded.items)
       setOc(ocfounded)
-    }}
+    }
+  }
     RecuperarUnaOrdenDeCompra()
   }, [params])
 

@@ -20,10 +20,9 @@ const schemaLineaRemito = new mongoose.Schema ({
 
 schemaLineaRemito.virtual("faltante")
     
-    
     .get(async function (){
         const lc = await LineaCompra.findById(this.lineaCompra)
-        let faltante = lc.cantidad - this.cantidadIngresada
+        let faltante =  lc.cantidad - this.cantidadIngresada
         console.log(faltante)
         return faltante
     })

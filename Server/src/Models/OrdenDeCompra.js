@@ -11,7 +11,7 @@ const schemaOrdenCompra = new mongoose.Schema({
     },
     formaDePago: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Proveedor",
+        ref: "FormaDePago",
         required:true
     },
     items: [{
@@ -26,6 +26,12 @@ const schemaOrdenCompra = new mongoose.Schema({
     },
     total: {
         type: Number,
+        required: true
+    },
+    estado : {
+        type: String,
+        Enumerator : { value: ["Pendiente", "Confirmada", "Rechazada"]},
+        default: "Pendiente",
         required: true
     }
 })

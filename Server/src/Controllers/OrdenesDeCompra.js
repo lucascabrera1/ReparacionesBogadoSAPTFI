@@ -56,6 +56,7 @@ const RecuperarOrdenesDeCompra = async (req, res, next) => {
                 fechaentrega: elem.fechaEntrega,
                 proveedor: proveedorencontrado.razonsocial,
                 total: elem.total,
+                estado: elem.estado,
                 items: elem.items
             }
             ocsdevueltas.push(newElem)
@@ -101,6 +102,7 @@ const RecuperarOrdenDeCompra = async (req, res, next) => {
             fechaentrega: oc.fechaEntrega,
             proveedor: proveedorencontrado.razonsocial,
             total: oc.total,
+            estado: oc.estado,
             items: items
         }
         return res.send(ocDevuelta)
