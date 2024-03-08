@@ -20,7 +20,9 @@ router.route('/linearemito').post(remitos.AgregarLineaRemito)
 router.route('/linearemito/:idremito/:idlinearemito').delete(remitos.EliminarLineaRemito)
 router.route('/nuevoremito').post(remitos.AgregarRemito)
 router.route('/remito/:id').delete(remitos.EliminarRemito)
-router.route('/todos').get(remitos.RecuperarRemitos)
+router.route('/todos')
+.get(remitos.RecuperarRemitos)
+.post(remitos.AgregarRemito)
 router.route('/lineascompra/:idoc').get(remitos.RecuperarLineasDeCompra)
 
 export default router

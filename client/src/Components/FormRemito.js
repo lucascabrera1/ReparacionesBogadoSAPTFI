@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react'
 import {useDispatch, useSelector } from 'react-redux'
 import {SeleccionarTodasLasOrdenesDeCompra, RecuperarOrdenesDeCompra, EstadoOrdenesDeCompra,
   SeleccionarTodosLosProveedores, RecuperarProveedores, EstadoProveedores,
-  SeleccionarTodasLasLineasDeCompra, RecuperarLineasDeCompra, EstadoLineasDeCompra
+  SeleccionarTodasLasLineasDeCompra, RecuperarLineasDeCompra, EstadoLineasDeCompra,
+  AgregarRemito
 } from '../Features/RemitoSlice'
 import Input from './Common/Input'
 import Table from 'react-bootstrap/Table'
@@ -17,24 +18,29 @@ function FormRemito() {
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
+
   const ocs = useSelector(SeleccionarTodasLasOrdenesDeCompra)
   console.log(ocs)
   const lcs = useSelector(SeleccionarTodasLasLineasDeCompra)
-  const estadoocs = useSelector(EstadoOrdenesDeCompra)
   const proveedores = useSelector(SeleccionarTodosLosProveedores)
+  const estadoocs = useSelector(EstadoOrdenesDeCompra)
   const estadoproveedores = useSelector(EstadoProveedores)
   const estadolineascompra = useSelector(EstadoLineasDeCompra)
+
   const [rsp, setRsp] = useState('')
   const [idOc, setIdOc] = useState('')
+  const [idLc, setidLc] = useState('')
+  const [producto, setProducto] = useState('')
+  const [proveedorSeleccionado, setProveedorSeleccionado] = useState ('')
   const [lineasC, setLineasC] = useState([])
-  //const {register, handleSubmit, formState : {errors}} = useForm()
+  const [cantidadEsperada, setCantidadEsperada] = useState(0)
+  const [cantidadRecibida, setcantidadRecibida] = useState(0)
+  
 
   const {register, handleSubmit, formState : {errors}, control, reset, getValues} = useForm({
     proveedor: {},
-    total: 0,
     fechaEmision: Date(),
-    fechaEntrega: "",
-    formaDePago: ""
+    ordenCompra: {}
   })
 
   const {fields, append, remove, replace} = useFieldArray({
@@ -60,10 +66,7 @@ function FormRemito() {
     }
   },[estadolineascompra]) 
   
-  console.log(lcs)
-  console.log(ocs)
   let ocsfiltradas = ocs.filter(oc => oc.proveedor === rsp)
-  console.log(ocsfiltradas)
 
   const optOcsFiltradas = ocsfiltradas.map(oc =>{ 
     return <option className='optOcs' key={oc._id} value={oc._id}>
@@ -78,6 +81,10 @@ function FormRemito() {
       className='optProveedores'
       key={proveedor._id} 
       value={proveedor.razonsocial}
+      onChange={e => {
+        e.preventDefault()
+        setProveedorSeleccionado(e.target.value)
+      }}
     >
       {proveedor.razonsocial}
     </option>
@@ -87,150 +94,288 @@ function FormRemito() {
   let oc = ocsfiltradas.find(x => x._id === idOc)
   console.log(oc)
 
+  const AgregarLineaRemito = (id, idLc, cantidadesperada, cantidadrecibida) => {
+    console.log(proveedorSeleccionado)
+    console.log(cantidadrecibida)
+    console.log(producto)
+    console.log(id)
+    console.log(cantidadesperada)
+    if (!cantidadrecibida || cantidadrecibida< 1) {
+      alert(`la cantidad es obligatoria y debe ser mayor o igual a 1, y la ingresada fue: ${cantidadrecibida}`)
+      return false
+    }
+    if (!producto) {
+      alert("no hay ninguna línea de compra seleccionada")
+      return false
+    }
+    let item = fields.find(x => x.id_producto === id)
+    if (item === undefined) {
+    append({
+      id_producto: id,
+      producto,
+      lineaCompra : idLc,
+      cantidadesperada: cantidadesperada,
+      cantidadIngresada: cantidadrecibida
+    })
+    } else {
+      item.cantidadrecibida = item.cantidadrecibida + cantidadrecibida
+      replace([...fields])
+    }
+    console.log(proveedorSeleccionado)
+    let proveedor = (getValues()["proveedor"]===undefined?getValues()["proveedor"] : proveedorSeleccionado)
+    let fechaEmision = (getValues()["fechEemision"]===undefined?Date():Date())
+    let ordenCompra = (getValues()["ordenCompra"]===undefined?null: oc._id)
+    reset({
+      ...getValues(),
+      proveedor : proveedor,
+      fechaEmision : fechaEmision,
+      ordenCompra : ordenCompra
+    })
+  }
+
+  const QuitarLineaRemito = id_producto => {
+    let index = -1
+    let subtotal = 0
+    for(let i = 0; i<fields.length; i++) {
+      if (fields[i].id_producto === id_producto){
+        index = i
+        subtotal = fields[i].subtotal
+        break
+      }
+    }
+    if (index !== -1) {
+      remove(index)
+      let total_anterior = getValues()["total"]
+      reset({
+        ...getValues(),
+        total : total_anterior - subtotal
+      })
+    }
+  }
+
+  const LimpiarGrilla = (id_proveedor) => {
+    remove()
+    //setRsp('')
+    //setIdOc('')
+    setLineasC([])
+    setCantidadEsperada(0)
+    setcantidadRecibida(0)
+    //setidLc('')
+    setProducto('')
+    reset({
+      ...getValues(),
+      total : 0,
+      proveedor: id_proveedor,
+      ordenCompra: idOc
+    })
+  }
+
+  const handleSubmitOC = async (data, e) =>  {
+    if (data.detalles.length === 0) {
+      alert("Al menos debe haber una linea de remito ingresada")
+      return false
+    }
+    try {
+      const result = await dispatch(AgregarRemito(data)).unwrap()
+      alert('Remito guardado correctamente')
+      e.target.reset()
+      navigate('/remitos/todos')
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <div>
-      <select
-        onChange={e => {
-          e.preventDefault()
-          setRsp(e.target.value)
-        }
-      }>
-        {optProveedores}
-      </select>
-      <select
-        onChange= {async e  => { 
-          e.preventDefault()
-          setIdOc(e.target.value)
-          let lcs = await dispatch(RecuperarLineasDeCompra(e.target.value)).unwrap()
-          console.log(lcs)
-          setLineasC(lcs)
-        }
-      }>
-        {optOcsFiltradas}
-      </select>
-      {!oc ? null : <div key={oc._id}>
-        <p>Orden seleccionada: {oc._id}</p>
-        <p>Fecha de emision: {oc.fechaemision}</p>
-        <p>Fecha de entrega: {oc.fechaentrega}</p>
-        <p>Forma de pago: {oc.formapago}</p>
-        <p>Proveedor: {oc.proveedor}</p>
-        <p>Estado: {oc.estado}</p>
-      </div>}
-      
-      <Table className='table table-success table-bordered border-dark'>
+      <Form onSubmit={handleSubmit(handleSubmitOC)}>
+        <select
+          onChange={e => {
+            e.preventDefault()
+            setRsp(e.target.value)
+          }
+        }>
+          {optProveedores}
+        </select>
+        <select
+          onChange= {async e  => { 
+            e.preventDefault()
+            setIdOc(e.target.value)
+            LimpiarGrilla()
+            let lcs = await dispatch(RecuperarLineasDeCompra(e.target.value)).unwrap()
+            console.log(lcs)
+            setLineasC(lcs)
+          }
+        }>
+          {optOcsFiltradas}
+        </select>
+        {!oc ? <div>
+          <p>Orden seleccionada:</p>
+          <p>Fecha de emision: </p>
+          <p>Fecha de entrega:</p>
+          <p>Forma de pago: </p>
+          <p>Proveedor: </p>
+          <p>Estado: </p>
+        </div> : <div key={oc._id}>
+          <p>Orden seleccionada: {oc._id}</p>
+          <p>Fecha de emision: {oc.fechaemision}</p>
+          <p>Fecha de entrega: {oc.fechaentrega}</p>
+          <p>Forma de pago: {oc.formapago}</p>
+          <p>Proveedor: {oc.proveedor}</p>
+          <p>Estado: {oc.estado}</p>
+        </div>}
+        
+        <Table className='table table-success table-bordered border-dark'>
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Precio Unitario</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+                <th>Faltante</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                  lineasC.length > 0 ? 
+                    lineasC.map(item=> {
+                      return( <tr 
+                          key={item._id}
+                          onClick={ e => {
+                            e.preventDefault()
+                            console.log(item)
+                            setidLc(item._id)
+                            setProducto(item.producto)
+                            setCantidadEsperada(parseInt(item.cantidad))
+                          }}
+                        >
+                        <td>{item.producto}</td>
+                        <td>{item.preciocompra}</td>
+                        <td>{item.cantidad}</td>
+                        <td>{item.subtotal}</td>
+                        <td>{item.faltante}</td>
+                      </tr>
+                    )})
+                  : "vacio"
+              } 
+            </tbody>
+            <tfoot style={{backgroundColor: 'lightskyblue'}}>
+              <tr>
+                <th></th>
+                <th></th>
+                <th >Total: </th>
+                <th>{!oc ? null : oc.total}</th>
+                <th></th>
+              </tr>
+            </tfoot>
+          </Table>
+          <p>Seleccione una linea de compra e ingrese la cantidad ingresada</p>
+          <p>Producto Seleccionado:  {!producto ? null : producto}</p>
+          <input
+            style={{width: '300px'}}
+            type="number" 
+            placeholder="ingrese la cantidad recibida"
+            name="cantidad"
+            min="1"
+            step="1"
+            required = ""
+            onChange={(e)=>{
+              e.preventDefault()
+              console.log(typeof(e.target.value))
+              console.log(parseInt(e.target.value))
+              setcantidadRecibida(parseInt(e.target.value))
+              console.log(cantidadRecibida)
+          }}
+        />
+          
+          <Button
+            onClick={ e => {
+              console.log('llega al onclick')
+              console.log()
+              e.preventDefault()
+              console.log(cantidadRecibida)
+              AgregarLineaRemito(producto, idLc, cantidadEsperada, cantidadRecibida)
+              console.log(typeof(cantidadRecibida))
+              console.log(idLc)
+              console.log(producto)
+            }}
+          > Agregar Línea de Remito
+          </Button>
+          <Table className= 'table table-success table-bordered border-dark'>
           <thead>
             <tr>
               <th>Producto</th>
-              <th>Precio Unitario</th>
-              <th>Cantidad</th>
-              <th>Subtotal</th>
-              <th>Faltante</th>
+              <th>Cantidad Esperada</th>
+              <th>Cantidad Recibida</th>
             </tr>
           </thead>
           <tbody>
-            {
-                lineasC.length > 0 ? 
-                  lineasC.map(item=> {
-                    return( <tr key={item._id}>
-                      <td>{item.producto}</td>
-                      <td>{item.preciocompra}</td>
-                      <td>{item.cantidad}</td>
-                      <td>{item.subtotal}</td>
-                      <td>{item.faltante}</td>
-                    </tr>
-                  )})
-                : "vacio"
-            } 
+            {fields.map((item,index) => (
+              <tr key={item.id}>
+                <td>
+                  <Input type="text"
+                      disabled={true}
+                      name={`detalles.${index}.producto`}
+                      register={register} 
+                      errors={errors}>
+                  </Input>
+                  <Input
+                    type="hidden"
+                    name={`detalles.${index}.lineaCompra`}
+                    register={register}
+                    errors={errors}
+                  ></Input>
+                </td>
+                <td>
+                  <Input type="number"
+                    disabled={true}
+                    name={`detalles.${index}.cantidadIngresada`}
+                    register={register}
+                    errors={errors}>
+                  </Input>
+                </td>
+                <td>
+                  <Input type="number"
+                    disabled={true}
+                    name={`detalles.${index}.cantidadEsperada`}
+                    register={register} 
+                    errors={errors}>
+                  </Input>
+                </td>
+                <td>
+                  <Button 
+                    variant='danger'
+                    onClick={(e)=> {
+                      e.preventDefault()
+                      QuitarLineaRemito(item.id_producto)
+                    }}
+                  >Quitar</Button>
+                </td>
+              </tr>
+            ))}
           </tbody>
-          <tfoot style={{backgroundColor: 'lightskyblue'}}>
-            <tr>
-              <th></th>
-              <th></th>
-              <th >Total: </th>
-              <th>{!oc ? null : oc.total}</th>
-              <th></th>
-            </tr>
+          <tfoot>
+            <Button 
+              variant='danger' 
+              onClick={ e => {
+                e.preventDefault()
+                console.log('vaciar lista')
+                LimpiarGrilla()
+              }}
+            >Vaciar Lista de ítems
+            </Button>
           </tfoot>
         </Table>
-        <Input
-          type="number"
-          name="cantidadingresada"
-          placeholder="Cantidad ingresada"
-          register={register}
-          registerOptions= {{
-              required: true, maxLength: 5, minLength: 1
-          }}
-          errors= {errors}
-          optionMsgErrors={{
-              required: "el código es obligatorio",
-              maxLength: "no puede incluir mas de 5 caracteres",
-              minLength: "al menos 1 caracter "
-          }}
-        />
-        <Button>Agregar Línea de Remito</Button>
-        <Table className= 'table table-success table-bordered border-dark'>
-        <thead>
-          <tr>
-            <th>Producto</th>
-            <th>Cantidad</th>
-            <th>Precio Unitario</th>
-            <th>Subtotal</th>
-          </tr>
-        </thead>
-        <tbody>
-          {fields.map((item,index) => (
-            <tr key={item.id}>
-              <td>
-                <Input type="text"
-                    disabled={true}
-                    name={`detalles.${index}.descripcion`}
-                    register={register} errors={errors}>
-                </Input>
-                <Input
-                  type="hidden"
-                  name={`detalles.${index}.id_producto`}
-                  register={register}
-                  errors={errors}
-                ></Input>
-              </td>
-              <td>
-                <Input type="number"
-                    disabled={true}
-                    name={`detalles.${index}.cantidad`}
-                    register={register} errors={errors}>
-                </Input>
-              </td>
-              <td>
-                <Input type="number"
-                    disabled={true}
-                    name={`detalles.${index}.preciocompra`}
-                    register={register} errors={errors}>
-                </Input>
-              </td>
-              <td>
-                <Input type="text"
-                    disabled={true}
-                    name={`detalles.${index}.subtotal`}
-                    register={register} errors={errors}>
-                </Input>
-              </td>
-              <td>
-                <Button 
-                  variant='danger'
-                  onClick={(e)=> {
-                    e.preventDefault()
-                    //QuitarLineaCompra(item.id_producto)
-                  }}
-                >Quitar</Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-        <tfoot>
-          <p>total acumulado: $ {getValues()["total"]}</p>
-          <Button variant='danger' onClick={console.log('vaciar lista')}>Vaciar Lista de ítems</Button>
-        </tfoot>
-      </Table>
+        <Button 
+            type='submit'
+            style={{backgroundColor:'green', color:'ButtonShadow'}}
+          >Generar Nuevo Remito de Compra
+        </Button>
+      </Form>
+      <Button
+        variant='secondary'
+        onClick={e => { e.preventDefault(); navigate('/remitos/todos')}}>
+        ...Atrás
+      </Button>
     </div>
   )
 }

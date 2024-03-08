@@ -28,7 +28,7 @@ const initialState = {
 const URL_BASE_OC = process.env.REACT_APP_URI_API + `/ordenesdecompra/`
 const URL_BASE_PROVEEDORES = process.env.REACT_APP_URI_API + `/proveedores`
 const URL_BASE_LINEASCOMPRA = process.env.REACT_APP_URI_API_REMITOS + `/lineascompra/`
-const URL_BASE_PRODUCTOS = process.env.REACT_APP_URI_API_REMITOS + `/productos/`
+//const URL_BASE_PRODUCTOS = process.env.REACT_APP_URI_API_REMITOS + `/productos/`
 const URL_BASE_REMITOS = process.env.REACT_APP_URI_API_REMITOS + `/todos`
 //const URL_BASE_REMITOS = '127.0.0.1:4500/remitos/todos'
 
@@ -80,6 +80,19 @@ export const RecuperarLineasDeCompra = createAsyncThunk ("Remito/RecuperarLineas
     }
 })
 
+export const AgregarRemito = createAsyncThunk('Remito/AgregarRemito', async(remito) => {
+    try {
+        console.log('entra al guardar remito')
+        console.log(remito)
+        const response = await axios.post(URL_BASE_REMITOS, remito)
+        console.log(response.data)
+        return response.data
+    } catch (error) {
+        console.error(error.message)
+        return error.message
+    }
+})
+
 export const RemitoSlice = createSlice({
     name: "Remito",
     initialState,
@@ -101,6 +114,10 @@ export const RemitoSlice = createSlice({
         .addCase(RecuperarLineasDeCompra.fulfilled, (state, action) => {
             state.status = "completed"
             state.lineasCompra = action.payload
+        })
+        .addCase(AgregarRemito.fulfilled, (state, action) => {
+            state.status = "completed"
+            state.remitos.push(action.payload)
         })
     }
 })

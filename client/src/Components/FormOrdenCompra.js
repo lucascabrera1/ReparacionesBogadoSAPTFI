@@ -148,18 +148,12 @@ function FormOrdenCompra() {
   }
 
   const handleSubmitOC = async (data, e) =>  {
-    console.log(data)
-    console.log(data.detalles.length)
-    console.log('handle submit orden compra')
     if (data.detalles.length === 0) {
       alert("Al menos debe haber una linea de compra ingresada")
       return false
     }
     try {
-      console.log('entra al agregar orden de compra')
-      console.log(data)
       const result = await dispatch(AgregarOrdenDeCompra(data)).unwrap()
-      console.log(result)
       alert('orden de compra guardada correctamente')
       e.target.reset()
       navigate('/ordenesdecompra')
@@ -349,7 +343,6 @@ function FormOrdenCompra() {
         {...register('formaDePago', {required: true})}
         onChange={(e) => {
           e.preventDefault()
-          console.log(e.target.value)
         }}>
           {optionFormasDePago}
       </Form.Select>

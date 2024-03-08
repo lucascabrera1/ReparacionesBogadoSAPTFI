@@ -168,9 +168,12 @@ const AgregarLineaRemito = async (req, res) => {
 
 const AgregarRemito = async (req, res) => {
     try {
-        console.log(req.body.items)
+        console.log('llega al metodo agregar remito')
+        console.log(req.body)
+        console.log('linea 172 req.body')
+        console.log(req.body.detalles)
         let items = []
-        for(const elem of req.body.items) {
+        for(const elem of req.body.detalles) {
             console.log(elem)
             const lr = new LineaRemito()
             lr.lineaCompra = elem.lineaCompra
@@ -179,7 +182,7 @@ const AgregarRemito = async (req, res) => {
             items.push(lrguardada)
         }
         const remito = new Remito(req.body)
-        remito.items = items
+        remito.detalles = items
         console.log(remito)
         const remitosaved = await remito.save()
         return res.json(remitosaved)
