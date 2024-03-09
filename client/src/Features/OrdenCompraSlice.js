@@ -65,10 +65,18 @@ export const AgregarProducto = createAsyncThunk('/ordenCompra/AgregarProducto', 
         console.log(productoInicial)
         const response = await axios.post(URL_BASE_PRODUCTOS, productoInicial)
         console.log(response.data)
-        return response.data
+        let resp = {
+            error: false,
+            data: response.data
+        }
+        return resp
     } catch (error) {
         console.error(error.message)
-        return error.message
+        let resp = {
+            error: true,
+            message: error.response.data.message
+        }
+        return resp
     }
 })
 

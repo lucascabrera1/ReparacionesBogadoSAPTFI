@@ -49,17 +49,23 @@ function FormProducto() {
       >{p.razonsocial}
     </option>))
 
+    optionProveedores.unshift(<option value="" key="">Seleccione</option>)
+
     const optionMarcas = marcas.map(marca => (<option
       value={marca._id} 
       key={marca._id}
       >{marca.nombre}
     </option>))
 
+    optionMarcas.unshift(<option value="" key="">Seleccione</option>)
+
     const optionCategorias = categorias.map(cat => (<option
       value={cat._id} 
       key={cat._id}
       >{cat.descripcion}
     </option>))
+
+    optionCategorias.unshift(<option value="" key="">Seleccione</option>)
 
     const handleSubmitProducto = async (data, e) => {
       console.log('params')
@@ -85,9 +91,13 @@ function FormProducto() {
           console.log(data)
           const result = await dispatch(AgregarProducto(data)).unwrap()
           console.log(result)
-          alert('producto guardado correctamente')
-          e.target.reset()
-          navigate('/productos')
+          if (result.error) {
+            alert('Hubo un error al guardar el producto: '+result.message)
+          } else {
+            alert('producto guardado correctamente')
+            e.target.reset()
+            navigate('/productos')
+          }
         } catch (error) {
           console.error(error)
         }
@@ -125,7 +135,7 @@ function FormProducto() {
                 className='col-md-2'
                 size='sm'
                 name='proveedor'
-                {...register('proveedor')}
+                {...register('proveedor', {required: true})}
                 onChange={e => {
                   e.preventDefault()
                   console.log(e.target.value)
@@ -133,13 +143,20 @@ function FormProducto() {
               >
                 {optionProveedores}
               </Form.Select>
+              {
+                errors["proveedor"]?.type === "required" && <> <span style={{color: "red"}} >
+                    El Proveedor es requerido
+                  </span>
+                  <br/>
+                </>
+              }
               <label>Marca</label>
               <Form.Select
                 aria-label='Marca'
                 className='col-md-2'
                 size='sm'
                 name='marca'
-                {...register('marca')}
+                {...register('marca', {required: true})}
                 onChange={e => {
                   e.preventDefault()
                   console.log(e.target.value)
@@ -147,13 +164,20 @@ function FormProducto() {
               >
                 {optionMarcas}
               </Form.Select>
+              {
+                errors["marca"]?.type === "required" && <> <span style={{color: "red"}} >
+                    La marca es requerida
+                  </span>
+                  <br/>
+                </>
+              }
               <label>Categoria</label>
               <Form.Select
                 aria-label='Categoria'
                 className='col-md-2'
                 size='sm'
                 name='categoria'
-                {...register('categoria')}
+                {...register('categoria', {required: true})}
                 onChange={e => {
                   e.preventDefault()
                   console.log(e.target.value)
@@ -161,6 +185,13 @@ function FormProducto() {
               >
                 {optionCategorias}
               </Form.Select>
+              {
+                errors["categoria"]?.type === "required" && <> <span style={{color: "red"}} >
+                    La Categoría es requerida
+                  </span>
+                  <br/>
+                </>
+              }
             </Form.Group>
             <br/> <br/>
             <Input

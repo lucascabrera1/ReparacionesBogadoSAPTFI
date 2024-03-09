@@ -215,7 +215,7 @@ const AgregarProducto = async (req, res) => {
         return res.send(productosaved)
     } catch (error) {
         console.error(error)
-        return res.status(500).json({message : message.error})
+        return res.status(500).json({message : error.message})
     }
 }
 

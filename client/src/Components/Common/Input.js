@@ -17,7 +17,7 @@ function Input({type,
     <div>
         <label>{label}</label>
         <input
-            style={{width: '300px'}}
+            style={{width: type=='number'?'100px':'300px'}}
             type={type} 
             placeholder={placeholder}
             className={classname}
