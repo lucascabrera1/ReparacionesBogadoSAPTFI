@@ -146,6 +146,7 @@ export const RecuperarProductos = createAsyncThunk ("ordenCompra/RecuperarProduc
 export const RecuperarProductosPorProveedor = createAsyncThunk ("ordenCompra/RecuperarProductosPorProveedor", async (idProveedor) => {
     try {
         console.log(idProveedor)
+        if (idProveedor === "") return []
         const response = await axios.get(URL_BASE_PRODUCTOS + idProveedor)
         return [...response.data]
     } catch (error) {

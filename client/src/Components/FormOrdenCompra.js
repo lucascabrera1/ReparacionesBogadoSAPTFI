@@ -182,7 +182,7 @@ function FormOrdenCompra() {
           {...register('proveedor')}
           onChange={(e) => {
             e.preventDefault()
-            alert("No se pueden ordenar productos de otros proveedores")
+            if (fields.length>0) alert("No se pueden ordenar productos de otros proveedores")
             LimpiarGrilla(e.target.value)
             dispatch(RecuperarProductosPorProveedor(e.target.value))
           }}
