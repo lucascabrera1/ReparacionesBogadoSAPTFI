@@ -29,7 +29,7 @@ const URL_BASE_OC = process.env.REACT_APP_URI_API + `/ordenesdecompra/`
 const URL_BASE_PROVEEDORES = process.env.REACT_APP_URI_API + `/proveedores`
 const URL_BASE_LINEASCOMPRA = process.env.REACT_APP_URI_API_REMITOS + `/lineascompra/`
 //const URL_BASE_PRODUCTOS = process.env.REACT_APP_URI_API_REMITOS + `/productos/`
-const URL_BASE_REMITOS = process.env.REACT_APP_URI_API_REMITOS + `/todos`
+const URL_BASE_REMITOS = process.env.REACT_APP_URI_API_REMITOS
 //const URL_BASE_REMITOS = '127.0.0.1:4500/remitos/todos'
 
 
@@ -37,7 +37,7 @@ console.log(URL_BASE_REMITOS)
 
 export const RecuperarRemitos = createAsyncThunk ('Remito/RecuperarRemitos', async ()=> {
     try {
-        const response = await axios.get(URL_BASE_REMITOS)
+        const response = await axios.get(`${URL_BASE_REMITOS}/todos`)
         return [...response.data]
     } catch (error) {
         console.log(console.error(error))
@@ -60,7 +60,7 @@ export const RecuperarOrdenesDeCompra = createAsyncThunk ('Remito/RecuperarOrden
     try {
         console.log('llega a la linea 61')
         console.log(URL_BASE_OC)
-        const response = await axios.get(URL_BASE_OC)
+        const response = await axios.get(`${URL_BASE_REMITOS}/inicio`)
         return [...response.data]
     } catch (error) {
         console.log(console.error(error))
@@ -80,11 +80,22 @@ export const RecuperarLineasDeCompra = createAsyncThunk ("Remito/RecuperarLineas
     }
 })
 
+export const RecuperarRemitoDeCompra = createAsyncThunk("Remito/RecuperarRemitoDeCompra", async (id) => {
+    try {
+        console.log(URL_BASE_REMITOS + id)
+        const response = await axios.get(`${URL_BASE_REMITOS}/remito/${id}`)
+        return response.data
+    } catch (error) {
+        console.log(console.error(error))
+        return error.message
+    }
+})
+
 export const AgregarRemito = createAsyncThunk('Remito/AgregarRemito', async(remito) => {
     try {
         console.log('entra al guardar remito')
         console.log(remito)
-        const response = await axios.post(URL_BASE_REMITOS, remito)
+        const response = await axios.post(`${URL_BASE_REMITOS}/todos`, remito)
         console.log(response.data)
         return response.data
     } catch (error) {
@@ -118,6 +129,15 @@ export const RemitoSlice = createSlice({
         .addCase(AgregarRemito.fulfilled, (state, action) => {
             state.status = "completed"
             state.remitos.push(action.payload)
+        })
+        .addCase(RecuperarRemitoDeCompra.fulfilled, (state, action) => {
+            state.remitos = state.remitos.map(item => {
+                if (item._id === action.payload._id) {
+                    return action.payload
+                } else {
+                    return item
+                }
+            })
         })
     }
 })

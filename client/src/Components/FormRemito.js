@@ -23,11 +23,11 @@ function FormRemito() {
   console.log(ocs)
   const lcs = useSelector(SeleccionarTodasLasLineasDeCompra)
   const proveedores = useSelector(SeleccionarTodosLosProveedores)
+  console.log(proveedores)
   const estadoocs = useSelector(EstadoOrdenesDeCompra)
   const estadoproveedores = useSelector(EstadoProveedores)
   const estadolineascompra = useSelector(EstadoLineasDeCompra)
 
-  const [rsp, setRsp] = useState('')
   const [idOc, setIdOc] = useState('')
   const [idLc, setidLc] = useState('')
   const [producto, setProducto] = useState('')
@@ -64,9 +64,13 @@ function FormRemito() {
     if (estadolineascompra==="idle"){
       dispatch(RecuperarLineasDeCompra(idOc))
     }
-  },[estadolineascompra]) 
+  },[estadolineascompra])
+
+  console.log(ocs)
+  console.log(proveedorSeleccionado)
   
-  let ocsfiltradas = ocs.filter(oc => oc.proveedor === rsp)
+  let ocsfiltradas = ocs.filter(oc =>  oc.proveedor === proveedorSeleccionado)
+  console.log(ocsfiltradas)
 
   const optOcsFiltradas = ocsfiltradas.map(oc =>{ 
     return <option className='optOcs' key={oc._id} value={oc._id}>
@@ -80,7 +84,7 @@ function FormRemito() {
     return <option
       className='optProveedores'
       key={proveedor._id} 
-      value={proveedor.razonsocial}
+      value={proveedor._id}
       onChange={e => {
         e.preventDefault()
         setProveedorSeleccionado(e.target.value)
@@ -108,21 +112,21 @@ function FormRemito() {
       alert("no hay ninguna línea de compra seleccionada")
       return false
     }
-    let item = fields.find(x => x.id_producto === id)
+    let item = fields.find(x => x.producto === id)
+    console.log(item)
     if (item === undefined) {
     append({
-      id_producto: id,
       producto,
       lineaCompra : idLc,
-      cantidadesperada: cantidadesperada,
-      cantidadIngresada: cantidadrecibida
+      cantidadIngresada: cantidadRecibida,
+      cantidadEsperada : cantidadesperada
     })
     } else {
-      item.cantidadrecibida = item.cantidadrecibida + cantidadrecibida
+      item.cantidadIngresada = item.cantidadIngresada + cantidadRecibida
       replace([...fields])
     }
     console.log(proveedorSeleccionado)
-    let proveedor = (getValues()["proveedor"]===undefined?getValues()["proveedor"] : proveedorSeleccionado)
+    let proveedor = (getValues()["proveedor"]===undefined ? proveedorSeleccionado : getValues()["proveedor"])
     let fechaEmision = (getValues()["fechEemision"]===undefined?Date():Date())
     let ordenCompra = (getValues()["ordenCompra"]===undefined?null: oc._id)
     reset({
@@ -179,7 +183,7 @@ function FormRemito() {
       const result = await dispatch(AgregarRemito(data)).unwrap()
       alert('Remito guardado correctamente')
       e.target.reset()
-      navigate('/remitos/todos')
+      navigate('/remitos')
     } catch (error) {
       console.error(error)
     }
@@ -191,7 +195,8 @@ function FormRemito() {
         <select
           onChange={e => {
             e.preventDefault()
-            setRsp(e.target.value)
+            setProveedorSeleccionado(e.target.value)
+            console.log(e.target.value)
           }
         }>
           {optProveedores}
@@ -304,8 +309,8 @@ function FormRemito() {
           <thead>
             <tr>
               <th>Producto</th>
-              <th>Cantidad Esperada</th>
               <th>Cantidad Recibida</th>
+              <th>Cantidad Esperada</th>
             </tr>
           </thead>
           <tbody>
@@ -346,6 +351,8 @@ function FormRemito() {
                     variant='danger'
                     onClick={(e)=> {
                       e.preventDefault()
+                      console.log(item)
+                      console.log(item._idproducto)
                       QuitarLineaRemito(item.id_producto)
                     }}
                   >Quitar</Button>
@@ -373,7 +380,7 @@ function FormRemito() {
       </Form>
       <Button
         variant='secondary'
-        onClick={e => { e.preventDefault(); navigate('/remitos/todos')}}>
+        onClick={e => { e.preventDefault(); navigate('/remitos')}}>
         ...Atrás
       </Button>
     </div>
