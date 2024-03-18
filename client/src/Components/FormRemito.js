@@ -137,11 +137,11 @@ function FormRemito() {
     })
   }
 
-  const QuitarLineaRemito = id_producto => {
+  const QuitarLineaRemito = producto => {
     let index = -1
     let subtotal = 0
     for(let i = 0; i<fields.length; i++) {
-      if (fields[i].id_producto === id_producto){
+      if (fields[i].producto === producto){
         index = i
         subtotal = fields[i].subtotal
         break
@@ -330,7 +330,11 @@ function FormRemito() {
                     errors={errors}
                   ></Input>
                 </td>
-                <td>
+                <td style={ 
+                  item.cantidadIngresada === item.cantidadEsperada  ? { 
+                  backgroundColor: 'green' } : {
+                  backgroundColor : 'red'
+                }}>
                   <Input type="number"
                     disabled={true}
                     name={`detalles.${index}.cantidadIngresada`}
@@ -351,9 +355,9 @@ function FormRemito() {
                     variant='danger'
                     onClick={(e)=> {
                       e.preventDefault()
-                      console.log(item)
-                      console.log(item._idproducto)
-                      QuitarLineaRemito(item.id_producto)
+                      console.log(item.id)
+                      console.log(item.producto)
+                      QuitarLineaRemito(item.producto)
                     }}
                   >Quitar</Button>
                 </td>

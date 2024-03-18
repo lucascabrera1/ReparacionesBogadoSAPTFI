@@ -37,6 +37,7 @@ function FormOrdenesCompra() {
             <th>Proveedor</th>
             <th>Forma de Pago</th>
             <th>Total</th>
+            <th>Estado</th>
             <th>Detalles</th>
           </tr>
         </thead>
@@ -49,6 +50,7 @@ function FormOrdenesCompra() {
                 <td>{oc.proveedor}</td>
                 <td>{oc.formapago}</td>
                 <td>{oc.total}</td>
+                <td>{oc.estado}</td>
                 <td><NavLink to={`/ordenesdecompra/${oc._id}`}> Ver Detalles...</NavLink></td>
               </tr>
               }

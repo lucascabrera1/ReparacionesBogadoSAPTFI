@@ -16,6 +16,7 @@ import FormLineasCompra from './Components/FormLineasCompra.js'
 import FormRemitos from './Components/FormRemitos.js'
 import FormLineasRemito from './Components/FormLineasRemito.js'
 import FormRemito from './Components/FormRemito.js'
+import ReporteProveedores from './Components/Reportes/ReporteProveedores.js'
 
 function App() {
   return <div>
@@ -44,6 +45,7 @@ function App() {
             <Route path='/remitos' element={<FormRemitos/>}/>
             <Route path='/nuevoremito' element={<FormRemito/>}/>
             <Route path='/remitos/:id' element={<FormLineasRemito/>}/>
+            <Route path='/reporteproveedores' element={<ReporteProveedores/>}/>
             {/*<Route path='/' element={<FormTodasLasOC/>} />
             <Route path='/home' element={<Home/>} />
             
