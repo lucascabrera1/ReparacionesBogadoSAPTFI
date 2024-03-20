@@ -5,8 +5,18 @@ import {SeleccionarTodasLasOrdenesDeCompra, RecuperarOrdenesDeCompra, EstadoOrde
 import { useSelector, useDispatch } from 'react-redux'
 import { useEffect } from 'react'
 
-function ReporteProveedores  ()  {
-    const colores = ['blueviolet', 'blue', '#000975']
+function ReporteProveedores () {
+
+    function generarNuevoColor () {
+        var simbolos, color;
+        simbolos = "0123456789ABCDEF";
+        color = "#";
+    
+        for(var i = 0; i < 6; i++){
+            color = color + simbolos[Math.floor(Math.random() * 16)];
+        }
+        return color
+    }
 
     const estadoocs = useSelector(EstadoOrdenesDeCompra)
     const ocs = useSelector(SeleccionarTodasLasOrdenesDeCompra)
@@ -42,7 +52,11 @@ function ReporteProveedores  ()  {
     })
 
     return (
-        <div style={{width: '100%', height: 500}}> reporte proveedores
+        <div style={{width: '100%', height: 500}}>
+            <h1>Mejores Proveedores</h1>
+            <h2>A continuación, se enuncia un gráfico de tortas donde se indica
+                un proveedor y la cantidad de ordenes de compra
+            </h2>
             <ResponsiveContainer>
                 <PieChart width={1200} height={1100}>
                     <Pie 
@@ -56,9 +70,7 @@ function ReporteProveedores  ()  {
                         fill='#EBEFEA'
                     >
                         {ocsxproov.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={colores[index%colores.length]}>
-                                
-                            </Cell>
+                            <Cell key={`cell-${index}`} fill={generarNuevoColor()}/>
                         ))} 
                     </Pie>
                     <Tooltip/>
