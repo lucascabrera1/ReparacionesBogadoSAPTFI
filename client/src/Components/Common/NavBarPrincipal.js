@@ -13,6 +13,8 @@ export default function () {
                 <li><NavLink to="/ventas">Ventas</NavLink></li>
                 <li><NavLink to="/remitos">Ingreso de Remitos</NavLink></li>
                 <li><NavLink to="/reparaciones">Ordenes de Reparaciones</NavLink></li>
+                <li><NavLink to="/reporteproveedores">Reporte de Proveedores</NavLink></li>
+                
             </ul>
         </navbar>
     )

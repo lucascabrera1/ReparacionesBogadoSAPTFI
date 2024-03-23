@@ -17,17 +17,19 @@ import FormRemitos from './Components/FormRemitos.js'
 import FormLineasRemito from './Components/FormLineasRemito.js'
 import FormRemito from './Components/FormRemito.js'
 import ReporteProveedores from './Components/Reportes/ReporteProveedores.js'
+import Welcome from './Components/Welcome.js'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'
+import NavBarBootstrap from './Components/Common/NavBarBootstrap.js'
 
 function App() {
-  return <div>
-    <header className='App-header'>
+  return <div  className="container-fluid">
+    <header className ='d-flex flex-column justify-content-center align-items-center bg-dark text-success'>
       <h1>REPARACIONES BOGADO</h1>
-      <h2>BIENVENIDO AL MENÚ PRINCIPAL DE REPARACIONES BOGADO</h2>
-      <h3>SELECCIONE LA SECCIÓN A LA QUE NECESITE INGRESAR</h3>
     </header>
     <div className='items-center justify-center'>
       <BrowserRouter>
-        <NavBarPrincipal/>
+        <NavBarBootstrap/>
           <Routes>
             <Route path='/ordenesdecompra' element={<FormGestionOC/>}/>
             <Route path='/nuevamarca' element={<FormMarca/>} />
@@ -46,6 +48,7 @@ function App() {
             <Route path='/nuevoremito' element={<FormRemito/>}/>
             <Route path='/remitos/:id' element={<FormLineasRemito/>}/>
             <Route path='/reporteproveedores' element={<ReporteProveedores/>}/>
+            <Route path='/' element= {<Welcome/>}/>
             {/*<Route path='/' element={<FormTodasLasOC/>} />
             <Route path='/home' element={<Home/>} />
             
@@ -56,7 +59,7 @@ function App() {
           </Routes>
       </BrowserRouter>
     </div>
-      <footer className='App-footer'><h2>Realizado por Lucas Cabrera</h2></footer>
+    <footer className=''><em>© Realizado por Lucas Cabrera</em></footer>
   </div>
 }
 

@@ -3,21 +3,18 @@ import axios from 'axios'
 
 const initialState = {
     remitos:[],
-    proveedores:[],
     productos: [],
     lineasCompra: [],
     lineasremito: [],
     ordenesDeCompra: [],
     formasdepago: [],
     estadoremitos: "idle",
-    estadoproveedores: "idle",
     estadoproductos: "idle",
     estadolineascompra: "idle",
     estadoordenesdecompra: "idle",
     estadoformasdepago: "idle",
     estadolineasremito: "idle",
     errorremito: null,
-    errorproveedor: null,
     errorlineacompra: null,
     errorlinearemito: null,
     errorproducto: null,
@@ -26,7 +23,6 @@ const initialState = {
 }
 
 const URL_BASE_OC = process.env.REACT_APP_URI_API + `/ordenesdecompra/`
-const URL_BASE_PROVEEDORES = process.env.REACT_APP_URI_API + `/proveedores`
 const URL_BASE_LINEASCOMPRA = process.env.REACT_APP_URI_API_REMITOS + `/lineascompra/`
 //const URL_BASE_PRODUCTOS = process.env.REACT_APP_URI_API_REMITOS + `/productos/`
 const URL_BASE_REMITOS = process.env.REACT_APP_URI_API_REMITOS
@@ -45,16 +41,6 @@ export const RecuperarRemitos = createAsyncThunk ('Remito/RecuperarRemitos', asy
     }
 })
 
-export const RecuperarProveedores = createAsyncThunk ('Remito/RecuperarProveedores', async () => {
-    try {
-        console.log(URL_BASE_PROVEEDORES)
-        const response = await axios.get(URL_BASE_PROVEEDORES)
-        return [...response.data]
-    } catch (error) {
-        console.log(console.error(error))
-        return error.message
-    }
-})
 
 export const RecuperarOrdenesDeCompra = createAsyncThunk ('Remito/RecuperarOrdenesDeCompra', async ()=> {
     try {
@@ -113,11 +99,6 @@ export const RemitoSlice = createSlice({
             state.status = "completed"
             state.remitos = action.payload
         })
-        .addCase(RecuperarProveedores.fulfilled, (state, action) => {
-            state.status = "completed"
-            state.proveedores = action.payload
-            console.log(state.proveedores)
-        })
         .addCase(RecuperarOrdenesDeCompra.fulfilled, (state, action) => {
             state.status = "completed"
             state.ordenesDeCompra = action.payload
@@ -148,10 +129,6 @@ export const SeleccionarTodosLosRemitos = (state) => {
     return state.remitos.remitos
 }
 
-export const SeleccionarTodosLosProveedores = (state) => {
-    return state.remitos.proveedores
-}
-
 export const SeleccionarTodasLasOrdenesDeCompra = (state) => { 
     return state.remitos.ordenesDeCompra
 }
@@ -162,11 +139,9 @@ export const SeleccionarTodasLasLineasDeCompra = (state) => {
 }
 
 export const EstadoRemitos = (state) => state.remitos.estadoremitos
-export const EstadoProveedores = (state) => state.remitos.estadoproveedores
 export const EstadoOrdenesDeCompra = (state) => state.remitos.estadoordenesdecompra
 export const EstadoLineasDeCompra = (state) => state.remitos.estadolineascompra
 
 export const ErroresRemitos = (state) => state.remitos.errorremito
-export const ErroresProveedores = (state) => state.remitos.errorproveedor
 export const ErroresOrdenesDeCompra = (state) => state.remitos.errorordendecompra
 export const ErroresLineasDeCompra = (state) => state.remitos.errorordencompra

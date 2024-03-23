@@ -1,7 +1,8 @@
 import {Cell, Pie, PieChart, ResponsiveContainer, Tooltip} from 'recharts'
-import {SeleccionarTodasLasOrdenesDeCompra, RecuperarOrdenesDeCompra, EstadoOrdenesDeCompra,
-    SeleccionarTodosLosProveedores, RecuperarProveedores, EstadoProveedores,
+import {SeleccionarTodasLasOrdenesDeCompra, RecuperarOrdenesDeCompra, EstadoOrdenesDeCompra
 }from '../../Features/RemitoSlice'
+import {SeleccionarTodosLosProveedores, RecuperarProveedores, EstadoProveedores
+} from '../../Features/OrdenCompraSlice'
 import { useSelector, useDispatch } from 'react-redux'
 import { useEffect } from 'react'
 
@@ -31,7 +32,9 @@ function ReporteProveedores () {
     },[estadoocs])
 
     useEffect(()=>{
+        console.log(estadoproveedores)
         if (estadoproveedores==="idle"){
+            console.log('se hace dispatch de recuperar proveedores')
           dispatch(RecuperarProveedores())
         }
     },[estadoproveedores])

@@ -2,10 +2,12 @@ import React from 'react'
 import { useEffect, useState } from 'react'
 import {useDispatch, useSelector } from 'react-redux'
 import {SeleccionarTodasLasOrdenesDeCompra, RecuperarOrdenesDeCompra, EstadoOrdenesDeCompra,
-  SeleccionarTodosLosProveedores, RecuperarProveedores, EstadoProveedores,
   SeleccionarTodasLasLineasDeCompra, RecuperarLineasDeCompra, EstadoLineasDeCompra,
   AgregarRemito
 } from '../Features/RemitoSlice'
+import {
+  SeleccionarTodosLosProveedores, RecuperarProveedores, EstadoProveedores
+} from '../Features/OrdenCompraSlice'
 import Input from './Common/Input'
 import Table from 'react-bootstrap/Table'
 import {useForm, useFieldArray} from 'react-hook-form'
