@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import ocs from './OrdenesDeCompra.js'
+import auth from './auth.js'
 import remitos from './Remitos.js'
 
 const router = Router()
@@ -10,6 +11,7 @@ router.route('/').get(function(req,res) {
 })
 
 router.use('/', ocs)
+router.use('/auth', auth)
 router.use('/remitos/', remitos)
 
 export default router
