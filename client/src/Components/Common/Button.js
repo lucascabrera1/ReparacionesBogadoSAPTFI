@@ -1,5 +1,6 @@
-export default function Button({type = "button", onClick, className ='px-2 py-1', children}) {
-    return (
-        <button type={type} onClick={onClick} className={className}>{children}</button>
-    )
+import Button from 'react-bootstrap/Button';
+
+export default function ButtonApp({type = "button", onClick, variant, children}) {
+
+    return <Button type={type} onClick={onClick} variant={variant} size="md">{children}</Button>;
 }

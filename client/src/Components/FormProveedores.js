@@ -6,7 +6,7 @@ import {SeleccionarTodosLosProveedores,
   EliminarProveedor
 } from '../Features/OrdenCompraSlice'
 import Table from 'react-bootstrap/Table'
-import Button from 'react-bootstrap/Button'
+import ButtonApp from './Common/Button'
 import { NavLink, useNavigate } from 'react-router-dom'
 
 function FormProveedores() {
@@ -27,10 +27,15 @@ function FormProveedores() {
       if (ok) {dispatch(EliminarProveedor(_id))}
   }
 
+  const handleEdit = (_id) => {
+    navigate(`/proveedores/${_id}`);
+  }
+
   return (
     <div>
-        <Table className= 'table table-success table-bordered border-dark'>
-          <thead>
+        <h2>Proveedores</h2>
+        <Table className= 'table table-success table-bordered border-dark table-sm'>
+          <thead className='table-dark'>
               <tr>
                 <th>Razón Social</th>
                 <th>Cuit</th>
@@ -51,16 +56,14 @@ function FormProveedores() {
                   <td>{proveedor.email}</td>
                   <td>{proveedor.localidad}</td>
                   <td>{proveedor.telefono}</td>
-                  <td><NavLink
-                        className="button"
-                        style={{backgroundColor: 'yellow'}}
-                        to={`/proveedores/${proveedor._id}`} >
-                          Modificar
-                      </NavLink> {' '}
-                      <Button variant='danger' size='lg' 
+                  <td><ButtonApp variant='primary'
+                        onClick={()=> handleEdit(proveedor._id)}>
+                        Modificar
+                      </ButtonApp>
+                      <ButtonApp variant='danger'
                         onClick={()=> handleDelete(proveedor._id, proveedor.razonsocial)}>
                         Eliminar
-                      </Button> {' '}
+                      </ButtonApp> {' '}
                   </td>
                 </tr>
                 }
@@ -68,10 +71,10 @@ function FormProveedores() {
             }
           </tbody>
       </Table>
-      <Button variant='primary' size='md'
+      <ButtonApp variant='primary' 
         onClick={(e)=> { e.preventDefault(); navigate('/proveedor')}}>
-        Agregar nuevo
-      </Button>
+        Nuevo
+      </ButtonApp>
       <NavLink 
         onClick={e => { e.preventDefault(); navigate('/ordenesdecompra')}}>
         ...Atrás

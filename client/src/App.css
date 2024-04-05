@@ -40,3 +40,30 @@
 label {
   font-weight: bold;
 }
+
+footer {
+  margin-top: 1em;
+}
+
+button {
+  margin-right: 0.1em !important;
+  margin-left: 0.1em !important;
+  min-width: 5em;
+}
+
+fieldset {
+  margin-bottom: 1em !important;
+  border: 1px solid #666 !important;
+  padding:1px !important;
+  border-radius: 0.5em;
+}
+
+legend {
+  padding: 1px 10px !important;
+  float:none !important;
+  width:auto !important;
+}
+
+#formProveedor input {
+  margin: auto;
+}

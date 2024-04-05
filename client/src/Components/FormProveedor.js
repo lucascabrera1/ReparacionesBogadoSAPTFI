@@ -1,7 +1,7 @@
 import {useDispatch} from 'react-redux'
 import {useNavigate, useParams} from 'react-router-dom'
 import {useForm} from 'react-hook-form'
-import Button from 'react-bootstrap/esm/Button'
+import ButtonApp from './Common/Button.js'
 import Input from './Common/Input'
 import {AgregarProveedor, ModificarProveedor} from '../Features/OrdenCompraSlice.js'
 import Form from 'react-bootstrap/Form'
@@ -43,14 +43,14 @@ function FormProveedor() {
   }
 
   return (
-    <div className='App d-flex flex-column justify-content-md-center align-items-center'>
-      Ingrese los datos del proveedor a agregar
-      <Form 
-        style={{width: '450px', border: '2px solid black'}}
+    <div className='d-flex flex-column justify-content-md-center align-items-center text-center'>
+      <Form id="formProveedor"
+        style={{width: '450px'}}
         onSubmit={handleSubmit(handleSubmitProveedor)}
         >
+          <fieldset>
+            <legend>Datos del proveedor</legend>
         <Form.Group className="mb-3 " controlId="dob">
-          <br/>
           <Input
             type="text"
             name="razonsocial"
@@ -66,7 +66,6 @@ function FormProveedor() {
                 minLength: "al menos 2 caracteres"
             }}
           />
-          <br/>
           <Input
             type="number"
             name="cuit"
@@ -82,7 +81,6 @@ function FormProveedor() {
                 minLength: "al menos 8 caracteres"
             }}
           />
-          <br/>
           <Input
             type="text"
             name="direccion"
@@ -98,7 +96,6 @@ function FormProveedor() {
                 minLength: "al menos 2 caracteres"
             }}
           />
-          <br/>
           <Input
             type="email"
             name="email"
@@ -108,7 +105,6 @@ function FormProveedor() {
             errors= {errors}
             optionMsgErrors={{required: "El correo electrónico es obligatorio"}}
           />
-          <br/>
           <Input
             type="text"
             name="localidad"
@@ -124,7 +120,6 @@ function FormProveedor() {
                 minLength: "al menos 2 caracteres"
             }}
           />
-          <br/>
           <Input
             type="text"
             name="telefono"
@@ -140,25 +135,26 @@ function FormProveedor() {
                 minLength: "al menos 8 caracteres"
             }}
           />
-          <br/>
         </Form.Group>
         <Form.Group>
-          <Button 
+          <ButtonApp 
             className='col-lg-4' 
-            style={{backgroundColor: 'green', float: 'left'}} 
+            variant='success'
             type="submit" 
-            size='lg'>
+            >
               Save
-          </Button>
-          <Button
+          </ButtonApp>
+          <ButtonApp
               className='col-lg-4'
               style={{float: 'right'}}
-              variant="secondary" size = "lg"
+              variant="secondary"
               onClick={e => { e.preventDefault(); navigate('/proveedores')}}>
                 Cancel
-          </Button>
+          </ButtonApp>
         </Form.Group>
+        </fieldset>
       </Form>
+      
     </div>
   )
 }

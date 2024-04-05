@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
 import {NavLink, useNavigate} from 'react-router-dom'
 import { useEffect } from 'react'
-import Button from 'react-bootstrap/Button'
+import ButtonApp from './Common/Button.js'
 import Table from 'react-bootstrap/Table'
 import {RecuperarMarcas, EstadoMarcas, SeleccionarTodasLasMarcas, EliminarMarca} from '../Features/OrdenCompraSlice.js'
 
@@ -24,11 +24,12 @@ function FormMarcas() {
     return (<div>
         <h2>Marcas Recuperadas</h2>
         {
-            <Table className= 'table-success table-bordered border-dark'>
-                <thead>
+            <Table className= 'table table-success table-bordered border-dark table-sm'>
+                <thead className='table-dark'>
                     <tr>
                         <th>Nombre</th>
                         <th>Pais de Origen</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -37,10 +38,10 @@ function FormMarcas() {
                             return <tr key={marca._id}>
                                 <td>{marca.nombre}</td>
                                 <td>{marca.paisorigen}</td>
-                                <td><Button variant='danger' size='lg' 
+                                <td><ButtonApp variant='danger' 
                                     onClick={()=> handleDelete(marca._id, marca.nombre)}>
                                         Eliminar
-                                    </Button> {' '}
+                                    </ButtonApp> {' '}
                                 </td>
                             </tr>
                         })
@@ -48,11 +49,11 @@ function FormMarcas() {
                 </tbody>
             </Table>
         }
-        <Button 
+        <ButtonApp 
         onClick={ e => { e.preventDefault(); navigate('/nuevamarca')}}
         variant='info' size='lg'>
             Agregar
-        </Button> {' '}
+        </ButtonApp> {' '}
         <NavLink onClick={e => { e.preventDefault(); navigate('/ordenesdecompra')}}>...Atrás</NavLink>
     </div>)
 }

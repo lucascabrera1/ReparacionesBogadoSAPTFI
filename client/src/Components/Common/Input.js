@@ -2,7 +2,7 @@ import React from 'react'
 import styles from '../../../src/App.css'
 
 function Input({type, 
-    classname = ` `,
+    classname = `form-control`,
     disabled = false,
     name, 
     label,
