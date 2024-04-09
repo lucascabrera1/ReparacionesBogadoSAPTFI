@@ -1,26 +1,25 @@
 import User from "../Models/User.js"
+import Role from "../Models/Role.js"
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 dotenv.config({path: './.env'})
 const stoken = process.env.SECRET
 
 const SignIn = async (req, res, next) => {
-    console.log(stoken)
-    const {email, contraseña} = req.body
-    console.log(email, contraseña)
-    const user = await User.findOne({email: email})
+    const {email, password} = req.body
+    const user = await User.findOne({email: email}).populate("roles")
     if (!user) {
-        return res.status(400).send("User or password invalid")
+        return res.status(400).send("User doesn't exists")
     }
-    const pwdisvalid = await user.validatePassword(contraseña)
+    let pwdisvalid = await user.validatePassword(password)
     if (!pwdisvalid) {
         return res.status(400).send({user: null, token: null})
     }
     console.log('password: ' + pwdisvalid)
     const token = jwt.sign({id: user._id}, stoken, {
-        expiresIn: 60 * 60 *24
+        expiresIn: 60 * 60
     })
-    res.json({user: user, token: token})
+    res.json({user, token})
 }
 
 const Me =  async (req, res, next) => {
@@ -34,24 +33,24 @@ const Me =  async (req, res, next) => {
 
 const SignUp = async (req, res, next) => {
     const {nombreUsuario, email, password, roles} = req.body
-    console.log(req.body)
-    const result = await User.schema.methods.encryptPassword(password)
-    console.log(result)
     const newUser = new User ({
         nombreUsuario,
         email,
-        password: await User.schema.methods.encryptPassword(password),
-        roles
+        password: await User.schema.methods.encryptPassword(password)
     })
-    const savedUser = await newUser.save()
-    console.log(stoken)
     const token = jwt.sign({_id : newUser._id}, stoken, {
-        expiresIn: 60
+        expiresIn: 60 * 60
     })
-
-    res.status(200).json(savedUser)
-    //res.send(newUser)
-    console.log(newUser)
+    if (roles) {
+        const foundRoles = await Role.find({nombre: {$in: roles}})
+        newUser.roles = foundRoles.map(role => role._id)
+    } else {
+        const role = await Role.findOne({nombre: "user"})
+        newUser.roles = [role._id]
+    }
+    const savedUser = await newUser.save()
+    res.status(200).json({token})
+    console.log(savedUser)
 }
 
 export default {SignIn, SignUp, Me}

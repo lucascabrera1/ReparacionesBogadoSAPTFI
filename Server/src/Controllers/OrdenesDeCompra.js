@@ -167,7 +167,7 @@ const EliminarProducto = async (req, res) => {
         if (!productoencontrado || productoencontrado.length === 0){
             return res.status(404).json({
                 error: true,
-                message: "Marca no encontrada"
+                message: "Producto no encontrado"
             })
         }
         return res.status(200).json(productoencontrado)
@@ -269,30 +269,6 @@ const AgregarLineaCompra = async (req, res) => {
     }
 }
 
-/* const RecuperarLineasCompra = async (req, res) => {
-    try {
-        const lcs = await LineaCompra.find({})
-        let proveedoresdevueltos = []
-        for (const elem of proveedores) {
-            let newElem = {
-                _id: elem._id,
-                cuit : elem.cuit,
-                direccion : elem.direccion,
-                razonsocial: elem.razonsocial,
-                email: elem.email,
-                localidad: elem.localidad,
-                telefono: elem.telefono
-            }
-            proveedoresdevueltos.push(newElem)
-        }
-        console.log(proveedoresdevueltos)
-        return res.send(proveedoresdevueltos)
-    } catch (error) {
-        console.error(error.message)
-        return res.status(500).json({message: error.message})
-    }
-} */
-
 const RecuperarProveedores = async (req, res) => {
     try {
         const proveedores = await Proveedor.find({})
@@ -314,6 +290,24 @@ const RecuperarProveedores = async (req, res) => {
     } catch (error) {
         console.error(error.message)
         return res.status(500).json({message: error.message})
+    }
+}
+
+const RecuperarUnProveedor = async (req, res) => {
+    try {
+        const proveedor = await Proveedor.findById({_id: req.params.id})
+        let proveedorDevuelto = {
+            _id : proveedor._id,
+            cuit: proveedor.cuit,
+            direccion: proveedor.direccion,
+            razonsocial: proveedor.razonsocial,
+            email: proveedor.email,
+            localidad: proveedor.localidad,
+            telefono: proveedor.telefono
+        }
+        return res.send(proveedorDevuelto)
+    } catch (error) {
+        console.error(error.message)
     }
 }
 
@@ -432,6 +426,7 @@ export default {GenerarOrdenDeCompra,
     ModificarProducto,
     EliminarProducto,
     RecuperarProductos,
+    RecuperarUnProveedor,
     RecuperarCategorias,
     RecuperarOrdenDeCompra,
     RecuperarFormasDePago,

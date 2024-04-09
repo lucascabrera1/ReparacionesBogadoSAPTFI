@@ -1,5 +1,7 @@
 import express from 'express'
 import ocs from '../Controllers/OrdenesDeCompra.js'
+import verifyToken from "../Controllers/VerifyToken.js"
+import {isEncargadoDeCompras, isAdmin} from '../Middlewares/authJwt.js'
 import morgan from 'morgan'
 
 const router = express()
@@ -30,12 +32,13 @@ router.route('/proveedores')
     .post(ocs.AgregarProveedor)
 router.route('/categorias').get(ocs.RecuperarCategorias)
 router.route('/marcas/:id').delete(ocs.EliminarMarca)
-router.route('/proveedores/:id')
-    .delete(ocs.EliminarProveedor)
+router.route('/proveedores/:id/:idUser')
+    .delete( [verifyToken, isAdmin], ocs.EliminarProveedor)
     .patch(ocs.ModificarProveedor)
-router.route('/productos/:id')
+    .get(ocs.RecuperarUnProveedor)
+router.route('/productos/:id/:idUser')
     .patch(ocs.ModificarProducto)
-    .delete(ocs.EliminarProducto)
+    .delete([verifyToken, isEncargadoDeCompras], ocs.EliminarProducto)
 router.route('/productos/:idProveedor')
     .get(ocs.RecuperarProductosPorProveedor)
 router.route('/ordenesdecompra')

@@ -41,7 +41,10 @@ schemaUser.methods.encryptPassword = async (contraseña) => {
 }
 
 schemaUser.methods.validatePassword = function (contraseña) {
-    return bcrypt.compare(contraseña, this.contraseña)
+    console.log('inicio console log del modelo')
+    console.log(contraseña, this.password)
+    console.log('fin console log del modelo')
+    return bcrypt.compare(contraseña, this.password)
 }
 
 export default model('User', schemaUser)

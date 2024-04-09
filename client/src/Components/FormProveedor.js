@@ -9,15 +9,13 @@ import Form from 'react-bootstrap/Form'
 function FormProveedor() {
 
   const params = useParams()
+  console.log(params)
   const navigate = useNavigate()
   const dispatch = useDispatch()
   //const estadoproveedores = useSelector(state => state.ordenesDeCompra.proveedores)
   const {register, handleSubmit, formState : {errors}} = useForm()
 
   const handleSubmitProveedor = async (data, e) => {
-    console.log('params')
-    console.log(params)
-    console.log('fin params')
     if (params.id) {
       try {
         console.log(data)

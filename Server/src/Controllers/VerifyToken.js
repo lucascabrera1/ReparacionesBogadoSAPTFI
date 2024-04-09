@@ -3,9 +3,10 @@ import dotenv from 'dotenv'
 dotenv.config({path: './.env'})
 const stoken = process.env.SECRET
 
-function verifyToken (req, res, next) {
-    const bearer = req.headers['authorization'];
-    const token = bearer.split(' ')[1]
+function verifyToken  (req, res, next)  {
+    //const bearer = req.headers['authorization'];
+    //const token = bearer.split(' ')[1]
+    const token = req.headers['x-access-token']
     if (!token) {
         return res.status(401).json({
             auth: false,
@@ -13,6 +14,7 @@ function verifyToken (req, res, next) {
         })
     }
     try {
+        console.log(req.body)
         const decoded = jwt.verify(token, stoken)
         console.log(decoded)
         req.userId = decoded.id

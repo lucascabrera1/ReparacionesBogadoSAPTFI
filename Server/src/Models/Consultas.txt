@@ -27,6 +27,7 @@ db.proveedors.insertMany ([
     {"razonsocial":"Giovanni Bessett","cuit":"4293139974","email":"gbessetto@google.co.jp","direccion":"00966 Wayridge Court","localidad":"Gabao","telefono":"381-157-6202"}
 ])
 
+//agregar productos
 db.productos.insertMany([
     {
         "descripcion" : "teclado gamer",
@@ -62,3 +63,52 @@ db.productos.insertMany([
         "stock": 9
     }
 ])
+
+//agregar roles
+db.roles.insertMany ([
+    {
+        "nombre": "Encargado de Compras",
+        "descripcion":"Puede gestionar ordenes de Compras"
+    },
+    {
+        "nombre": "Encargado de Ventas",
+        "descripcion":"Puede gestionar las ventas"
+    },
+    {
+        "nombre": "",
+        "descripcion":""
+    },
+    {
+        "nombre": "",
+        "descripcion":""
+    },
+])
+
+
+db.users.update({"_id" : ObjectId("660fa0e6910dbc24ca7e225b")}, {
+    $push: {
+        roles: {
+            $each: [
+                ObjectId("661163fac29d0eff0426cc9e"),
+                ObjectId("660f62fb68491856fdbb856f")
+            ]}
+        }
+    }
+)
+
+db.users.update({"_id" : ObjectId("660fa0e6910dbc24ca7e225b")}, {
+    $pullAll: {
+        roles: [ 
+            ObjectId("660f62fb68491856fdbb856f"),
+            "661163fac29d0eff0426cc9e",
+            "661163fac29d0eff0426cc9e",
+            ObjectId("661163fac29d0eff0426cc9e"),
+            ObjectId("661163fac29d0eff0426cc9e"),
+            ObjectId("661163fac29d0eff0426cc9e"),
+            ObjectId("661163fac29d0eff0426cc9e"),
+            ObjectId("661163fac29d0eff0426cc9e"),
+            "661163fac29d0eff0426cc9e",
+            "661163fac29d0eff0426cc9e"
+        ]}
+    }
+)
