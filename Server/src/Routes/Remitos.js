@@ -1,6 +1,8 @@
 import express from 'express'
 import remitos from '../Controllers/Remitos.js'
 import morgan from 'morgan'
+import verifyToken from "../Controllers/VerifyToken.js"
+import {isEncargadoDeDeposito, isAdmin} from '../Middlewares/authJwt.js'
 
 const router = express()
 
@@ -15,16 +17,21 @@ router.use(morgan('short'))
     next()
 })
 
-router.route('/inicio').get(remitos.RecuperarOrdenesDeCompra)
-router.route('/linearemito').post(remitos.AgregarLineaRemito)
-router.route('/linearemito/:idremito/:idlinearemito').delete(remitos.EliminarLineaRemito)
-router.route('/nuevoremito').post(remitos.AgregarRemito)
+router.route('/inicio')
+    .get([verifyToken, isEncargadoDeDeposito], remitos.RecuperarOrdenesDeCompra)
+router.route('/linearemito')
+    .post([verifyToken, isEncargadoDeDeposito], remitos.AgregarLineaRemito)
+router.route('/linearemito/:idremito/:idlinearemito')
+    .delete([verifyToken, isEncargadoDeDeposito], remitos.EliminarLineaRemito)
+router.route('/nuevoremito')
+    .post([verifyToken, isEncargadoDeDeposito], remitos.AgregarRemito)
 router.route('/remito/:id')
-.delete(remitos.EliminarRemito)
-.get(remitos.RecuperarRemitoDeCompra)
+    .delete([verifyToken, isEncargadoDeDeposito], remitos.EliminarRemito)
+    .get([verifyToken, isEncargadoDeDeposito], remitos.RecuperarRemitoDeCompra)
 router.route('/todos')
-.get(remitos.RecuperarRemitos)
-.post(remitos.AgregarRemito)
-router.route('/lineascompra/:idoc').get(remitos.RecuperarLineasDeCompra)
+    .get([verifyToken, isEncargadoDeDeposito], remitos.RecuperarRemitos)
+    .post([verifyToken, isEncargadoDeDeposito], remitos.AgregarRemito)
+router.route('/lineascompra/:idoc')
+    .get([verifyToken, isEncargadoDeDeposito], remitos.RecuperarLineasDeCompra)
 
 export default router

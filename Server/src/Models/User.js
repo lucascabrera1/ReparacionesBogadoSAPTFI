@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 import bcrypt from "bcryptjs"
 
-const schemaUser = new Schema({
+let schemaUser = new Schema({
     nombreUsuario: {
         type: String,
         required: true,
@@ -35,16 +35,16 @@ const schemaUser = new Schema({
     versionKey: false
 })
 
-schemaUser.methods.encryptPassword = async (contraseña) => {
+schemaUser.methods.encryptPassword = async (password) => {
     const salt = await bcrypt.genSalt(4)
-    return bcrypt.hash(contraseña, salt)
+    return bcrypt.hash(password, salt)
 }
 
-schemaUser.methods.validatePassword = function (contraseña) {
+schemaUser.methods.validatePassword = function (password) {
     console.log('inicio console log del modelo')
-    console.log(contraseña, this.password)
+    console.log(password, this.password)
     console.log('fin console log del modelo')
-    return bcrypt.compare(contraseña, this.password)
+    return bcrypt.compare(password, this.password)
 }
 
 export default model('User', schemaUser)

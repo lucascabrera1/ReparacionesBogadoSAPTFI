@@ -21,6 +21,7 @@ import Welcome from './Components/Welcome.js'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import NavBarBootstrap from './Components/Common/NavBarBootstrap.js'
+import Login from './Components/Auth/LoginForm.js'
 
 function App() {
   return <div  className="container-fluid">
@@ -34,9 +35,9 @@ function App() {
             <Route path='/ordenesdecompra' element={<FormGestionOC/>}/>
             <Route path='/nuevamarca' element={<FormMarca/>} />
             <Route path='*' element= {<NotFoundPage/>}/>
-            <Route path='/todaslasmarcas' element={<FormMarcas/>}/>
+            <Route path='/todaslasmarcas' element={<ProtectedRoute><FormMarcas/></ProtectedRoute>}/>
             <Route path='/proveedores' element={<FormProveedores/>}/>
-            <Route path='/productos' element={<FormProductos/>}/>
+            <Route path='/productos' element={<ProtectedRoute><FormProductos/></ProtectedRoute>}/>
             <Route path='/producto' element={<FormProducto/>} />
             <Route path='/productos/:id' element={<FormProducto/>} />
             <Route path='/proveedor' element= {<FormProveedor/>}/>
@@ -48,6 +49,7 @@ function App() {
             <Route path='/nuevoremito' element={<FormRemito/>}/>
             <Route path='/remitos/:id' element={<FormLineasRemito/>}/>
             <Route path='/reporteproveedores' element={<ReporteProveedores/>}/>
+            <Route path='/login' element={<Login/>}></Route>
             <Route path='/' element= {<Welcome/>}/>
             {/*<Route path='/' element={<FormTodasLasOC/>} />
             <Route path='/home' element={<Home/>} />

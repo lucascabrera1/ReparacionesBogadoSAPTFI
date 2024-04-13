@@ -246,23 +246,23 @@ export const OrdenCompraSlice = createSlice({
             state.proveedores = action.payload
         })
         .addCase(RecuperarMarcas.fulfilled, (state, action) => {
-            state.status = "completed"
+            state.estadomarcas = "completed"
             state.marcas = action.payload
         })
         .addCase(RecuperarCategorias.fulfilled, (state, action) => {
-            state.status = "completed"
+            state.estadocategorias = "completed"
             state.categorias = action.payload
         })
         .addCase(RecuperarProductos.fulfilled, (state, action) => {
-            state.status = "completed"
+            state.estadoproductos = "completed"
             state.productos = action.payload
         })
         .addCase(RecuperarFormasDePago.fulfilled, (state, action) => {
-            state.status = "completed"
+            state.estadoformasdepago = "completed"
             state.formasdepago = action.payload
         })
         .addCase(RecuperarOrdenesDeCompra.fulfilled, (state, action) => {
-            state.status = "completed"
+            state.estadoordenesdecompra = "completed"
             state.ordenesDeCompra = action.payload
         })
         .addCase(RecuperarOrdenDeCompra.fulfilled, (state, action) => {
@@ -275,11 +275,11 @@ export const OrdenCompraSlice = createSlice({
             })
         })
         .addCase(RecuperarProductosPorProveedor.fulfilled, (state, action) => {
-            state.status = "completed"
+            state.estadoproductos = "completed"
             state.productos = action.payload
         })
         .addCase(AgregarMarca.fulfilled, (state, action) => {
-            state.status = "completed"
+            state.estadomarcas = "completed"
             state.marcas.push(action.payload)
         })
         .addCase(AgregarProveedor.fulfilled, (state, action) => {
@@ -356,6 +356,8 @@ export const SeleccionarTodasLasLineasCompra = (state) => {
 }
 
 export const SeleccionarTodasLasOrdenesDeCompra = (state) => {
+    console.log(state.ordenesDeCompra.ordenesDeCompra)
+    console.log(state.auth)
     return state.ordenesDeCompra.ordenesDeCompra
 }
 

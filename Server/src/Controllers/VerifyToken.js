@@ -4,9 +4,17 @@ dotenv.config({path: './.env'})
 const stoken = process.env.SECRET
 
 function verifyToken  (req, res, next)  {
-    //const bearer = req.headers['authorization'];
+    //const bearer = req.headers['x-access-token'];
     //const token = bearer.split(' ')[1]
-    const token = req.headers['x-access-token']
+    console.log("llega al verify token")
+    const bearer = req.headers["authorization"]
+    console.log("bearer de req.headers['authorization']")
+    console.log(req.headers)
+    console.log(bearer)
+    const token = bearer.split(' ')[1]
+    console.log("pasa por el verify token")
+    console.log(token)
+    console.log("arriba muestra el token")
     if (!token) {
         return res.status(401).json({
             auth: false,
@@ -19,6 +27,7 @@ function verifyToken  (req, res, next)  {
         console.log(decoded)
         req.userId = decoded.id
         console.log(req.userId)
+        console.log("pasa exitosamente el verify token")
         next();
     } catch (error) {
         res.status(400).json({
