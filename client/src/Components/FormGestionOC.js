@@ -7,6 +7,7 @@ function FormGestionOC() {
         <li><NavLink to={'/proveedores'}>Gestionar Proveedores</NavLink></li>
         <li><NavLink to={'/productos'}>Gestionar Productos</NavLink></li>
         <li><NavLink to={'/todaslasordenesdecompra'}>Gestionar Ordenes de Compra</NavLink></li>
+        <li><NavLink to={'/reporteproveedores'}>Ver Reporte de Proveedores</NavLink></li>
     </ul>
   )
 }

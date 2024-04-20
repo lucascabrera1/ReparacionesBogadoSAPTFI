@@ -1,24 +1,31 @@
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
+import { NavLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default function NavBarBootstrap() {
+    const navigate = useNavigate();
+
+    const navegar = function(url) {
+        navigate(url);
+    }
 
     return (
         <Navbar expand="lg" bg="primary" data-bs-theme="dark">
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav>
-                        <Nav.Link href="/">Inicio</Nav.Link>
+                        <NavLink className="nav-link" to="/">Inicio</NavLink>
                         <NavDropdown title="Ordenes de Compra" id="basic-nav-dropdown">
-                            <NavDropdown.Item href="/todaslasmarcas">Marcas</NavDropdown.Item>
-                            <NavDropdown.Item href="/proveedores">Proveedores</NavDropdown.Item>
-                            <NavDropdown.Item href="/productos">Productos</NavDropdown.Item>
-                            <NavDropdown.Item href="/todaslasordenesdecompra">Ordenes de Compra</NavDropdown.Item>
+                            <NavDropdown.Item onClick={() => {navegar('/todaslasmarcas')}}>Marcas</NavDropdown.Item>
+                            <NavDropdown.Item onClick={() => {navegar('/proveedores')}}>Proveedores</NavDropdown.Item>
+                            <NavDropdown.Item onClick={() => {navegar('/productos')}}>Productos</NavDropdown.Item>
+                            <NavDropdown.Item onClick={() => {navegar('/todaslasordenesdecompra')}}>Ordenes de Compra</NavDropdown.Item>
                         </NavDropdown>
-                        <Nav.Link href="/ventas">Ventas</Nav.Link>
-                        <Nav.Link href="/remitos">Ingreso de Remitos</Nav.Link>
-                        <Nav.Link href="/reparaciones">Ordenes de Reparaciones</Nav.Link>
+                        <NavLink className="nav-link" to="/ventas">Ventas</NavLink>
+                        <NavLink className="nav-link" to="/remitos">Ingreso de Remitos</NavLink>
+                        <NavLink className="nav-link" to="/reparaciones">Ordenes de Reparaciones</NavLink>
                     </Nav>
                 </Navbar.Collapse>
         </Navbar>

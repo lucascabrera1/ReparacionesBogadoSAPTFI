@@ -95,11 +95,14 @@ export const AgregarOrdenDeCompra = createAsyncThunk('/ordenCompra/AgregarOrdenD
 
 export const RecuperarOrdenesDeCompra = createAsyncThunk ('ordenCompra/RecuperarOrdenesDeCompra', async ()=> {
     try {
+
         const response = await axios.get(URL_BASE_OC)
-        return [...response.data]
+        const result = {error: false, data : response.data}
+        return result
     } catch (error) {
-        console.log(console.error(error))
-        return error.message
+        const result = {error: true, message: error.response.status==401?"No Autorizado":error.message}
+        console.error(error)
+        return result
     }
 })
 
@@ -263,7 +266,11 @@ export const OrdenCompraSlice = createSlice({
         })
         .addCase(RecuperarOrdenesDeCompra.fulfilled, (state, action) => {
             state.estadoordenesdecompra = "completed"
-            state.ordenesDeCompra = action.payload
+            if (!action.payload.error) {
+                state.ordenesDeCompra = action.payload.data
+            } else {
+                state.errorordendencompra = action.payload.message
+            }
         })
         .addCase(RecuperarOrdenDeCompra.fulfilled, (state, action) => {
             state.ordenesDeCompra = state.ordenesDeCompra.map(item => {

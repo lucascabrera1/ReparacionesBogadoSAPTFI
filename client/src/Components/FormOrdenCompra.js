@@ -164,12 +164,12 @@ function FormOrdenCompra() {
 
   return (
     <div>
-      <Form onSubmit={handleSubmit(handleSubmitLC)}>
+      {/* <Form onSubmit={handleSubmit(handleSubmitLC)}>
         <div>
           formulario dentro de otro formulario
           <Button type='submit'> Enviar linea compra</Button>
         </div>
-      </Form>
+      </Form> */}
       <br/>
       Acá voy a generar UNA orden de compra
       <Form onSubmit={handleSubmit(handleSubmitOC)} style={{border: '2px solid black'}}>

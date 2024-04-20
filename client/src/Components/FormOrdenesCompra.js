@@ -3,6 +3,7 @@ import {useDispatch, useSelector } from 'react-redux'
 import {SeleccionarTodasLasOrdenesDeCompra,
   RecuperarOrdenesDeCompra,
   EstadoOrdenesDeCompra,
+  ErroresOrdenesDeCompra
 } from '../Features/OrdenCompraSlice'
 import Table from 'react-bootstrap/Table'
 import Button from 'react-bootstrap/Button'
@@ -11,6 +12,9 @@ import FormLineasCompra from './FormLineasCompra.js'
 import { formatHumanDateTime, formatHumanDate } from '../Util/DateFormat.js'
 
 function FormOrdenesCompra() {
+  
+  const erroresocs = useSelector(ErroresOrdenesDeCompra)
+
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -26,7 +30,7 @@ function FormOrdenesCompra() {
     }
   },[estadoocs])
 
-  return (
+  return erroresocs ? (<div className='alert alert-danger'>{erroresocs}</div>) :  (
     <div>aca devolvemos todas las ordenes de compra
       <ul><li><NavLink to={'/nuevaordendecompra'}>Generar una nueva orden de compra</NavLink></li></ul>
       <Table className= 'table table-success table-bordered border-dark'>

@@ -15,16 +15,16 @@ const Login = () =>{
     const [errMsg, setErrMsg] = useState('')
 
     const SubmitUser = async (user) => {
-        console.log(user)
-        const userData = await dispatch(login(user)).unwrap()
-        console.log('inicio userData')
-        console.log(userData)
-        console.log('fin userData')
-        if (userData) {
-            navigate("/todaslasmarcas")
-        } else {
-            setErrMsg("Credenciales inválidas")
-
+        try {
+            const userData = await dispatch(login(user)).unwrap()
+            if (userData) {
+                navigate("/ordenesdecompra")
+            } else {
+                setErrMsg("Credenciales inválidas")
+                alert ("usuario y/o contraseña incorrectos")
+            }
+        } catch (error) {
+            console.error(error)
         }
     }
     

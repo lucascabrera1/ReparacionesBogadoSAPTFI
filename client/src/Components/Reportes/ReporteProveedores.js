@@ -12,7 +12,6 @@ function ReporteProveedores () {
         var simbolos, color;
         simbolos = "0123456789ABCDEF";
         color = "#";
-    
         for(var i = 0; i < 6; i++){
             color = color + simbolos[Math.floor(Math.random() * 16)];
         }
@@ -20,10 +19,11 @@ function ReporteProveedores () {
     }
 
     const estadoocs = useSelector(EstadoOrdenesDeCompra)
-    const ocs = useSelector(SeleccionarTodasLasOrdenesDeCompra)
     const estadoproveedores = useSelector(EstadoProveedores)
-    const proveedores = useSelector(SeleccionarTodosLosProveedores)
     const dispatch = useDispatch()
+    const ocs = useSelector(SeleccionarTodasLasOrdenesDeCompra)
+    console.log(ocs)
+    const proveedores = useSelector(SeleccionarTodosLosProveedores)
 
     useEffect(()=>{
         if (estadoocs==="idle"){
@@ -54,6 +54,9 @@ function ReporteProveedores () {
         ocsxproov.push(informe)
     })
 
+    console.log(repetidos)
+    console.log(ocsxproov)
+
     return (
         <div style={{width: '100%', height: 500}}>
             <h1>Mejores Proveedores</h1>
@@ -74,7 +77,7 @@ function ReporteProveedores () {
                     >
                         {ocsxproov.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={generarNuevoColor()}/>
-                        ))} 
+                        ))}
                     </Pie>
                     <Tooltip/>
                 </PieChart>

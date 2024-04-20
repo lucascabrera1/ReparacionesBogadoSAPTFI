@@ -69,9 +69,6 @@ const RecuperarOrdenesDeCompra = async (req, res, next) => {
 
 const RecuperarOrdenDeCompra = async (req, res, next) => {
     try {
-        console.log('-----------------inicio req.params-----------------')
-        console.log(req.params)
-        console.log('-----------------fin req.params-----------------')
         const oc = await OrdenDeCompra.findById({_id : req.params.id})
         if (!oc){
             return res.status(404).json({
