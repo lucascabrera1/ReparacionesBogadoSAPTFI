@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import {useDispatch, useSelector } from 'react-redux'
-import {RecuperarRemitos, EstadoRemitos, SeleccionarTodosLosRemitos} from '../Features/RemitoSlice.js'
+import {RecuperarRemitos, EstadoRemitos, RecuperarOrdenesDeCompra, SeleccionarTodosLosRemitos, 
+  EstadoOrdenesDeCompra,  ErroresRemitos, ErroresOrdenesDeCompra} from '../Features/RemitoSlice.js'
 import Table from 'react-bootstrap/Table'
 import Button from 'react-bootstrap/Button'
 import { NavLink, useNavigate } from 'react-router-dom'
@@ -10,8 +11,13 @@ function FormRemitos() {
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
+
   const remitos = useSelector(SeleccionarTodosLosRemitos)
   const estadoremitos = useSelector(EstadoRemitos)
+  //const ocs = useSelector(SeleccionarTodasLasOrdenesDeCompra)
+  const estadoocs = useSelector(EstadoOrdenesDeCompra)
+  const erroresremito = useSelector(ErroresRemitos)
+  console.log(erroresremito)
   
   useEffect(()=>{
     if (estadoremitos==="idle"){
@@ -19,7 +25,13 @@ function FormRemitos() {
     }
   },[estadoremitos])
 
-  return (
+  useEffect(()=>{
+    if (estadoremitos==="idle"){
+      dispatch(RecuperarOrdenesDeCompra())
+    }
+  },[estadoocs])
+
+  return erroresremito ? (<div className='alert alert-danger'>{erroresremito}</div>) :  (
     <div>
       <h2 style={{backgroundColor: 'yellowgreen'}}>Remitos de Compra ingresados hasta el momento</h2>
       <Table className= 'table table-success table-bordered border-dark'>

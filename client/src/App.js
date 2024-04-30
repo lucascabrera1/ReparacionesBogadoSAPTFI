@@ -36,17 +36,17 @@ function App() {
             <Route path='/nuevamarca' element={<FormMarca/>} />
             <Route path='*' element= {<NotFoundPage/>}/>
             <Route path='/todaslasmarcas' element={<ProtectedRoute><FormMarcas/></ProtectedRoute>}/>
-            <Route path='/proveedores' element={<FormProveedores/>}/>
+            <Route path='/proveedores' element={<ProtectedRoute><FormProveedores/></ProtectedRoute>}/>
             <Route path='/productos' element={<ProtectedRoute><FormProductos/></ProtectedRoute>}/>
             <Route path='/producto' element={<FormProducto/>} />
             <Route path='/productos/:id' element={<FormProducto/>} />
             <Route path='/proveedor' element= {<FormProveedor/>}/>
             <Route path='/proveedores/:id' element= {<FormProveedor/>}/>
-            <Route path='/todaslasordenesdecompra' element= {<FormOrdenesCompra/>}/>
+            <Route path='/todaslasordenesdecompra' element= {<ProtectedRoute><FormOrdenesCompra/></ProtectedRoute>}/>
             <Route path='/nuevaordendecompra' element={<FormOrdenCompra/>}/>
             <Route path='/ordenesdecompra/:id' element={<FormLineasCompra/>}></Route>
-            <Route path='/remitos' element={<FormRemitos/>}/>
-            <Route path='/nuevoremito' element={<FormRemito/>}/>
+            <Route path='/remitos' element={<ProtectedRoute><FormRemitos/></ProtectedRoute>}/>
+            <Route path='/nuevoremito' element={<ProtectedRoute><FormRemito/></ProtectedRoute>}/>
             <Route path='/remitos/:id' element={<FormLineasRemito/>}/>
             <Route path='/reporteproveedores' element={<ReporteProveedores/>}/>
             <Route path='/login' element={<Login/>}></Route>

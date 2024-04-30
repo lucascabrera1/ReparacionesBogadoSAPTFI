@@ -3,15 +3,19 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { NavLink } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import {logOut, selectCurrentUser} from '../../Features/AuthSlice'
+import { useDispatch, useSelector } from 'react-redux';
 
 export default function NavBarBootstrap() {
-    const navigate = useNavigate();
 
+    const navigate = useNavigate();
     const navegar = function(url) {
         navigate(url);
     }
+    const dispatch = useDispatch()
+    const userlogged = useSelector(selectCurrentUser)
 
-    return (
+    return ( 
         <Navbar expand="lg" bg="primary" data-bs-theme="dark">
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
@@ -28,7 +32,7 @@ export default function NavBarBootstrap() {
                         <NavLink className="nav-link" to="/reparaciones">Ordenes de Reparaciones</NavLink>
                     </Nav>
                 </Navbar.Collapse>
+                {userlogged ? <li><NavLink to="/"><a onClick={()=> {dispatch(logOut())}}>Salir</a></NavLink></li>:<></>}
         </Navbar>
     )
-
 }

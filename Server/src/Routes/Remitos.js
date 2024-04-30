@@ -1,5 +1,6 @@
 import express from 'express'
 import remitos from '../Controllers/Remitos.js'
+import ocs from '../Controllers/OrdenesDeCompra.js'
 import morgan from 'morgan'
 import verifyToken from "../Controllers/VerifyToken.js"
 import {isEncargadoDeDeposito, isAdmin} from '../Middlewares/authJwt.js'
@@ -33,5 +34,7 @@ router.route('/todos')
     .post([verifyToken, isEncargadoDeDeposito], remitos.AgregarRemito)
 router.route('/lineascompra/:idoc')
     .get([verifyToken, isEncargadoDeDeposito], remitos.RecuperarLineasDeCompra)
+router.route('/proveedores')
+    .get([verifyToken, isEncargadoDeDeposito], ocs.RecuperarProveedores)
 
 export default router

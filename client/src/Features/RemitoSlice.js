@@ -1,5 +1,6 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit'
 import axios from 'axios'
+import ErrorRetornado from './ReturnError'
 
 const initialState = {
     remitos:[],
@@ -8,49 +9,87 @@ const initialState = {
     lineasremito: [],
     ordenesDeCompra: [],
     formasdepago: [],
+    proveedores : [],
     estadoremitos: "idle",
     estadoproductos: "idle",
     estadolineascompra: "idle",
     estadoordenesdecompra: "idle",
     estadoformasdepago: "idle",
     estadolineasremito: "idle",
+    estadoproveedores : "idle",
     errorremito: null,
     errorlineacompra: null,
     errorlinearemito: null,
     errorproducto: null,
     errorordendecompra: null,
-    errorformadepago: null
+    errorformadepago: null,
+    errorproveedor : null
 }
+
+/* const ErrorRetornado = (error) => {
+    let errorrecibido = error.response.status
+    return errorrecibido === 403 ?  `Error 403: Acceso no autorizado ${error.response.data.message}` :
+    errorrecibido === 401 ? `Error 401 : La soliocitud ha sido rechazada ${error.response.data.message}` :
+    errorrecibido === 404 ? `Error 404: Recurso no encontrado ${error.response.data.message}`
+    : error.message 
+} */
 
 const URL_BASE_OC = process.env.REACT_APP_URI_API + `/ordenesdecompra/`
 const URL_BASE_LINEASCOMPRA = process.env.REACT_APP_URI_API_REMITOS + `/lineascompra/`
 //const URL_BASE_PRODUCTOS = process.env.REACT_APP_URI_API_REMITOS + `/productos/`
 const URL_BASE_REMITOS = process.env.REACT_APP_URI_API_REMITOS
+const URL_BASE_PROVEEDORES = process.env.REACT_APP_URI_API_REMITOS + `/proveedores`
 //const URL_BASE_REMITOS = '127.0.0.1:4500/remitos/todos'
 
-
-console.log(URL_BASE_REMITOS)
+export const RecuperarProveedores = createAsyncThunk ('Remito/RecuperarProveedores', async () => {
+    try {
+        const response = await axios.get(URL_BASE_PROVEEDORES)
+        const result = {error: false, data : response.data}
+        return result
+    } catch (error) {
+        const result = {
+            error: true, 
+            message: ErrorRetornado(error)
+        }
+        console.error(error)
+        return result
+    }
+})
 
 export const RecuperarRemitos = createAsyncThunk ('Remito/RecuperarRemitos', async ()=> {
     try {
+        console.log("llega al recuperar remitos")
         const response = await axios.get(`${URL_BASE_REMITOS}/todos`)
-        return [...response.data]
+        console.log("a continuacion deberia ver la respuesta")
+        console.log(response)
+        console.log("fin respuesta")
+        const result = {error: false, data : response.data}
+        return result
     } catch (error) {
-        console.log(console.error(error))
-        return error.message
+        const result = {
+            error: true, 
+            message: ErrorRetornado(error)
+        }
+        console.log(result)
+        console.error(error)
+        return result
     }
 })
 
 
 export const RecuperarOrdenesDeCompra = createAsyncThunk ('Remito/RecuperarOrdenesDeCompra', async ()=> {
     try {
-        console.log('llega a la linea 61')
-        console.log(URL_BASE_OC)
+        console.log(URL_BASE_REMITOS)
         const response = await axios.get(`${URL_BASE_REMITOS}/inicio`)
-        return [...response.data]
+        const result = {error: false, data : response.data}
+        return result
     } catch (error) {
-        console.log(console.error(error))
-        return error.message
+        const result = {
+            error: true, 
+            message: ErrorRetornado(error)
+        }
+        console.error(error)
+        return result
     }
 })
 
@@ -59,9 +98,10 @@ export const RecuperarLineasDeCompra = createAsyncThunk ("Remito/RecuperarLineas
         console.log(idOc)
         console.log(URL_BASE_LINEASCOMPRA + idOc)
         const response = await axios.get(URL_BASE_LINEASCOMPRA + idOc)
+        console.log(response)
         return [...response.data]
     } catch (error) {
-        console.log(console.error(error))
+        console.error(error)
         return error.message
     }
 })
@@ -96,19 +136,40 @@ export const RemitoSlice = createSlice({
     reducers: {},
     extraReducers: (builder) =>{ builder
         .addCase(RecuperarRemitos.fulfilled, (state, action) => {
-            state.status = "completed"
-            state.remitos = action.payload
+            state.estadoremitos = "completed"
+            if (!action.payload.error) {
+                state.remitos = action.payload.data
+            } else {
+                state.errorremito = action.payload.message
+            }
+        })
+        /* .addCase(RecuperarRemitos.rejected, (state, action) => {
+            state.estadoremitos = "completed"
+            state.errorremito = action.payload.message
+        }) */
+        .addCase(RecuperarProveedores.fulfilled, (state, action) => {
+            //state.status = "completed"
+            state.estadoproveedores = "completed"
+            if (!action.payload.error) {
+                state.proveedores = action.payload.data
+            } else {
+                state.errorproveedor = action.payload.message
+            }
         })
         .addCase(RecuperarOrdenesDeCompra.fulfilled, (state, action) => {
-            state.status = "completed"
-            state.ordenesDeCompra = action.payload
+            state.estadoremitos = "completed"
+            if (!action.payload.error) {
+                state.ordenesDeCompra = action.payload.data
+            } else {
+                state.errorordendecompra = action.payload.message
+            }
         })
         .addCase(RecuperarLineasDeCompra.fulfilled, (state, action) => {
-            state.status = "completed"
+            state.estadolineascompra = "completed"
             state.lineasCompra = action.payload
         })
         .addCase(AgregarRemito.fulfilled, (state, action) => {
-            state.status = "completed"
+            state.estadoremitos = "completed"
             state.remitos.push(action.payload)
         })
         .addCase(RecuperarRemitoDeCompra.fulfilled, (state, action) => {
@@ -138,10 +199,19 @@ export const SeleccionarTodasLasLineasDeCompra = (state) => {
     return state.remitos.lineasCompra
 }
 
+export const SeleccionarTodosLosProveedores = (state) => { 
+    return state.remitos.proveedores
+}
+
 export const EstadoRemitos = (state) => state.remitos.estadoremitos
 export const EstadoOrdenesDeCompra = (state) => state.remitos.estadoordenesdecompra
 export const EstadoLineasDeCompra = (state) => state.remitos.estadolineascompra
+export const EstadoProveedores = (state) => {console.log(state);return state.remitos.estadoproveedores}
 
-export const ErroresRemitos = (state) => state.remitos.errorremito
+export const ErroresRemitos = (state) =>  {
+    console.log(state.remitos.errorremito)
+    return state.remitos.errorremito
+}
 export const ErroresOrdenesDeCompra = (state) => state.remitos.errorordendecompra
 export const ErroresLineasDeCompra = (state) => state.remitos.errorordencompra
+export const ErroresProveedores = (state) => state.remitos.errorproveedor

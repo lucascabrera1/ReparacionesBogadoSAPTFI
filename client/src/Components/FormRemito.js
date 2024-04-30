@@ -3,11 +3,12 @@ import { useEffect, useState } from 'react'
 import {useDispatch, useSelector } from 'react-redux'
 import {SeleccionarTodasLasOrdenesDeCompra, RecuperarOrdenesDeCompra, EstadoOrdenesDeCompra,
   SeleccionarTodasLasLineasDeCompra, RecuperarLineasDeCompra, EstadoLineasDeCompra,
+  SeleccionarTodosLosProveedores, RecuperarProveedores, EstadoProveedores,
   AgregarRemito
 } from '../Features/RemitoSlice'
-import {
+/* import {
   SeleccionarTodosLosProveedores, RecuperarProveedores, EstadoProveedores
-} from '../Features/OrdenCompraSlice'
+} from '../Features/OrdenCompraSlice' */
 import Input from './Common/Input'
 import Table from 'react-bootstrap/Table'
 import {useForm, useFieldArray} from 'react-hook-form'
@@ -29,6 +30,7 @@ function FormRemito() {
   const estadoocs = useSelector(EstadoOrdenesDeCompra)
   const estadoproveedores = useSelector(EstadoProveedores)
   const estadolineascompra = useSelector(EstadoLineasDeCompra)
+  
 
   const [idOc, setIdOc] = useState('')
   const [idLc, setidLc] = useState('')

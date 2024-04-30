@@ -33,6 +33,19 @@ const URL_BASE_LINEASCOMPRA = process.env.REACT_APP_URI_API + `/lineascompra/`
 const URL_BASE_CATEGORIAS = process.env.REACT_APP_URI_API + `/categorias/`
 const URL_BASE_FORMASDEPAGO = process.env.REACT_APP_URI_API + `/formasdepago`
 
+/* const ErrorRetornado = (error) => {
+    if (error === 403) return "Error 403: el servidor ha recibido y ha entendido la petición, pero rechaza enviar una respuesta"
+    else if (error === 401) return "Error 401: carece de credenciales válidas de autenticación para el recurso solicitado"
+} */
+
+const ErrorRetornado = (error) => {
+    let errorrecibido = error.response.status
+    return errorrecibido === 403 ?  `Error 403: Acceso no autorizado ${error.response.data.message}` :
+    errorrecibido === 401 ? `Error 401 : La soliocitud ha sido rechazada ${error.response.data.message}` :
+    errorrecibido === 404 ? `Error 404: Recurso no encontrado ${error.response.data.message}`
+    : error.message 
+}
+
 export const AgregarMarca = createAsyncThunk('ordenCompra/AgregarMarca', async (marcaInicial) => {
     try {
         console.log('entra al guardar marca')
@@ -95,12 +108,15 @@ export const AgregarOrdenDeCompra = createAsyncThunk('/ordenCompra/AgregarOrdenD
 
 export const RecuperarOrdenesDeCompra = createAsyncThunk ('ordenCompra/RecuperarOrdenesDeCompra', async ()=> {
     try {
-
         const response = await axios.get(URL_BASE_OC)
         const result = {error: false, data : response.data}
         return result
     } catch (error) {
-        const result = {error: true, message: error.response.status==401?"No Autorizado":error.message}
+        const result = {
+            error: true, 
+            //message: error.response.status===401?"Error 401: No Autorizado":error.message
+            message: ErrorRetornado(error)
+        }
         console.error(error)
         return result
     }
@@ -109,40 +125,59 @@ export const RecuperarOrdenesDeCompra = createAsyncThunk ('ordenCompra/Recuperar
 export const RecuperarProveedores = createAsyncThunk ('ordenCompra/RecuperarProveedores', async () => {
     try {
         const response = await axios.get(URL_BASE_PROVEEDORES)
-        return [...response.data]
+        const result = {error: false, data : response.data}
+        return result
     } catch (error) {
-        console.log(console.error(error))
-        return error.message
+        const result = {
+            error: true, 
+            //message: error.response.status===403?"Error 403, recurso no encontrado":error.message
+            message: ErrorRetornado(error)
+        }
+        console.error(error)
+        return result
     }
 })
 
 export const RecuperarCategorias = createAsyncThunk ('ordenCompra/RecuperarCategorias', async () => {
     try {
         const response = await axios.get(URL_BASE_CATEGORIAS)
-        return [...response.data]
+        const result = {error: false, data : response.data}
+        return result
     } catch (error) {
+        const result = {error: true, message: error.message}
         console.log(console.error(error))
-        return error.message
+        return result
     }
 })
 
 export const RecuperarMarcas = createAsyncThunk ("ordenCompra/RecuperarMarcas", async () => {
     try {
         const response = await axios.get(URL_BASE_MARCAS)
-        return [...response.data]
+        const result = {error: false, data : response.data}
+        return result
     } catch (error) {
-        console.log(console.error(error))
-        return error.message
+        const result = {
+            error: true, 
+            //message: error.response.status===403?"Error 403 recurso no encontrado":error.message
+            message: ErrorRetornado(error)
+        }
+        console.error(error)
+        return result
     }
 })
 
 export const RecuperarProductos = createAsyncThunk ("ordenCompra/RecuperarProductos", async () => {
     try {
         const response = await axios.get(URL_BASE_PRODUCTOS)
-        return [...response.data]
+        const result = {error: false, data : response.data}
+        return result
     } catch (error) {
+        const result = {
+            error: true, 
+            message: ErrorRetornado(error)
+        }
         console.log(console.error(error))
-        return error.message
+        return result
     }
 })
 
@@ -151,10 +186,12 @@ export const RecuperarProductosPorProveedor = createAsyncThunk ("ordenCompra/Rec
         console.log(idProveedor)
         if (idProveedor === "") return []
         const response = await axios.get(URL_BASE_PRODUCTOS + idProveedor)
-        return [...response.data]
+        const result = {error: false, data : response.data}
+        return result
     } catch (error) {
+        const result = {error: true, message: ErrorRetornado(error)}
         console.log(console.error(error))
-        return error.message
+        return result
     }
 })
 
@@ -162,20 +199,24 @@ export const RecuperarOrdenDeCompra = createAsyncThunk("ordenCompra/RecuperarOrd
     try {
         console.log(URL_BASE_OC + id)
         const response = await axios.get(URL_BASE_OC + id)
-        return response.data
+        const result = {error: false, data : response.data}
+        return result
     } catch (error) {
+        const result = {error: true, message: error.message}
         console.log(console.error(error))
-        return error.message
+        return result
     }
 })
 
 export const RecuperarFormasDePago = createAsyncThunk ("ordenCompra/RecuperarFormasDePago", async () => {
     try {
         const response = await axios.get(URL_BASE_FORMASDEPAGO)
-        return [...response.data]
+        const result = {error: false, data : response.data}
+        return result
     } catch (error) {
+        const result = {error: true, message: error.message}
         console.log(console.error(error))
-        return error.message
+        return result
     }
 })
 
@@ -246,23 +287,43 @@ export const OrdenCompraSlice = createSlice({
         .addCase(RecuperarProveedores.fulfilled, (state, action) => {
             //state.status = "completed"
             state.estadoproveedores = "completed"
-            state.proveedores = action.payload
+            if (!action.payload.error) {
+                state.proveedores = action.payload.data
+            } else {
+                state.errorproveedor = action.payload.message
+            }
         })
         .addCase(RecuperarMarcas.fulfilled, (state, action) => {
             state.estadomarcas = "completed"
-            state.marcas = action.payload
+            if (!action.payload.error) {
+                state.marcas = action.payload.data
+            } else {
+                state.errormarca = action.payload.message
+            }
         })
         .addCase(RecuperarCategorias.fulfilled, (state, action) => {
             state.estadocategorias = "completed"
-            state.categorias = action.payload
+            if (!action.payload.error) {
+                state.categorias = action.payload.data
+            } else {
+                state.errorcategoria = action.payload.message
+            }
         })
         .addCase(RecuperarProductos.fulfilled, (state, action) => {
             state.estadoproductos = "completed"
-            state.productos = action.payload
+            if (!action.payload.error) {
+                state.productos = action.payload.data
+            } else {
+                state.errorproducto = action.payload.message
+            }
         })
         .addCase(RecuperarFormasDePago.fulfilled, (state, action) => {
             state.estadoformasdepago = "completed"
-            state.formasdepago = action.payload
+            if (!action.payload.error) {
+                state.formasdepago = action.payload.data
+            } else {
+                state.errorformadepago = action.payload.message
+            }
         })
         .addCase(RecuperarOrdenesDeCompra.fulfilled, (state, action) => {
             state.estadoordenesdecompra = "completed"
@@ -283,22 +344,26 @@ export const OrdenCompraSlice = createSlice({
         })
         .addCase(RecuperarProductosPorProveedor.fulfilled, (state, action) => {
             state.estadoproductos = "completed"
-            state.productos = action.payload
+            if (!action.payload.error) {
+                state.productos = action.payload.data
+            } else {
+                state.errorproducto = action.payload.message
+            }
         })
         .addCase(AgregarMarca.fulfilled, (state, action) => {
             state.estadomarcas = "completed"
             state.marcas.push(action.payload)
         })
         .addCase(AgregarProveedor.fulfilled, (state, action) => {
-            state.status = "completed"
+            state.estadoproveedores = "completed"
             state.proveedores.push(action.payload)
         })
         .addCase(AgregarProducto.fulfilled, (state, action) => {
-            state.status = "completed"
+            state.productos = "completed"
             state.productos.push(action.payload)
         })
         .addCase(AgregarOrdenDeCompra.fulfilled, (state, action) => {
-            state.status = "completed"
+            state.ordenesDeCompra = "completed"
             state.ordenesDeCompra.push(action.payload)
         })
         .addCase(EliminarMarca.fulfilled, (state, action) => {

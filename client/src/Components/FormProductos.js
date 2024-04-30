@@ -3,7 +3,8 @@ import {useDispatch, useSelector } from 'react-redux'
 import {SeleccionarTodosLosProductos,
   RecuperarProductos,
   EstadoProductos,
-  EliminarProducto
+  EliminarProducto,
+  ErroresProductos
 } from '../Features/OrdenCompraSlice'
 import Table from 'react-bootstrap/Table'
 import Button from 'react-bootstrap/Button'
@@ -14,6 +15,7 @@ function FormProductos() {
     const navigate = useNavigate()
     const productos = useSelector(SeleccionarTodosLosProductos)
     const estadoproductos = useSelector(EstadoProductos)
+    const errorproductos = useSelector(ErroresProductos)
 
     useEffect(()=>{
         if (estadoproductos==="idle"){
@@ -26,7 +28,7 @@ function FormProductos() {
         if (ok) {dispatch(EliminarProducto(_id))}
     }
 
-    return (
+    return errorproductos ? (<div className='alert alert-danger'>{errorproductos}</div>) : (
         <div>
             <Table className= 'table table-success table-bordered border-dark'>
                 <thead>

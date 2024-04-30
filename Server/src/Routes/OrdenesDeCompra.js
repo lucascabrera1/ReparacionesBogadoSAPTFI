@@ -1,7 +1,7 @@
 import express from 'express'
 import ocs from '../Controllers/OrdenesDeCompra.js'
 import verifyToken from "../Controllers/VerifyToken.js"
-import {isEncargadoDeCompras, isAdmin} from '../Middlewares/authJwt.js'
+import {isEncargadoDeCompras, isAdmin, isEncargadoDeDeposito} from '../Middlewares/authJwt.js'
 import morgan from 'morgan'
 
 const router = express()

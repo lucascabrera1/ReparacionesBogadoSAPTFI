@@ -3,12 +3,14 @@ import {NavLink, useNavigate} from 'react-router-dom'
 import { useEffect } from 'react'
 import ButtonApp from './Common/Button.js'
 import Table from 'react-bootstrap/Table'
-import {RecuperarMarcas, EstadoMarcas, SeleccionarTodasLasMarcas, EliminarMarca} from '../Features/OrdenCompraSlice.js'
+import {RecuperarMarcas, EstadoMarcas, SeleccionarTodasLasMarcas, 
+EliminarMarca, ErroresMarcas} from '../Features/OrdenCompraSlice.js'
 
 function FormMarcas() {
 
     const navigate = useNavigate()
     const dispatch = useDispatch()
+    const erroresmarca = useSelector(ErroresMarcas)
     const marcas = useSelector(SeleccionarTodasLasMarcas)
     const estadomarcas = useSelector(EstadoMarcas)
 
@@ -21,7 +23,7 @@ function FormMarcas() {
         if (ok) {dispatch(EliminarMarca(_id))}
     }
 
-    return (<div>
+    return erroresmarca ? (<div className='alert alert-danger'>{erroresmarca}</div>) : (<div>
         <h2>Marcas Recuperadas</h2>
         {
             <Table className= 'table table-success table-bordered border-dark table-sm'>

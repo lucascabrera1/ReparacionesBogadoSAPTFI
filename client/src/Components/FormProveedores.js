@@ -3,7 +3,8 @@ import {useDispatch, useSelector } from 'react-redux'
 import {SeleccionarTodosLosProveedores,
   RecuperarProveedores,
   EstadoProveedores,
-  EliminarProveedor
+  EliminarProveedor,
+  ErroresProveedores
 } from '../Features/OrdenCompraSlice'
 import Table from 'react-bootstrap/Table'
 import ButtonApp from './Common/Button'
@@ -15,6 +16,7 @@ function FormProveedores() {
   const navigate = useNavigate()
   const proveedores = useSelector(SeleccionarTodosLosProveedores)
   const estadoproveedores = useSelector(EstadoProveedores)
+  const errorproveedores = useSelector(ErroresProveedores)
 
   useEffect(()=>{
       if (estadoproveedores==="idle"){
@@ -31,7 +33,7 @@ function FormProveedores() {
     navigate(`/proveedores/${_id}`);
   }
 
-  return (
+  return errorproveedores ? (<div className='alert alert-danger'>{errorproveedores}</div>) : (
     <div>
         <h2>Proveedores</h2>
         <Table className= 'table table-success table-bordered border-dark table-sm'>

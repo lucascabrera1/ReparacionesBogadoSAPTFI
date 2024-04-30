@@ -50,6 +50,7 @@ const RecuperarOrdenesDeCompra = async (req, res, next) => {
 
 const RecuperarRemitos = async (req, res, next) => {
     try {
+        console.log("llega a la api de recuperar remitos")
         const remitos = await Remito.find({})
         let remitosdevueltos = []
         for (const elem of remitos) {
