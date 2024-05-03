@@ -22,6 +22,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import NavBarBootstrap from './Components/Common/NavBarBootstrap.js'
 import Login from './Components/Auth/LoginForm.js'
+import RegisterForm from './Components/Auth/RegisterForm.js'
 
 function App() {
   return <div  className="container-fluid">
@@ -43,6 +44,7 @@ function App() {
             <Route path='/proveedor' element= {<FormProveedor/>}/>
             <Route path='/proveedores/:id' element= {<FormProveedor/>}/>
             <Route path='/todaslasordenesdecompra' element= {<ProtectedRoute><FormOrdenesCompra/></ProtectedRoute>}/>
+            <Route path='/register' element= {<ProtectedRoute><RegisterForm/></ProtectedRoute>}/>
             <Route path='/nuevaordendecompra' element={<FormOrdenCompra/>}/>
             <Route path='/ordenesdecompra/:id' element={<FormLineasCompra/>}></Route>
             <Route path='/remitos' element={<ProtectedRoute><FormRemitos/></ProtectedRoute>}/>

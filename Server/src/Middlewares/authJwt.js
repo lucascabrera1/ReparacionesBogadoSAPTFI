@@ -66,28 +66,33 @@ export const isAdmin = async (req, res, next) => {
 }
 
 export const isEncargadoDeDeposito = async (req, res, next) => {
-    const token = req.headers.authorization.split(' ')[1]
-    console.log('inicio token isEncargadoDeDeposito')
-    console.log(token)
-    console.log('final token isEncargadoDeDeposito')
-    const decoded = jwt.verify(token, stoken)
-    console.log('inicio decoded isEncargadoDeDeposito')
-    console.log(decoded)
-    console.log('final decoded isEncargadoDeDeposito')
-    req.userId = decoded.id
-    const user = await User.findById(req.userId)
-    const roles = await Role.find({_id: {$in: user.roles}})
-    console.log("inicio roles en isEncargado de Depósito")
-    console.log(roles)
-    console.log("final roles en isEncargado de Depósito")
-    for (let i=0; i< roles.length; i++) {
-        if (roles[i].nombre === "Encargado de Depósito") {
-            next();
-            return;
+    try {
+        const token = req.headers.authorization.split(' ')[1]
+        console.log('inicio token isEncargadoDeDeposito')
+        console.log(token)
+        console.log('final token isEncargadoDeDeposito')
+        const decoded = jwt.verify(token, stoken)
+        console.log('inicio decoded isEncargadoDeDeposito')
+        console.log(decoded)
+        console.log('final decoded isEncargadoDeDeposito')
+        req.userId = decoded.id
+        const user = await User.findById(req.userId)
+        const roles = await Role.find({_id: {$in: user.roles}})
+        console.log("inicio roles en isEncargado de Depósito")
+        console.log(roles)
+        console.log("final roles en isEncargado de Depósito")
+        for (let i=0; i< roles.length; i++) {
+            if (roles[i].nombre === "Encargado de Depósito") {
+                next();
+                return;
+            }
+            console.log("pasa el next del isEncargadoDeDeposito")
         }
-        console.log("pasa el next del isEncargadoDeDeposito")
+        return res.status(403).json({message: "Requiere el rol de Encargado de Depósito"})
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
     }
-    return res.status(403).json({message: "Requiere el rol de Encargado de Depósito"})
+    
 }
 
 export const isProveedor = async (req, res, next) => {

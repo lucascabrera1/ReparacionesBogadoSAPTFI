@@ -46,7 +46,7 @@ function FormProveedor() {
         style={{width: '450px'}}
         onSubmit={handleSubmit(handleSubmitProveedor)}
         >
-          <fieldset>
+            <fieldset>
             <legend>Datos del proveedor</legend>
         <Form.Group className="mb-3 " controlId="dob">
           <Input

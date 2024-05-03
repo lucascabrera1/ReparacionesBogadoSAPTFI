@@ -30,9 +30,21 @@ export default function NavBarBootstrap() {
                         <NavLink className="nav-link" to="/ventas">Ventas</NavLink>
                         <NavLink className="nav-link" to="/remitos">Ingreso de Remitos</NavLink>
                         <NavLink className="nav-link" to="/reparaciones">Ordenes de Reparaciones</NavLink>
+                        <NavDropdown title="Ordenes de Compra" id="basic-nav-dropdown">
+                            <NavDropdown.Item onClick={() => {navegar('/register')}}>Agregar Usuario</NavDropdown.Item>
+                            <NavDropdown.Item onClick={() => {navegar('/register:/id')}}>Modificar Usuario</NavDropdown.Item>
+                        </NavDropdown>
                     </Nav>
                 </Navbar.Collapse>
-                {userlogged ? <li><NavLink to="/"><a onClick={()=> {dispatch(logOut())}}>Salir</a></NavLink></li>:<></>}
+                {userlogged ? 
+                    <li>
+                        <Nav.Link href="/login" onClick={()=>{dispatch(logOut())}}>
+                            <a >Salir</a>
+                        </Nav.Link>
+                        <p>{userlogged.nombreUsuario}</p>
+                    </li>
+                    :<NavLink to="/login">Iniciar sesion</NavLink>
+                }
         </Navbar>
     )
 }

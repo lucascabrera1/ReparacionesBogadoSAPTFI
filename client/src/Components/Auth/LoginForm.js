@@ -18,7 +18,7 @@ const Login = () =>{
         try {
             const userData = await dispatch(login(user)).unwrap()
             if (userData) {
-                navigate("/ordenesdecompra")
+                navigate("/")
             } else {
                 setErrMsg("Credenciales inválidas")
                 alert ("usuario y/o contraseña incorrectos")

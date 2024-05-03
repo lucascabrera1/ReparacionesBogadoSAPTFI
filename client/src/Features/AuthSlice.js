@@ -1,8 +1,15 @@
 import { createSlice, createAsyncThunk} from "@reduxjs/toolkit";
 import axios from 'axios'
+import ReturnError from "./ReturnError";
 
 const urlApi = process.env.REACT_APP_URI_API
 console.log(urlApi)
+
+const initialState = {
+    usuarios : [],
+    estadousuarios : "idle",
+    erroresusuario : null
+}
 
 export const login = createAsyncThunk('auth/signin', async ({email, password}) => {
     console.log(urlApi)
@@ -25,7 +32,29 @@ export const login = createAsyncThunk('auth/signin', async ({email, password}) =
         console.error(error)
         return false
     }
-    
+})
+
+export const AgregarUsuario = createAsyncThunk('auth/AgregarUsuario', async (user) => {
+    try {
+        const url = `${urlApi}/auth/signup`
+        const response = await axios.post(url, user)
+        console.log(response.data)
+        return response.data
+    } catch (error) {
+        console.error(error)
+        return error.message
+    }
+})
+
+export const ModificarUsuario = createAsyncThunk('auth/ModificarUsuario', async(initialUsuario) => {
+    try {
+        const url = `${urlApi}/auth/modificarusuario`
+        const response = await axios.patch(url + initialUsuario.id, initialUsuario)
+        return response.data
+    } catch (error) {
+        console.error(error.message)
+        return error.message
+    }
 })
 
 export const authSlice = createSlice ({
@@ -51,6 +80,10 @@ export const authSlice = createSlice ({
             console.log(axios.defaults.headers.common.Authorization)
             console.log(state.accessToken)
             console.log(state.user)
+        })
+        .addCase(AgregarUsuario.fulfilled, (state, action) => {
+            state.estadousuarios = "completed",
+            state.usuarios.push(action.payload)
         })
     }
 })

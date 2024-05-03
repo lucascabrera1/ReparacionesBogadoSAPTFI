@@ -43,8 +43,10 @@ const URL_BASE_PROVEEDORES = process.env.REACT_APP_URI_API_REMITOS + `/proveedor
 
 export const RecuperarProveedores = createAsyncThunk ('Remito/RecuperarProveedores', async () => {
     try {
+        console.log("entra al recuperar proveedores")
         const response = await axios.get(URL_BASE_PROVEEDORES)
         const result = {error: false, data : response.data}
+        console.log(response)
         return result
     } catch (error) {
         const result = {
