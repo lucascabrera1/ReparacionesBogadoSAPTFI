@@ -1,16 +1,17 @@
 import { useState } from "react";
 import {useForm} from 'react-hook-form'
 import { useNavigate, useParams } from "react-router";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Input from "../../Components/Common/Input";
 import Button from "../../Components/Common/Button";
-import { AgregarUsuario, ModificarUsuario } from "../../Features/AuthSlice";
+import { AgregarUsuario, ModificarUsuario, ErroresUsuarios } from "../../Features/AuthSlice";
 import ButtonApp from "../../Components/Common/Button";
 import Form from 'react-bootstrap/Form'
 
 function RegisterForm() {
 
-    const params = useParams
+    const erroresusers = useSelector(ErroresUsuarios)
+    const params = useParams()
     console.log(params)
     const navigate = useNavigate()
     const dispatch = useDispatch()
@@ -24,7 +25,7 @@ function RegisterForm() {
             console.log(result.data)
             alert("Usuario modificado correctamente")
             e.target.reset()
-            navigate('/seguridad')
+            navigate('/')
           } catch (error) {
             console.error(error)
           }
@@ -34,14 +35,15 @@ function RegisterForm() {
             console.log(result)
             alert('Usuario guardado correctamente')
             e.target.reset()
-            navigate('/seguridad')
+            navigate('/')
           } catch (error) {
             console.error(error)
           }
         }
       }
 
-    return (<div className='d-flex flex-column justify-content-md-center align-items-center text-center'>
+    return erroresusers ? (<div className='alert alert-danger'>{erroresusers}</div>) :
+     (<div className='d-flex flex-column justify-content-md-center align-items-center text-center'>
         <Form id="formUsuario"
             style={{width: '450px'}}
             onSubmit={handleSubmit(handleSubmitUser)}
@@ -51,7 +53,7 @@ function RegisterForm() {
                 <Form.Group className="mb-3 " controlId="dob">
                     <Input
                         type="text"
-                        name="nombreusuario"
+                        name="nombreUsuario"
                         placeholder="Nombre de Usuario"
                         register={register}
                         registerOptions= {{
@@ -102,7 +104,7 @@ function RegisterForm() {
                         className='col-lg-4'
                         style={{float: 'right'}}
                         variant="secondary"
-                        onClick={e => { e.preventDefault(); navigate('/seguridad')}}>
+                        onClick={e => { e.preventDefault(); navigate('/')}}>
                             Cancel
                     </ButtonApp>
                 </Form.Group>

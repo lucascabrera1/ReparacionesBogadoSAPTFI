@@ -60,8 +60,9 @@ export const isAdmin = async (req, res, next) => {
                 return;
             }
         }
-    } catch (error) {
         return res.status(403).json({message: "Requiere el rol de Administrador"})
+    } catch (error) {
+        return res.status(500).json({message: "Recurso no encontrado"})
     }
 }
 

@@ -135,7 +135,11 @@ export const AgregarRemito = createAsyncThunk('Remito/AgregarRemito', async(remi
 export const RemitoSlice = createSlice({
     name: "Remito",
     initialState,
-    reducers: {},
+    reducers: {
+        reinicializar : (state, action) => {
+            return initialState
+        }
+    },
     extraReducers: (builder) =>{ builder
         .addCase(RecuperarRemitos.fulfilled, (state, action) => {
             state.estadoremitos = "completed"
@@ -187,6 +191,7 @@ export const RemitoSlice = createSlice({
 })
 
 export default RemitoSlice.reducer
+export const {reinicializar} = RemitoSlice.actions
 
 export const SeleccionarTodosLosRemitos = (state) => {
     return state.remitos.remitos

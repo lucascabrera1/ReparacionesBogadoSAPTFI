@@ -5,14 +5,23 @@ import { NavLink } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import {logOut, selectCurrentUser} from '../../Features/AuthSlice'
 import { useDispatch, useSelector } from 'react-redux';
+import { reinicializar as reinicializarOcs } from '../../Features/OrdenCompraSlice';
+import { reinicializar as reinicializarRemito} from '../../Features/RemitoSlice';
 
 export default function NavBarBootstrap() {
+
+    
 
     const navigate = useNavigate();
     const navegar = function(url) {
         navigate(url);
     }
     const dispatch = useDispatch()
+    const ReinicializarEstado = () => {
+        dispatch(logOut())
+        dispatch(reinicializarOcs())
+        dispatch(reinicializarRemito())
+    }
     const userlogged = useSelector(selectCurrentUser)
 
     return ( 
@@ -30,7 +39,7 @@ export default function NavBarBootstrap() {
                         <NavLink className="nav-link" to="/ventas">Ventas</NavLink>
                         <NavLink className="nav-link" to="/remitos">Ingreso de Remitos</NavLink>
                         <NavLink className="nav-link" to="/reparaciones">Ordenes de Reparaciones</NavLink>
-                        <NavDropdown title="Ordenes de Compra" id="basic-nav-dropdown">
+                        <NavDropdown title="Seguridad" id="basic-nav-dropdown">
                             <NavDropdown.Item onClick={() => {navegar('/register')}}>Agregar Usuario</NavDropdown.Item>
                             <NavDropdown.Item onClick={() => {navegar('/register:/id')}}>Modificar Usuario</NavDropdown.Item>
                         </NavDropdown>
@@ -38,9 +47,11 @@ export default function NavBarBootstrap() {
                 </Navbar.Collapse>
                 {userlogged ? 
                     <li>
-                        <Nav.Link href="/login" onClick={()=>{dispatch(logOut())}}>
+                        <NavLink to="/" onClick={()=>{
+                            ReinicializarEstado()
+                        }}>
                             <a >Salir</a>
-                        </Nav.Link>
+                        </NavLink>
                         <p>{userlogged.nombreUsuario}</p>
                     </li>
                     :<NavLink to="/login">Iniciar sesion</NavLink>

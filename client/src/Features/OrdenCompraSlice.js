@@ -282,7 +282,11 @@ export const ModificarProducto = createAsyncThunk('ordenCompra/ModificarProducto
 export const OrdenCompraSlice = createSlice({
     name: "ordenesDeCompra",
     initialState,
-    reducers: {},
+    reducers: {
+        reinicializar : (state, action) => {
+            return initialState
+        }
+    },
     extraReducers: (builder) =>{ builder
         .addCase(RecuperarProveedores.fulfilled, (state, action) => {
             //state.status = "completed"
@@ -403,6 +407,7 @@ export const OrdenCompraSlice = createSlice({
 })
 
 export default OrdenCompraSlice.reducer
+export const {reinicializar} = OrdenCompraSlice.actions
 
 export const SeleccionarTodosLosProveedores = (state) => { 
     return state.ordenesDeCompra.proveedores

@@ -67,6 +67,7 @@ export const authSlice = createSlice ({
         logOut: (state, action) => {
             state.user = null
             state.accessToken = null
+            axios.defaults.headers.common.Authorization = ""
         }
     },
     extraReducers: (builder) => {
@@ -82,7 +83,7 @@ export const authSlice = createSlice ({
             console.log(state.user)
         })
         .addCase(AgregarUsuario.fulfilled, (state, action) => {
-            state.estadousuarios = "completed",
+            state.estadousuarios = "completed"
             state.usuarios.push(action.payload)
         })
     }
@@ -92,3 +93,11 @@ export const {logOut} = authSlice.actions
 export default authSlice.reducer
 export const selectCurrentToken = (state) =>  state.auth?.accessToken
 export const selectCurrentUser = (state) => state.auth?.user
+
+export const SeleccionarTodosLosUsuarios = (state) => {
+    return state.auth.usuarios
+}
+
+export const EstadoUsuarios = (state) => state.auth.estadoformasdepago
+
+export const ErroresUsuarios = (state) => state.auth.erroresusuario
