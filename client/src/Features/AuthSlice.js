@@ -38,11 +38,15 @@ export const AgregarUsuario = createAsyncThunk('auth/AgregarUsuario', async (use
     try {
         const url = `${urlApi}/auth/signup`
         const response = await axios.post(url, user)
-        console.log(response.data)
-        return response.data
+        const result = {error: false, data : response.data}
+        return result
     } catch (error) {
+        const result = {
+            error: true, 
+            message: ReturnError(error)
+        }
         console.error(error)
-        return error.message
+        return result
     }
 })
 
@@ -84,7 +88,11 @@ export const authSlice = createSlice ({
         })
         .addCase(AgregarUsuario.fulfilled, (state, action) => {
             state.estadousuarios = "completed"
-            state.usuarios.push(action.payload)
+            if (!action.payload.error) {
+                state.usuarios.push(action.payload.data)
+            } else {
+                state.erroresusuario = action.payload.message
+            }
         })
     }
 })
@@ -98,6 +106,9 @@ export const SeleccionarTodosLosUsuarios = (state) => {
     return state.auth.usuarios
 }
 
-export const EstadoUsuarios = (state) => state.auth.estadoformasdepago
+export const EstadoUsuarios = (state) => state.auth.estadousuarios
 
-export const ErroresUsuarios = (state) => state.auth.erroresusuario
+export const ErroresUsuarios = (state) => {
+    console.log(state.auth)
+    return state.auth.erroresusuario
+}

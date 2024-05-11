@@ -1,21 +1,36 @@
 import { useState } from "react";
-import {useForm} from 'react-hook-form'
+import {useForm, useFieldArray} from 'react-hook-form'
 import { useNavigate, useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import Input from "../../Components/Common/Input";
 import Button from "../../Components/Common/Button";
-import { AgregarUsuario, ModificarUsuario, ErroresUsuarios } from "../../Features/AuthSlice";
+import { AgregarUsuario, ModificarUsuario } from "../../Features/AuthSlice";
+import {selectCurrentUser} from "../../Features/AuthSlice" 
 import ButtonApp from "../../Components/Common/Button";
 import Form from 'react-bootstrap/Form'
+import FormCheckInput from "react-bootstrap/esm/FormCheckInput";
 
 function RegisterForm() {
 
-    const erroresusers = useSelector(ErroresUsuarios)
+    const userlogged = useSelector(selectCurrentUser)
+    let isAdmin = false
+    userlogged.roles.forEach(rol => {
+        console.log(rol)
+        if (rol.nombre === "admin") isAdmin = true
+    })
+    console.log(isAdmin)
     const params = useParams()
     console.log(params)
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    const {register, handleSubmit, formState : {errors}} = useForm()
+    const {register, handleSubmit, control, formState : {errors}} = useForm()
+
+    const {fields, append, remove, replace} = useFieldArray({
+        control,
+        name: "roles",
+    })
+
+    console.log(fields)
 
     const handleSubmitUser = async (data, e) => {
         if (params.id) {
@@ -31,6 +46,7 @@ function RegisterForm() {
           }
         } else {
           try {
+            console.log(data)
             const result = await dispatch(AgregarUsuario(data)).unwrap()
             console.log(result)
             alert('Usuario guardado correctamente')
@@ -40,10 +56,13 @@ function RegisterForm() {
             console.error(error)
           }
         }
-      }
+    }
 
-    return erroresusers ? (<div className='alert alert-danger'>{erroresusers}</div>) :
-     (<div className='d-flex flex-column justify-content-md-center align-items-center text-center'>
+    return !isAdmin ? 
+    (<div className='alert alert-danger'> 
+        {userlogged.nombreUsuario } no posee el rol de Administrador
+    </div>) :
+    (<div className='d-flex flex-column justify-content-md-center align-items-center text-center'>
         <Form id="formUsuario"
             style={{width: '450px'}}
             onSubmit={handleSubmit(handleSubmitUser)}
@@ -66,7 +85,6 @@ function RegisterForm() {
                             minLength: "Al menos 2 caracteres"
                         }}
                     />
-                    
                     <Input
                         type="email"
                         name="email"
@@ -92,12 +110,93 @@ function RegisterForm() {
                         }}
                     />
                 </Form.Group>
+                <Form.Group className="mb-3 " controlId="dob">
+                    <legend>Roles del nuevo usuario</legend>
+                    {/* <div className="form-check">
+                        <Input
+                            register = {register}
+                            name="roles"
+                            errors = {errors}
+                            classname="checkbox" 
+                            type="checkbox"
+                            value="admin" 
+                            id="flexCheckDefault"
+                        />
+                        <label class="form-check-label" for="flexCheckDefault">
+                            Administrador
+                        </label>
+                    </div> */}
+                    {
+                        fields.map((item, index) => (
+                            <div className="mb-6 " key={index}>
+                            <input
+                                {...register('roles')}
+                                id="admin"
+                                type="checkbox"
+                                name = {`roles.${index}.rol`}
+                                onClick={ e => {
+                                    //e.preventDefault()
+                                    console.log()
+                                    console.log("onclick")
+                                    console.log(this)
+                                    console.log(fields)
+                                }}
+                            />
+                            <label>administrador formchecjinput</label>
+                        </div>
+                        ))
+                    }
+                    
+                    <div class="form-check">
+                        <Input
+                            register = {register}
+                            name="roles"
+                            errors={errors}
+                            classname="checkbox" 
+                            type="checkbox" 
+                            value="Encargado de Compras" 
+                            id="flexCheckChecked"
+                        />
+                        <label class="form-check-label" for="flexCheckChecked">
+                            Encargado de Compras
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <Input
+                            register={register}
+                            name='roles'
+                            errors = {errors}
+                            classname="checkbox" 
+                            type="checkbox" 
+                            value="Encargado de Depósito" 
+                            id="flexCheckDefault"
+                        />
+                        <label class="form-check-label" for="flexCheckDefault">
+                            Encargado de Depósito
+                        </label>
+                    </div>
+                    
+                    <div class="form-check">
+                        <Input
+                            register={register}
+                            name="encargado de ventas"
+                            errors = {errors}
+                            classname="checkbox" 
+                            type="checkbox" 
+                            value="Encargado de Ventas" 
+                            id="flexCheckChecked"
+                        />
+                        <label class="form-check-label" for="flexCheckChecked">
+                            Encargado de Ventas
+                        </label>
+                    </div>
+                </Form.Group>
                 <Form.Group>
                     <ButtonApp 
                         className='col-lg-4' 
                         variant='success'
                         type="submit" 
-                        >
+                    >
                         Save
                     </ButtonApp>
                     <ButtonApp
