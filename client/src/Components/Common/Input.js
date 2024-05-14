@@ -11,13 +11,14 @@ function Input({type,
     registerOptions, 
     errors, 
     optionMsgErrors,
-    onBlur
+    onBlur,
+    onClick
     }){
   return (
     <div>
         <label>{label}</label>
         <input
-            style={{width: type=='number'?'100px':'300px'}}
+            style={{width: type==='number'?'100px':'300px'}}
             type={type} 
             placeholder={placeholder}
             className={classname}
@@ -25,6 +26,7 @@ function Input({type,
             {...register(name, registerOptions)}
             disabled = {disabled}
             onBlur = {onBlur}
+            onClick={onClick}
         />
         {errors[name]?.type === "required" && <span style={{color: "red"}} >{optionMsgErrors.required}</span>}
         {errors[name]?.type === "minLength" && <span style={{color: "red"}} >{optionMsgErrors.minLength}</span>}

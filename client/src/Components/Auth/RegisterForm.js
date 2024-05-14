@@ -126,36 +126,41 @@ function RegisterForm() {
                             Administrador
                         </label>
                     </div> */}
-                    {
-                        fields.map((item, index) => (
-                            <div className="mb-6 " key={index}>
-                            <input
-                                {...register('roles')}
-                                id="admin"
-                                type="checkbox"
-                                name = {`roles.${index}.rol`}
-                                onClick={ e => {
-                                    //e.preventDefault()
-                                    console.log()
-                                    console.log("onclick")
-                                    console.log(this)
-                                    console.log(fields)
-                                }}
-                            />
-                            <label>administrador formchecjinput</label>
-                        </div>
-                        ))
-                    }
-                    
+                    <div class="form-check">
+                        <Input
+                            id="admin"
+                            name = {`roles.${fields[0]}`}
+                            register={register}
+                            errors={errors}
+                            type="checkbox"
+                            classname="checkbox"
+                            onClick={ e => {
+                                console.log("onclick")
+                                e.target.checked 
+                                ? append("admin")
+                                : remove("admin")
+                                console.log(fields)
+                            }}
+                        />
+                        <label class="form-check-label" for="flexCheckChecked">
+                            Administrador
+                        </label>
+                    </div>
                     <div class="form-check">
                         <Input
                             register = {register}
-                            name="roles"
+                            name={`roles.${fields[1]}`}
                             errors={errors}
                             classname="checkbox" 
                             type="checkbox" 
                             value="Encargado de Compras" 
                             id="flexCheckChecked"
+                            onClick= {(e => {
+                                console.log("click en encargado de compras")
+                                e.target.checked 
+                                ? append("Encargado de Compras")
+                                : remove("Encargado de Compras")
+                            })}
                         />
                         <label class="form-check-label" for="flexCheckChecked">
                             Encargado de Compras
@@ -164,12 +169,18 @@ function RegisterForm() {
                     <div class="form-check">
                         <Input
                             register={register}
-                            name='roles'
+                            name={`roles.${fields[2]}`}
                             errors = {errors}
                             classname="checkbox" 
                             type="checkbox" 
                             value="Encargado de Depósito" 
                             id="flexCheckDefault"
+                            onClick= {(e => {
+                                console.log("click en encargado de depósito")
+                                e.target.checked 
+                                ? append("Encargado de Depósito")
+                                : remove("Encargado de Depósito")
+                            })}
                         />
                         <label class="form-check-label" for="flexCheckDefault">
                             Encargado de Depósito
@@ -179,12 +190,18 @@ function RegisterForm() {
                     <div class="form-check">
                         <Input
                             register={register}
-                            name="encargado de ventas"
+                            name={`roles.${fields[3]}`}
                             errors = {errors}
                             classname="checkbox" 
                             type="checkbox" 
                             value="Encargado de Ventas" 
-                            id="flexCheckChecked"
+                            id="flexCheckDefault"
+                            onClick= {(e => {
+                                console.log("click en encargado de ventas")
+                                e.target.checked 
+                                ? append("Encargado de Ventas")
+                                : remove("Encargado de Ventas")
+                            })}
                         />
                         <label class="form-check-label" for="flexCheckChecked">
                             Encargado de Ventas

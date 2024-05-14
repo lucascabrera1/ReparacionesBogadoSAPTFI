@@ -88,8 +88,9 @@ export const authSlice = createSlice ({
         })
         .addCase(AgregarUsuario.fulfilled, (state, action) => {
             state.estadousuarios = "completed"
+            console.log(action)
             if (!action.payload.error) {
-                state.usuarios.push(action.payload.data)
+                state.usuarios.push(action.meta.arg)
             } else {
                 state.erroresusuario = action.payload.message
             }
