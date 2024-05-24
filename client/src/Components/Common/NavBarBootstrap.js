@@ -7,11 +7,9 @@ import {logOut, selectCurrentUser} from '../../Features/AuthSlice'
 import { useDispatch, useSelector } from 'react-redux';
 import { reinicializar as reinicializarOcs } from '../../Features/OrdenCompraSlice';
 import { reinicializar as reinicializarRemito} from '../../Features/RemitoSlice';
+import { reinicializar as reinicializarUsuario} from '../../Features/UsersSlice'
 
 export default function NavBarBootstrap() {
-
-    
-
     const navigate = useNavigate();
     const navegar = function(url) {
         navigate(url);
@@ -21,6 +19,7 @@ export default function NavBarBootstrap() {
         dispatch(logOut())
         dispatch(reinicializarOcs())
         dispatch(reinicializarRemito())
+        dispatch(reinicializarUsuario())
     }
     const userlogged = useSelector(selectCurrentUser)
 
@@ -41,7 +40,7 @@ export default function NavBarBootstrap() {
                         <NavLink className="nav-link" to="/reparaciones">Ordenes de Reparaciones</NavLink>
                         <NavDropdown title="Seguridad" id="basic-nav-dropdown">
                             <NavDropdown.Item onClick={() => {navegar('/register')}}>Agregar Usuario</NavDropdown.Item>
-                            <NavDropdown.Item onClick={() => {navegar('/register:/id')}}>Modificar Usuario</NavDropdown.Item>
+                            <NavDropdown.Item onClick={() => {navegar('/users')}}>Modificar o Eliminar Usuario</NavDropdown.Item>
                         </NavDropdown>
                     </Nav>
                 </Navbar.Collapse>

@@ -1,14 +1,12 @@
-import { useState } from "react";
 import {useForm, useFieldArray} from 'react-hook-form'
 import { useNavigate, useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import Input from "../../Components/Common/Input";
-import Button from "../../Components/Common/Button";
-import { AgregarUsuario, ModificarUsuario } from "../../Features/AuthSlice";
+import { useEffect, useState } from 'react';
+import { AgregarUsuario, ModificarUsuario, FetchUser } from "../../Features/UsersSlice";
 import {selectCurrentUser} from "../../Features/AuthSlice" 
+import Input from "../../Components/Common/Input";
 import ButtonApp from "../../Components/Common/Button";
 import Form from 'react-bootstrap/Form'
-import FormCheckInput from "react-bootstrap/esm/FormCheckInput";
 
 function RegisterForm() {
 
@@ -23,7 +21,19 @@ function RegisterForm() {
     console.log(params)
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    const {register, handleSubmit, control, formState : {errors}} = useForm()
+    const [uam, setUam] = useState('')
+    const {register, handleSubmit, control, formState : {errors}, getValues} = useForm({
+        defaultValues: uam ? { 
+            nombreUsuario : uam.nombreUsuario,
+            email: uam.email,
+            password : uam.password
+        } : {
+            nombreUsuario : "",
+            email: "",
+            password : ""
+        }
+    })
+    
 
     const {fields, append, remove, replace} = useFieldArray({
         control,
@@ -32,15 +42,17 @@ function RegisterForm() {
 
     console.log(fields)
 
+
+
     const handleSubmitUser = async (data, e) => {
         if (params.id) {
           try {
             console.log(data)
             const result = await dispatch(ModificarUsuario({...data, id: params.id})).unwrap()
-            console.log(result.data)
+            console.log(result)
             alert("Usuario modificado correctamente")
             e.target.reset()
-            navigate('/')
+            navigate('/users')
           } catch (error) {
             console.error(error)
           }
@@ -51,18 +63,49 @@ function RegisterForm() {
             console.log(result)
             alert('Usuario guardado correctamente')
             e.target.reset()
-            navigate('/')
+            navigate('/users')
           } catch (error) {
             console.error(error)
           }
         }
     }
 
+    useEffect ( ()=> {
+        console.log("entra al use effect")
+        async function fetchUser () {
+            console.log('id del usuario')
+            console.log(params.id)
+            console.log('usuarios')
+            if (params.id) {
+                const userFounded = await (dispatch (FetchUser(params.id)).unwrap())
+                console.log(userFounded)
+                setUam(userFounded)
+            }
+        }
+       fetchUser()
+    }, [params.id])
+
+    console.log(uam)
+
     return !isAdmin ? 
     (<div className='alert alert-danger'> 
         {userlogged.nombreUsuario } no posee el rol de Administrador
     </div>) :
     (<div className='d-flex flex-column justify-content-md-center align-items-center text-center'>
+        {
+            params.id ? <div key={uam._id}>
+                <h3>Usuario a modificar</h3>
+                <p> nombre de usuario {uam.nombreUsuario}</p>
+                <p>email {uam.email}</p>
+                <p>roles</p>
+                <ul>{
+                    uam ?  uam.roles.map(rol => {
+                        return <p>{rol.nombre}</p>
+                    }) : ""
+                }</ul>
+            </div>
+            : "registe un nuevo usuario"
+        }
         <Form id="formUsuario"
             style={{width: '450px'}}
             onSubmit={handleSubmit(handleSubmitUser)}
@@ -75,8 +118,10 @@ function RegisterForm() {
                         name="nombreUsuario"
                         placeholder="Nombre de Usuario"
                         register={register}
-                        registerOptions= {{
-                            required: true, maxLength: 50, minLength: 2 
+                        registerOptions= {params.id ? {
+                            maxLength: 50, minLength: 2 
+                        } : {
+                            required: true, maxLength : 50, minLength: 2
                         }}
                         errors= {errors}
                         optionMsgErrors={{
@@ -90,7 +135,7 @@ function RegisterForm() {
                         name="email"
                         placeholder="Correo Electrónico"
                         register={register}
-                        registerOptions= {{required: true}}
+                        registerOptions= {params.id ? {} :  {required: true} }
                         errors= {errors}
                         optionMsgErrors={{required: "El correo electrónico es obligatorio"}}
                     />
@@ -99,8 +144,10 @@ function RegisterForm() {
                         name="password"
                         placeholder="Contraseña"
                         register={register}
-                        registerOptions= {{
-                            required: true, maxLength: 20, minLength: 6 
+                        registerOptions= {params.id ? {
+                            maxLength: 20, minLength: 6 
+                        } : {
+                            required: true, maxLength: 20, minLength: 6
                         }}
                         errors= {errors}
                         optionMsgErrors={{
@@ -220,7 +267,7 @@ function RegisterForm() {
                         className='col-lg-4'
                         style={{float: 'right'}}
                         variant="secondary"
-                        onClick={e => { e.preventDefault(); navigate('/')}}>
+                        onClick={e => { e.preventDefault(); navigate('/users')}}>
                             Cancel
                     </ButtonApp>
                 </Form.Group>

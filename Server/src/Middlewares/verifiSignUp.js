@@ -26,7 +26,7 @@ export const CheckDuplicateUser = async (req, res, next) => {
     console.log("inicio userFoundedBynombreUsuario")
     console.log(userFoundedByName)
     console.log("fin userFoundedByName")
-    if (userFoundedByName) return res.status(400).json({
+    if (userFoundedByName && userFoundedByName._id.toString() !== req.params.id)  return res.status(400).json({
         error: true,
         message: `User ${nombreUsuario} founded by nombreUsuario already exists`
     })
@@ -35,7 +35,7 @@ export const CheckDuplicateUser = async (req, res, next) => {
     console.log("inicio userFoundedByMail")
     console.log(userFoundedByMail)
     console.log("fin userFoundedByMail")
-    if (userFoundedByMail) return res.status(400).json({
+    if (userFoundedByMail && userFoundedByMail._id.toString() !== req.params.id) return res.status(400).json({
         error: true,
         message: `User ${email} founded by Mail already exists`
     })

@@ -7,7 +7,7 @@ const initialState = {
     productos: [],
     categorias: [],
     lineasCompra: [],
-    ordenesDeCompra: [],
+    ordenes: [],
     formasdepago: [],
     estadoproveedores: "idle",
     estadomarcas: "idle",
@@ -332,13 +332,13 @@ export const OrdenCompraSlice = createSlice({
         .addCase(RecuperarOrdenesDeCompra.fulfilled, (state, action) => {
             state.estadoordenesdecompra = "completed"
             if (!action.payload.error) {
-                state.ordenesDeCompra = action.payload.data
+                state.ordenes = action.payload.data
             } else {
                 state.errorordendencompra = action.payload.message
             }
         })
         .addCase(RecuperarOrdenDeCompra.fulfilled, (state, action) => {
-            state.ordenesDeCompra = state.ordenesDeCompra.map(item => {
+            state.ordenes = state.ordenes.map(item => {
                 if (item._id === action.payload._id) {
                     return action.payload
                 } else {
@@ -363,12 +363,14 @@ export const OrdenCompraSlice = createSlice({
             state.proveedores.push(action.payload)
         })
         .addCase(AgregarProducto.fulfilled, (state, action) => {
-            state.productos = "completed"
+            state.estadoproductos = "completed"
             state.productos.push(action.payload)
         })
         .addCase(AgregarOrdenDeCompra.fulfilled, (state, action) => {
-            state.ordenesDeCompra = "completed"
-            state.ordenesDeCompra.push(action.payload)
+            console.log(action)
+            console.log(state)
+            state.estadoordenesdecompra = "completed"
+            state.ordenes.push(action.payload)
         })
         .addCase(EliminarMarca.fulfilled, (state, action) => {
             state.marcas = state.marcas.filter( (elem)=> {
@@ -433,9 +435,9 @@ export const SeleccionarTodasLasLineasCompra = (state) => {
 }
 
 export const SeleccionarTodasLasOrdenesDeCompra = (state) => {
-    console.log(state.ordenesDeCompra.ordenesDeCompra)
+    console.log(state.ordenesDeCompra.ordenes)
     console.log(state.auth)
-    return state.ordenesDeCompra.ordenesDeCompra
+    return state.ordenesDeCompra.ordenes
 }
 
 export const SeleccionarTodasLasFormasDePago = (state) => {

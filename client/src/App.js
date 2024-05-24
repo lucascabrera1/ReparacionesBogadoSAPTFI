@@ -23,6 +23,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import NavBarBootstrap from './Components/Common/NavBarBootstrap.js'
 import Login from './Components/Auth/LoginForm.js'
 import RegisterForm from './Components/Auth/RegisterForm.js'
+import FormUsuarios from './Components/Auth/UsersForm.js'
 
 function App() {
   return <div  className="container-fluid">
@@ -45,18 +46,20 @@ function App() {
             <Route path='/proveedores/:id' element= {<FormProveedor/>}/>
             <Route path='/todaslasordenesdecompra' element= {<ProtectedRoute><FormOrdenesCompra/></ProtectedRoute>}/>
             <Route path='/register' element= {<ProtectedRoute><RegisterForm/></ProtectedRoute>}/>
-            <Route path='/nuevaordendecompra' element={<FormOrdenCompra/>}/>
-            <Route path='/ordenesdecompra/:id' element={<FormLineasCompra/>}></Route>
+            <Route path='/nuevaordendecompra' element={<ProtectedRoute><FormOrdenCompra/></ProtectedRoute>}/>
+            <Route path='/ordenesdecompra/:id' element={<ProtectedRoute><FormLineasCompra/></ProtectedRoute>}></Route>
             <Route path='/remitos' element={<ProtectedRoute><FormRemitos/></ProtectedRoute>}/>
             <Route path='/nuevoremito' element={<ProtectedRoute><FormRemito/></ProtectedRoute>}/>
-            <Route path='/remitos/:id' element={<FormLineasRemito/>}/>
-            <Route path='/reporteproveedores' element={<ReporteProveedores/>}/>
+            <Route path='/users' element={<ProtectedRoute><FormUsuarios/></ProtectedRoute>} />
+            <Route path='/remitos/:id' element={<ProtectedRoute><FormLineasRemito/></ProtectedRoute>}/>
+            <Route path='/edit-user/:id' element={<ProtectedRoute><RegisterForm/></ProtectedRoute>}/>
+            <Route path='/reporteproveedores' element={<ProtectedRoute><ReporteProveedores/></ProtectedRoute>}/>
             <Route path='/login' element={<Login/>}></Route>
             <Route path='/' element= {<Welcome/>}/>
             {/*<Route path='/' element={<FormTodasLasOC/>} />
             <Route path='/home' element={<Home/>} />
             
-            <Route path='/edit-user/:id' element={<ProtectedRoute><UserForm/></ProtectedRoute>}/>
+            
             <Route path='/newuser' element={<UserForm/>}/> 
             <Route path='/login' element= {<Login/>}/>
             <Route path='*' element= {<NotFoundPage/>}/>*/}

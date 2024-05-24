@@ -20,9 +20,8 @@ function FormLineasCompra(idOc) {
   async function RecuperarUnaOrdenDeCompra(){
    if (params.id){
       const ocfounded = await (dispatch(RecuperarOrdenDeCompra(params.id)).unwrap())
-      console.log(ocfounded.items)
-      //setItems(ocfounded.items)
-      setOc(ocfounded)
+      console.log(ocfounded)
+      setOc(ocfounded.data)
     }
   }
     RecuperarUnaOrdenDeCompra()
@@ -30,7 +29,7 @@ function FormLineasCompra(idOc) {
 
   console.log(oc.items)
 
-  return (
+  return oc === undefined ? <div>no hay oc</div> : (
       <div>
         <div className='row'>
           <div className='col-md-3'>

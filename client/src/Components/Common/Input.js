@@ -12,7 +12,8 @@ function Input({type,
     errors, 
     optionMsgErrors,
     onBlur,
-    onClick
+    onClick,
+    value
     }){
   return (
     <div>
@@ -27,6 +28,7 @@ function Input({type,
             disabled = {disabled}
             onBlur = {onBlur}
             onClick={onClick}
+            value={value}
         />
         {errors[name]?.type === "required" && <span style={{color: "red"}} >{optionMsgErrors.required}</span>}
         {errors[name]?.type === "minLength" && <span style={{color: "red"}} >{optionMsgErrors.minLength}</span>}
