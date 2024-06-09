@@ -22,15 +22,15 @@ function RegisterForm() {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const [uam, setUam] = useState('')
-    const {register, handleSubmit, control, formState : {errors}, getValues} = useForm({
-        defaultValues: uam ? { 
-            nombreUsuario : uam.nombreUsuario,
-            email: uam.email,
-            password : uam.password
-        } : {
+    const {register, handleSubmit, control, formState : {errors}, getValues, reset} = useForm({
+        defaultValues: { 
             nombreUsuario : "",
             email: "",
-            password : ""
+            password : "",
+            roladmin : false,
+            rolcompras: false,
+            rolventas: false,
+            roldeposito: false
         }
     })
     
@@ -47,8 +47,19 @@ function RegisterForm() {
     const handleSubmitUser = async (data, e) => {
         if (params.id) {
           try {
+            const {nombreUsuario, email, rolAdmin, rolDeposito, rolCompras, rolVentas} = data
+            let nomRoles = [];
+            if (rolAdmin) nomRoles.push('admin')
+            if (rolCompras) nomRoles.push('Encargado de Compras')
+            if (rolDeposito) nomRoles.push('Encargado de Depósito')
+            if (rolVentas) nomRoles.push('Encargado de Ventas')
+            let user = {
+                email: email,
+                nombreUsuario: nombreUsuario,
+                roles: nomRoles
+            }
             console.log(data)
-            const result = await dispatch(ModificarUsuario({...data, id: params.id})).unwrap()
+            const result = await dispatch(ModificarUsuario({...user, id: params.id})).unwrap()
             console.log(result)
             alert("Usuario modificado correctamente")
             e.target.reset()
@@ -78,8 +89,17 @@ function RegisterForm() {
             console.log('usuarios')
             if (params.id) {
                 const userFounded = await (dispatch (FetchUser(params.id)).unwrap())
+                const {nombreUsuario, email, roles} = userFounded
+                let user = {
+                    nombreUsuario: nombreUsuario,
+                    email: email,
+                    rolAdmin: roles.find(rol=> rol.nombre === "admin")?true:false,
+                    rolCompras: roles.find(rol=> rol.nombre === "Encargado de Compras")?true:false,
+                    rolVentas: roles.find(rol=> rol.nombre === "Encargado de Ventas")?true:false,
+                    rolDeposito: roles.find(rol=> rol.nombre === "Encargado de Depósito")?true:false
+                }
                 console.log(userFounded)
-                setUam(userFounded)
+                reset(user)
             }
         }
        fetchUser()
@@ -139,7 +159,7 @@ function RegisterForm() {
                         errors= {errors}
                         optionMsgErrors={{required: "El correo electrónico es obligatorio"}}
                     />
-                    <Input
+                    {params.id ? "" : <Input
                         type="password"
                         name="password"
                         placeholder="Contraseña"
@@ -155,7 +175,7 @@ function RegisterForm() {
                             maxLength: "no puede incluir mas de 20 caracteres",
                             minLength: "al menos 6 caracteres"
                         }}
-                    />
+                    />}
                 </Form.Group>
                 <Form.Group className="mb-3 " controlId="dob">
                     <legend>Roles del nuevo usuario</legend>
@@ -175,19 +195,12 @@ function RegisterForm() {
                     </div> */}
                     <div class="form-check">
                         <Input
-                            id="admin"
-                            name = {`roles.${fields[0]}`}
+                            id="rolAdmin"
+                            name = "rolAdmin"
                             register={register}
                             errors={errors}
                             type="checkbox"
                             classname="checkbox"
-                            onClick={ e => {
-                                console.log("onclick")
-                                e.target.checked 
-                                ? append("admin")
-                                : remove("admin")
-                                console.log(fields)
-                            }}
                         />
                         <label class="form-check-label" for="flexCheckChecked">
                             Administrador
@@ -195,19 +208,12 @@ function RegisterForm() {
                     </div>
                     <div class="form-check">
                         <Input
+                            id="rolCompras"
                             register = {register}
-                            name={`roles.${fields[1]}`}
+                            name="rolCompras"
                             errors={errors}
                             classname="checkbox" 
-                            type="checkbox" 
-                            value="Encargado de Compras" 
-                            id="flexCheckChecked"
-                            onClick= {(e => {
-                                console.log("click en encargado de compras")
-                                e.target.checked 
-                                ? append("Encargado de Compras")
-                                : remove("Encargado de Compras")
-                            })}
+                            type="checkbox"
                         />
                         <label class="form-check-label" for="flexCheckChecked">
                             Encargado de Compras
@@ -216,18 +222,11 @@ function RegisterForm() {
                     <div class="form-check">
                         <Input
                             register={register}
-                            name={`roles.${fields[2]}`}
+                            name="rolDeposito"
                             errors = {errors}
                             classname="checkbox" 
                             type="checkbox" 
-                            value="Encargado de Depósito" 
-                            id="flexCheckDefault"
-                            onClick= {(e => {
-                                console.log("click en encargado de depósito")
-                                e.target.checked 
-                                ? append("Encargado de Depósito")
-                                : remove("Encargado de Depósito")
-                            })}
+                            id="rolDeposito"
                         />
                         <label class="form-check-label" for="flexCheckDefault">
                             Encargado de Depósito
@@ -237,18 +236,11 @@ function RegisterForm() {
                     <div class="form-check">
                         <Input
                             register={register}
-                            name={`roles.${fields[3]}`}
+                            name="rolVentas"
                             errors = {errors}
                             classname="checkbox" 
                             type="checkbox" 
-                            value="Encargado de Ventas" 
-                            id="flexCheckDefault"
-                            onClick= {(e => {
-                                console.log("click en encargado de ventas")
-                                e.target.checked 
-                                ? append("Encargado de Ventas")
-                                : remove("Encargado de Ventas")
-                            })}
+                            id="rolVentas"
                         />
                         <label class="form-check-label" for="flexCheckChecked">
                             Encargado de Ventas

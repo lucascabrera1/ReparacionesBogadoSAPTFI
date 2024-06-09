@@ -147,11 +147,18 @@ const DeleteUser = async (req, res) => {
 
 const EditUser = async (req, res) => {
     try {
-       const useram = req.body
-       if (useram.password) useram.password = await User.schema.methods.encryptPassword(useram.password)
-       const updatedUser = await User.findByIdAndUpdate({_id: req.params.id}, {useram}, {new : true})
-       console.log(updatedUser)
-       return res.status(200).json(updatedUser)
+        let {nombreUsuario, email, roles} = req.body
+        //const updatedUser = await User.findByIdAndUpdate({_id: req.params.id}, {useram}, {new : true})
+        const updatedUser = await User.findOne({_id: req.params.id})
+        updatedUser.nombreUsuario = nombreUsuario
+        updatedUser.email = email
+        if (roles) {
+            const foundRoles = await Role.find({nombre: {$in: roles}})
+            updatedUser.roles = foundRoles
+        }
+        console.log(updatedUser)
+        await updatedUser.save()
+        return res.status(200).json(updatedUser)
    } catch (error) {
        console.error(error)
        return res.status(500).json({message: error.message})
