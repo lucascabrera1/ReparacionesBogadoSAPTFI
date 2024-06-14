@@ -22,15 +22,16 @@ function RegisterForm() {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const [uam, setUam] = useState('')
+    const [checkedCheckBoxisAdmin, setcheckedCheckBoxisAdmin] = useState(isAdmin)
     const {register, handleSubmit, control, formState : {errors}, getValues, reset} = useForm({
         defaultValues: { 
             nombreUsuario : "",
             email: "",
             password : "",
-            roladmin : false,
-            rolcompras: false,
-            rolventas: false,
-            roldeposito: false
+            rolAdmin : false,
+            rolCompras: false,
+            rolVentas: false,
+            rolDeposito: false
         }
     })
     
@@ -42,22 +43,20 @@ function RegisterForm() {
 
     console.log(fields)
 
-
-
     const handleSubmitUser = async (data, e) => {
+        const {nombreUsuario, email, password, rolAdmin, rolDeposito, rolCompras, rolVentas} = data
+        let nomRoles = [];
+        if (rolAdmin) nomRoles.push('admin')
+        if (rolCompras) nomRoles.push('Encargado de Compras')
+        if (rolDeposito) nomRoles.push('Encargado de Depósito')
+        if (rolVentas) nomRoles.push('Encargado de Ventas')
+        let user = {
+            email: email,
+            nombreUsuario: nombreUsuario,
+            roles: nomRoles
+        }
         if (params.id) {
           try {
-            const {nombreUsuario, email, rolAdmin, rolDeposito, rolCompras, rolVentas} = data
-            let nomRoles = [];
-            if (rolAdmin) nomRoles.push('admin')
-            if (rolCompras) nomRoles.push('Encargado de Compras')
-            if (rolDeposito) nomRoles.push('Encargado de Depósito')
-            if (rolVentas) nomRoles.push('Encargado de Ventas')
-            let user = {
-                email: email,
-                nombreUsuario: nombreUsuario,
-                roles: nomRoles
-            }
             console.log(data)
             const result = await dispatch(ModificarUsuario({...user, id: params.id})).unwrap()
             console.log(result)
@@ -70,7 +69,8 @@ function RegisterForm() {
         } else {
           try {
             console.log(data)
-            const result = await dispatch(AgregarUsuario(data)).unwrap()
+            user.password = password
+            const result = await dispatch(AgregarUsuario(user)).unwrap()
             console.log(result)
             alert('Usuario guardado correctamente')
             e.target.reset()
@@ -93,10 +93,10 @@ function RegisterForm() {
                 let user = {
                     nombreUsuario: nombreUsuario,
                     email: email,
-                    rolAdmin: roles.find(rol=> rol.nombre === "admin")?true:false,
-                    rolCompras: roles.find(rol=> rol.nombre === "Encargado de Compras")?true:false,
-                    rolVentas: roles.find(rol=> rol.nombre === "Encargado de Ventas")?true:false,
-                    rolDeposito: roles.find(rol=> rol.nombre === "Encargado de Depósito")?true:false
+                    rolAdmin: roles?.find(rol=> rol.nombre === "admin")?true:false,
+                    rolCompras: roles?.find(rol=> rol.nombre === "Encargado de Compras")?true:false,
+                    rolVentas: roles?.find(rol=> rol.nombre === "Encargado de Ventas")?true:false,
+                    rolDeposito: roles?.find(rol=> rol.nombre === "Encargado de Depósito")?true:false
                 }
                 console.log(userFounded)
                 reset(user)

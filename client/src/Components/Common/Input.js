@@ -13,8 +13,8 @@ function Input({type,
     optionMsgErrors,
     onBlur,
     onClick,
-    value,
-    checked
+    value
+    //checked
     }){
   return (
     <div>
@@ -30,7 +30,7 @@ function Input({type,
             onBlur = {onBlur}
             onClick={onClick}
             value={value}
-            checked={checked ? true : false}
+            //checked={checked ? true : false}
         />
         {errors[name]?.type === "required" && <span style={{color: "red"}} >{optionMsgErrors.required}</span>}
         {errors[name]?.type === "minLength" && <span style={{color: "red"}} >{optionMsgErrors.minLength}</span>}

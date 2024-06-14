@@ -149,7 +149,7 @@ const EditUser = async (req, res) => {
     try {
         let {nombreUsuario, email, roles} = req.body
         //const updatedUser = await User.findByIdAndUpdate({_id: req.params.id}, {useram}, {new : true})
-        const updatedUser = await User.findOne({_id: req.params.id})
+        let updatedUser = await User.findOne({_id: req.params.id})
         updatedUser.nombreUsuario = nombreUsuario
         updatedUser.email = email
         if (roles) {
