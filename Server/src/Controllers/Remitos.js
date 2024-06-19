@@ -36,7 +36,10 @@ const RecuperarOrdenesDeCompra = async (req, res, next) => {
                 formapago: formadepagoencontrada.descripcion,
                 fechaemision: elem.fechaEmision,
                 fechaentrega: elem.fechaEntrega,
-                proveedor: proveedorencontrado.razonsocial,
+                proveedor: {
+                    _id: proveedorencontrado._id,
+                    razonsocial: proveedorencontrado.razonsocial
+                },
                 total: elem.total,
                 items: elem.items
             }
@@ -56,6 +59,7 @@ const RecuperarRemitos = async (req, res, next) => {
         for (const elem of remitos) {
             let proveedorencontrado = await Proveedor.findById(elem.proveedor)
             let ocencontrada = await OrdenDeCompra.findById(elem.ordenCompra)
+            if (!ocencontrada) continue
             let items = []
             for (const newItem of elem.items){
                 let lr = await LineaRemito.findById({_id: newItem._id})
@@ -82,6 +86,7 @@ const RecuperarRemitos = async (req, res, next) => {
         }
         return res.send(remitosdevueltos)
     } catch (error) {
+        console.log(error)
         return res.status(500).json({ message: error.message });
     }
 }

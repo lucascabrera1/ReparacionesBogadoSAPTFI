@@ -209,7 +209,7 @@ function FormOrdenCompra() {
             }}>
               <td>{producto.descripcion}</td>
               <td>{producto.categoria}</td>
-              <td>{producto.proveedor}</td>
+              <td>{producto.proveedor.razonsocial}</td>
               <td>{producto.marca}</td>
               <td>{producto.codigo}</td>
               <td>{producto.preciocompra}</td>

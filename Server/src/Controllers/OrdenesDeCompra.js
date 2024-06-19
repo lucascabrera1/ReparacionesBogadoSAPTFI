@@ -54,7 +54,10 @@ const RecuperarOrdenesDeCompra = async (req, res, next) => {
                 formapago: formadepagoencontrada.descripcion,
                 fechaemision: elem.fechaEmision,
                 fechaentrega: elem.fechaEntrega,
-                proveedor: proveedorencontrado.razonsocial,
+                proveedor: {
+                    _id: proveedorencontrado._id,
+                    razonsocial: proveedorencontrado.razonsocial
+                },
                 total: elem.total,
                 estado: elem.estado,
                 items: elem.items

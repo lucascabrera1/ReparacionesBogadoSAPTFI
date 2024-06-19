@@ -35,7 +35,7 @@ function FormRemito() {
   const [idOc, setIdOc] = useState('')
   const [idLc, setidLc] = useState('')
   const [producto, setProducto] = useState('')
-  const [proveedorSeleccionado, setProveedorSeleccionado] = useState ('')
+  const [proveedorSeleccionado, setProveedorSeleccionado] = useState ()
   const [lineasC, setLineasC] = useState([])
   const [cantidadEsperada, setCantidadEsperada] = useState(0)
   const [cantidadRecibida, setcantidadRecibida] = useState(0)
@@ -73,7 +73,7 @@ function FormRemito() {
   console.log(ocs)
   console.log(proveedorSeleccionado)
   
-  let ocsfiltradas = ocs.filter(oc =>  oc.proveedor === proveedorSeleccionado)
+  let ocsfiltradas = ocs.filter(oc =>  oc.proveedor._id === proveedorSeleccionado)
   console.log(ocsfiltradas)
 
   const optOcsFiltradas = ocsfiltradas.map(oc =>{ 
@@ -91,6 +91,9 @@ function FormRemito() {
       value={proveedor._id}
       onChange={e => {
         e.preventDefault()
+        console.log("llega a la lineas 94")
+        let prov = proveedores.find(x => x._id === e.target.value)
+        console.log(prov)
         setProveedorSeleccionado(e.target.value)
       }}
     >
@@ -131,6 +134,7 @@ function FormRemito() {
     }
     console.log(proveedorSeleccionado)
     let proveedor = (getValues()["proveedor"]===undefined ? proveedorSeleccionado : getValues()["proveedor"])
+    console.log(proveedor)
     let fechaEmision = (getValues()["fechEemision"]===undefined?Date():Date())
     let ordenCompra = (getValues()["ordenCompra"]===undefined?null: oc._id)
     reset({
@@ -178,13 +182,15 @@ function FormRemito() {
     })
   }
 
-  const handleSubmitOC = async (data, e) =>  {
+  const handleSubmitRemito = async (data, e) =>  {
     if (data.detalles.length === 0) {
       alert("Al menos debe haber una linea de remito ingresada")
       return false
     }
     try {
+      console.log(data)
       const result = await dispatch(AgregarRemito(data)).unwrap()
+      console.log(result)
       alert('Remito guardado correctamente')
       e.target.reset()
       navigate('/remitos')
@@ -195,7 +201,7 @@ function FormRemito() {
 
   return (
     <div>
-      <Form onSubmit={handleSubmit(handleSubmitOC)}>
+      <Form onSubmit={handleSubmit(handleSubmitRemito)}>
         <select
           onChange={e => {
             e.preventDefault()
@@ -229,7 +235,7 @@ function FormRemito() {
           <p>Fecha de emision: {oc.fechaemision}</p>
           <p>Fecha de entrega: {oc.fechaentrega}</p>
           <p>Forma de pago: {oc.formapago}</p>
-          <p>Proveedor: {oc.proveedor}</p>
+          <p>Proveedor: {oc.proveedor.razonsocial}</p>
           <p>Estado: {oc.estado}</p>
         </div>}
         

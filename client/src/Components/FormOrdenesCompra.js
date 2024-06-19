@@ -51,7 +51,7 @@ function FormOrdenesCompra() {
               return <tr key={oc._id}>
                 <td>{oc.fechaemision ? formatHumanDateTime(oc.fechaemision) : "vacia"}</td>
                 <td>{oc.fechaentrega ?  formatHumanDate(oc.fechaentrega) : "vacia"}</td>
-                <td>{oc.proveedor}</td>
+                <td>{oc.proveedor.razonsocial}</td>
                 <td>{oc.formapago}</td>
                 <td>{oc.total}</td>
                 <td>{oc.estado}</td>
