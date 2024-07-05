@@ -2,8 +2,11 @@ import User from "../Models/User.js"
 import Role from "../Models/Role.js"
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
+import { RandomPassword } from "../Utils/Random.js"
 dotenv.config({path: './.env'})
 const stoken = process.env.SECRET
+const PORT = process.env.PORT
+const URL_BASE = `${process.env.URL_BASE}/${PORT}`
 
 const SignIn = async (req, res, next) => {
     try {
@@ -245,5 +248,59 @@ const GetUser = async (req, res) =>{
     }
 }
 
+const SendMailToResetPassword = async (req, res) => {
+    const {email} = req.body
+    console.log(email)
+    try {
+        //res.send("llamada exitosa al metodo SendMailToResetPassword")
+        const userFounded = await User.findOne({email})
+        if (!userFounded) return res.status(400).json({message: `user ${email} doesn't exists`})
+        const secret = stoken + userFounded.password
+        const token = jwt.sign(
+            {
+                email : userFounded.email, 
+                id : userFounded._id
+            }, secret, {
+                expiresIn : "50m"
+            }
+        )
+        const link = `${URL_BASE}/reset-password/${userFounded._id}/${token}`
+        console.log(link)
+        return res.send(link) 
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({
+            error: true,
+            message: error.message
+        })
+    }
+}
 
-export default {SignIn, SignUp, Me, DeleteUser, EditUser, getUsers, GetUser}
+const ResetPassword = async (req, res) => {
+    const {email} = req.body
+    console.log(email)
+    try {
+        const userFounded = await User.findOne({email})
+        if (!userFounded) return res.status(400).json({message: `user ${email} doesn't exists`})
+        const randompassword = RandomPassword(8)
+        console.log(randompassword)
+        userFounded.password = await User.schema.methods.encryptPassword(randompassword)
+        await userFounded.save()
+        //res.status(200).json({userFounded})
+       
+        return res.status(200).json({message: `La clave del usuario ${userFounded.nombreUsuario} fue actualizada correctamete`})
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({
+            error: true,
+            message: error.message
+        })
+    }
+    try {
+        
+    } catch (error) {
+        
+    }
+}
+
+export default {SignIn, SignUp, Me, DeleteUser, EditUser, getUsers, GetUser, ResetPassword, SendMailToResetPassword}
