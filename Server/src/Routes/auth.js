@@ -2,7 +2,7 @@ import { Router } from "express";
 import auth from "../Controllers/Auth.js";
 import verifyToken from "../Controllers/VerifyToken.js";
 import {checkRoles, CheckDuplicateUser} from "../Middlewares/verifiSignUp.js"
-import { isAdmin, isAdminorFinalUser } from "../Middlewares/authJwt.js";
+import { isAdmin, isAdminorFinalUser, validNewPassword } from "../Middlewares/authJwt.js";
 
 const router = Router()
 
@@ -17,4 +17,9 @@ router.route('/users/:id')
 router.route('/reset-password')
     .patch([verifyToken, isAdminorFinalUser], auth.ResetPassword)
     .post(auth.SendMailToResetPassword)
+router.route('/reset-password/:id/:token')
+    .patch(auth.ResetPassword)
+    .get(auth.ValidateLink)
+router.route('/changepassword/:id')
+    .patch([verifyToken, validNewPassword], auth.ChangePassword)
 export default router

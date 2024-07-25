@@ -16,7 +16,22 @@ export default function () {
                 <li><NavLink to="/reporteproveedores">Reporte de Proveedores</NavLink></li>
                 
             </ul>
-            {userlogged?<li><NavLink to="/"><a onClick={()=> {dispatch(logOut())}}>Salir</a></NavLink></li>:<></>}
+            {
+                userlogged ?
+                <div>
+                    <li>
+                        <NavLink to="/">
+                            <a onClick={()=> {
+                                dispatch(logOut())
+                            }}>
+                                Salir
+                            </a>
+                        </NavLink>
+                    </li>
+                    
+                </div>
+                :<></>
+            }
         </navbar>
     )
     

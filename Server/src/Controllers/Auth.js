@@ -3,6 +3,7 @@ import Role from "../Models/Role.js"
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 import { RandomPassword } from "../Utils/Random.js"
+import sendmail from "../Utils/SendMail.js"
 dotenv.config({path: './.env'})
 const stoken = process.env.SECRET
 const PORT = process.env.PORT
@@ -251,10 +252,10 @@ const GetUser = async (req, res) =>{
 const SendMailToResetPassword = async (req, res) => {
     const {email} = req.body
     console.log(email)
+    const userFounded = await User.findOne({email})
+    if (!userFounded) return res.status(400).json({message: `user ${email} doesn't exists`})
     try {
         //res.send("llamada exitosa al metodo SendMailToResetPassword")
-        const userFounded = await User.findOne({email})
-        if (!userFounded) return res.status(400).json({message: `user ${email} doesn't exists`})
         const secret = stoken + userFounded.password
         const token = jwt.sign(
             {
@@ -265,8 +266,12 @@ const SendMailToResetPassword = async (req, res) => {
             }
         )
         const link = `${URL_BASE}/reset-password/${userFounded._id}/${token}`
-        console.log(link)
-        return res.send(link) 
+        const result = await sendmail.sendEmail(userFounded.email, "link para recuperar password", link)
+        console.log(result.messageId)
+        /* console.log("inicio resultado de llamar a sendMail")
+        console.log("fin resultado de llamar a sendMail")
+        console.log(link) */
+        return res.status(200).json({link})
     } catch (error) {
         console.error(error)
         return res.status(500).json({
@@ -276,7 +281,7 @@ const SendMailToResetPassword = async (req, res) => {
     }
 }
 
-const ResetPassword = async (req, res) => {
+/* const ResetPassword = async (req, res) => {
     const {email} = req.body
     console.log(email)
     try {
@@ -286,9 +291,9 @@ const ResetPassword = async (req, res) => {
         console.log(randompassword)
         userFounded.password = await User.schema.methods.encryptPassword(randompassword)
         await userFounded.save()
-        //res.status(200).json({userFounded})
-       
-        return res.status(200).json({message: `La clave del usuario ${userFounded.nombreUsuario} fue actualizada correctamete`})
+        return res.status(200).json({
+            message: `La clave del usuario ${userFounded.nombreUsuario} fue actualizada correctamete`
+        })
     } catch (error) {
         console.error(error)
         return res.status(500).json({
@@ -296,11 +301,75 @@ const ResetPassword = async (req, res) => {
             message: error.message
         })
     }
+} */
+
+const ResetPassword = async (req, res) => {
+    const {id, token} = req.params
     try {
-        
+        const userFounded = await User.findOne({_id : id})
+        if (!userFounded) return res.status(400).json({
+            message: `user ${userFounded.email} doesn't exists`
+        })
+        const randompassword = RandomPassword(8)
+        console.log(randompassword)
+        const secret = stoken + userFounded.password
+        const verify = jwt.verify(token, secret)
+        console.log("inicio verify")
+        console.log(verify)
+        console.log("fin verify")
+        if (verify.error) return res.status(400).json({
+            message: "token invalido o expirado, repita el proceso"
+        })
+        userFounded.password = await User.schema.methods.encryptPassword(randompassword)
+        const sendedpassword = await sendmail.sendEmail(userFounded.email, "su nueva contraseña", randompassword)
+        console.log(sendedpassword)
+        await userFounded.save()
+        return res.status(200).json({
+            verified : verify,
+            message: `La clave del usuario ${userFounded.nombreUsuario} fue actualizada correctamete`
+        })
     } catch (error) {
-        
+        console.error(error)
+        return res.status(500).json({
+            error: true,
+            message: error.message
+        })
     }
 }
 
-export default {SignIn, SignUp, Me, DeleteUser, EditUser, getUsers, GetUser, ResetPassword, SendMailToResetPassword}
+const ChangePassword = async (req, res) => {
+    try {
+        let {cnp} = req.body
+        let {id} = req.params
+        let updatedUser = await User.findOne({_id: id})
+        updatedUser.password = await User.schema.methods.encryptPassword(cnp)
+        await updatedUser.save()
+        return res.status(200).json(updatedUser)
+   } catch (error) {
+       console.error(error)
+       return res.status(500).json({message: error.message})
+   }
+}
+
+const ValidateLink = async (req, res) => {
+    const {id, token} = req.params
+    const foundedUser = await User.findOne({_id: id})
+    if (!foundedUser) return res.status(400).json({
+        message : "user doesn't founded"
+    })
+    const secret = stoken + foundedUser.password
+    try {
+        const verify = jwt.verify(token, secret)
+        res.status(200).json({
+            message : verify
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(400).json({
+            message : error
+        })
+    }
+}
+
+export default {SignIn, SignUp, Me, DeleteUser, EditUser, getUsers, GetUser, ResetPassword,
+    ValidateLink, SendMailToResetPassword, ChangePassword}

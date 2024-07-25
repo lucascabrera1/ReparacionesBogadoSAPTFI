@@ -18,11 +18,54 @@ export const login = createAsyncThunk('auth/login', async ({email, password}) =>
     }
 })
 
+export const sendLinkForResetPassword = createAsyncThunk('auth/sendLinkForResetPassword', async ({email}) => {
+    const url = `${urlApi}/auth/reset-password`
+    const user = {email: email}
+    try {
+        const response = await axios.post(url, user)
+        return response.data
+    } catch (error) {
+        console.error(error)
+        return false
+    }
+})
+
+export const sendNewPassword = createAsyncThunk('auth/sendNewPassword' , async ({id, token}) => {
+    const url = `${urlApi}/auth/reset-password/${id}/${token}`
+    console.log(url)
+    const user = {id: id, token: token}
+    try {
+        const response = await axios.patch(url, user)
+        console.log(response)
+        return response.data
+    } catch (error) {
+        console.error(error)
+        return false
+    }
+})
+
+export const changePassword = createAsyncThunk('auth/changePassword' , async (user) => {
+    const url = `${urlApi}/auth/changepassword/${user.id}`
+    console.log(url)
+    /* const user = {op, np, cnp}
+    console.log(user) */
+    try {
+        const response = await axios.patch(url, user)
+        console.log(response)
+        return response.data
+    } catch (error) {
+        console.error(error)
+        return false
+    }
+})
+
 export const authSlice = createSlice ({
     name: 'auth',
     initialState: {
         user : null,
         accessToken: null,
+        erroremail: false,
+        errorcambiopassword : null
     },
     reducers: {
         logOut: (state, action) => {

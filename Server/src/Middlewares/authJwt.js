@@ -107,3 +107,32 @@ export const isProveedor = async (req, res, next) => {
     }
     return res.status(403).json({message: "Requiere el rol de Proveedor"})
 }
+
+export const validNewPassword = async (req, res, next) => {
+    try {
+        /*
+            op = old password,
+            np = new password,
+            cnp = confirm new passord
+         */
+        const {op, np, cnp} = req.body
+        const {id} = req.params
+        const user = await User.findById({_id: id})
+        if (!user) return res.status(404).json({message: "el usuario no existe"})
+        let compare = await user.validatePassword(op)
+        if (!compare || compare === false) {
+            return (res.status(403).json({message : "contraseña incorrecta"}))
+        }
+        if (np !== cnp) {
+            return (res.status(403).json({message: "las nuevas claves no coinciden"}))
+        }
+        console.log("validate password succesfully")
+        next()
+    } catch (error) {
+        return res.status(500).json({
+            error: true,
+            message: error.message
+        })
+    }
+    
+}

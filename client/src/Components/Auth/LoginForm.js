@@ -6,6 +6,7 @@ import Input from "../../Components/Common/Input";
 import Button from "../../Components/Common/Button";
 //import styles from '../../Components/style.module.css'
 import { login } from "../../Features/AuthSlice";
+import { NavLink } from "react-router-dom";
 
 const Login = () =>{
 
@@ -62,6 +63,7 @@ const Login = () =>{
                 type="submit"
             >
             Iniciar Sesión </Button>
+            <NavLink to='/reset-password'>¿olvidó su contraseña?</NavLink>
         </form>
     )
 }

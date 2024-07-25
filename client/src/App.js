@@ -24,6 +24,9 @@ import NavBarBootstrap from './Components/Common/NavBarBootstrap.js'
 import Login from './Components/Auth/LoginForm.js'
 import RegisterForm from './Components/Auth/RegisterForm.js'
 import FormUsuarios from './Components/Auth/UsersForm.js'
+import FormLinkResetPwd from './Components/FormLinkResetPwd.js'
+import FormResetPwd from './Components/FormResetPwd.js'
+import FormChangePassword from './Components/FormChangePassword.js'
 
 function App() {
   return <div  className="container-fluid">
@@ -55,10 +58,13 @@ function App() {
             <Route path='/edit-user/:id' element={<ProtectedRoute><RegisterForm/></ProtectedRoute>}/>
             <Route path='/reporteproveedores' element={<ProtectedRoute><ReporteProveedores/></ProtectedRoute>}/>
             <Route path='/login' element={<Login/>}></Route>
+            <Route path='/reset-password' element={<FormLinkResetPwd/>}></Route>
             <Route path='/' element= {<Welcome/>}/>
+            <Route path='/reset-password/:id/:token' element={<FormResetPwd/> }/>
+            <Route path='/change-password/:id' element={<ProtectedRoute><FormChangePassword/></ProtectedRoute>}/>
             {/*<Route path='/' element={<FormTodasLasOC/>} />
             <Route path='/home' element={<Home/>} />
-            
+                                                                                                                
             
             <Route path='/newuser' element={<UserForm/>}/> 
             <Route path='/login' element= {<Login/>}/>

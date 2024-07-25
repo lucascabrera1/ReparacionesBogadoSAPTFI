@@ -52,6 +52,7 @@ export default function NavBarBootstrap() {
                             <a >Salir</a>
                         </NavLink>
                         <p>{userlogged.nombreUsuario}</p>
+                        <NavLink to={`change-password/${userlogged._id}`}>Cambiar contraseña</NavLink>
                     </li>
                     :<NavLink to="/login">Iniciar sesion</NavLink>
                 }
