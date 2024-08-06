@@ -52,10 +52,16 @@ export const changePassword = createAsyncThunk('auth/changePassword' , async (us
     try {
         const response = await axios.patch(url, user)
         console.log(response)
-        return response.data
+        return {
+            error: false,
+            data: response.data
+        }
     } catch (error) {
         console.error(error)
-        return false
+        return {
+            error: true,
+            message: error.response.data.message
+        }
     }
 })
 

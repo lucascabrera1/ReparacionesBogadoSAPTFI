@@ -10,33 +10,40 @@ function FormResetPwd() {
   const params = useParams()
   //destructuring
   console.log(params)
-  const [result, setResult] = useState("")
+  const [result, setResult] = useState({error:false})
 
-  const ResetPassword = async () => {
-    console.log("entra al reset password")
-    try {
-      console.log("entra al try del reset password")
-      const result = await dispatch(sendNewPassword(params)).unwrap()
-      console.log(result)
-      setResult(result.data)
-      navigate('/')
-    } catch (error) {
-      setResult(error.message)
-      return console.error(error)
+  
+
+  useEffect(()=> {
+    async function ResetPassword () {
+      console.log("entra al useffect reset password")
+      try {
+        console.log("entra al try del reset password")
+        const resultcall = await dispatch(sendNewPassword(params)).unwrap()
+        console.log(resultcall)
+        setResult(resultcall)
+        if (!resultcall) {
+          console.log("entraaaa")
+          setResult({error:true})
+        }
+        
+      } catch (error) {
+        setResult(error)
+        console.error(error)
+      }
     }
-  }
-
-  useEffect(() => {
     console.log("entra al use effect")
     console.log(result)
     ResetPassword()
-  }, [params.id])
+  }, [])
 
-  return result.error ? (
-    <div>ocurrio un error</div>
-  ) : (
-    <div>Contraseña enviada exitosamente</div>
-  )
+  return <>
+    {result.error ? (
+      <div>el link expiró o ya fue utilizado</div>
+    ) : (
+      <div>Contraseña enviada exitosamente</div>
+    )}
+  </>
 }
 
 export default FormResetPwd

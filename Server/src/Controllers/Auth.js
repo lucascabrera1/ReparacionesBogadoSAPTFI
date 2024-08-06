@@ -6,8 +6,7 @@ import { RandomPassword } from "../Utils/Random.js"
 import sendmail from "../Utils/SendMail.js"
 dotenv.config({path: './.env'})
 const stoken = process.env.SECRET
-const PORT = process.env.PORT
-const URL_BASE = `${process.env.URL_BASE}/${PORT}`
+const URL_BASE = process.env.URL_CLIENT
 
 const SignIn = async (req, res, next) => {
     try {

@@ -20,8 +20,14 @@ function FormChangePassword() {
             console.log(result)
             console.log(params)
             console.log(data)
+            if (result.error) {
+                alert(result.message)
+            } else {
+                alert("contraseña cambiada exitosamente")
+                navigate("/")
+            }
             
-            if (result === true) {
+            /*if (result === true) {
                 alert("contraseña cambiada exitosamente")
                 e.target.reset()
                 navigate("/")
@@ -29,7 +35,7 @@ function FormChangePassword() {
                 console.log("se va por el else")
                 console.log(result)
                 alert(result)
-            }
+            }*/
             
         } catch (error) {
             console.log("ocurrio un error")

@@ -14,7 +14,7 @@ const sendEmail = async (email, subject, text) => {
         });
 
         const result = await transporter.sendMail({
-            from: "haga click en el siguiente link para recuperar la contraseña olvidada <process.env.USER>",
+            from: "Reparaciones Bogado",
             to: email,
             subject: subject,
             text: text,
