@@ -191,10 +191,16 @@ function FormRemito() {
       console.log(data)
       const result = await dispatch(AgregarRemito(data)).unwrap()
       console.log(result)
-      alert('Remito guardado correctamente')
+      if (result.error === true) {
+        alert(result.message)
+      } else {
+        alert('Remito guardado correctamente')
+      }
+      
       e.target.reset()
       navigate('/remitos')
     } catch (error) {
+      alert(error)
       console.error(error)
     }
   }

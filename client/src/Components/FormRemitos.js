@@ -36,7 +36,7 @@ function FormRemitos() {
       <h2 style={{backgroundColor: 'yellowgreen'}}>Remitos de Compra ingresados hasta el momento</h2>
       <Table className= 'table table-success table-bordered border-dark'>
         <thead>
-          <tr>
+          <tr key="null">
             <th>Fecha de emisión</th>
             <th>Proveedor</th>
             <th>Orden de Compra</th>

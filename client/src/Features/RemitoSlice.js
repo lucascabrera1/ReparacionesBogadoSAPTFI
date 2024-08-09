@@ -124,11 +124,15 @@ export const AgregarRemito = createAsyncThunk('Remito/AgregarRemito', async(remi
         console.log('entra al guardar remito')
         console.log(remito)
         const response = await axios.post(`${URL_BASE_REMITOS}/todos`, remito)
-        console.log(response.data)
-        return response.data
+        const result = {error: false, data : response.data}
+        return result
     } catch (error) {
-        console.error(error.message)
-        return error.message
+        const result = {
+            error: true, 
+            message: ErrorRetornado(error)
+        }
+        console.error(error)
+        return result
     }
 })
 

@@ -156,7 +156,7 @@ function FormOrdenCompra() {
       const result = await dispatch(AgregarOrdenDeCompra(data)).unwrap()
       alert('orden de compra guardada correctamente')
       e.target.reset()
-      navigate('/ordenesdecompra')
+      navigate('/todaslasordenesdecompra')
     } catch (error) {
       console.error(error)
     }
@@ -209,7 +209,7 @@ function FormOrdenCompra() {
             }}>
               <td>{producto.descripcion}</td>
               <td>{producto.categoria}</td>
-              <td>{producto.proveedor.razonsocial}</td>
+              <td>{producto.proveedor}</td>
               <td>{producto.marca}</td>
               <td>{producto.codigo}</td>
               <td>{producto.preciocompra}</td>

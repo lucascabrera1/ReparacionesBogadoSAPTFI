@@ -27,6 +27,7 @@ import FormUsuarios from './Components/Auth/UsersForm.js'
 import FormLinkResetPwd from './Components/FormLinkResetPwd.js'
 import FormResetPwd from './Components/FormResetPwd.js'
 import FormChangePassword from './Components/FormChangePassword.js'
+import FormReporteRemitos from './Components/Reportes/FormReporteRemitos.js'
 
 function App() {
   return <div  className="container-fluid">
@@ -57,6 +58,7 @@ function App() {
             <Route path='/remitos/:id' element={<ProtectedRoute><FormLineasRemito/></ProtectedRoute>}/>
             <Route path='/edit-user/:id' element={<ProtectedRoute><RegisterForm/></ProtectedRoute>}/>
             <Route path='/reporteproveedores' element={<ProtectedRoute><ReporteProveedores/></ProtectedRoute>}/>
+            <Route path='/reporteremitos' element={<ProtectedRoute><FormReporteRemitos/></ProtectedRoute>}/>
             <Route path='/login' element={<Login/>}></Route>
             <Route path='/reset-password' element={<FormLinkResetPwd/>}></Route>
             <Route path='/' element= {<Welcome/>}/>

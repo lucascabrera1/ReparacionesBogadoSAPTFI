@@ -23,7 +23,9 @@ function ReporteProveedores () {
     const dispatch = useDispatch()
     const ocs = useSelector(SeleccionarTodasLasOrdenesDeCompra)
     console.log(ocs)
+    
     const proveedores = useSelector(SeleccionarTodosLosProveedores)
+    console.log(proveedores)
 
     useEffect(()=>{
         if (estadoocs==="idle"){
@@ -43,14 +45,18 @@ function ReporteProveedores () {
     let ocsxproov = [];
 
     ocs.forEach(function (element) {
-        repetidos[element.proveedor] = (repetidos[element.proveedor] || 0) + 1
+        console.log(element)
+        repetidos[element.proveedor._id] = (repetidos[element.proveedor._id] || 0) + 1
     });
+
+    console.log(repetidos)
 
     proveedores.forEach(x => {
         let informe = {
             proveedor : x.razonsocial,
             cantidadocs : repetidos[x._id]
         }
+        console.log(informe)
         ocsxproov.push(informe)
     })
 

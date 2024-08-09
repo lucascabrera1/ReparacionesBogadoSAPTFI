@@ -28,7 +28,7 @@ function FormOrdenesCompra() {
     if (estadoocs==="idle"){
       dispatch(RecuperarOrdenesDeCompra())
     }
-  },[estadoocs])
+  },[estadoocs, ocs])
 
   return erroresocs ? (<div className='alert alert-danger'>{erroresocs}</div>) :  (
     <div>aca devolvemos todas las ordenes de compra

@@ -1,6 +1,5 @@
 import Role from "../Models/Role.js"
 import User from "../Models/User.js"
-//import { ROLES } from "../Models/Role.js"
 
 export const checkRoles = async (req, res, next) => {
     let ROLES = []
@@ -23,23 +22,14 @@ export const checkRoles = async (req, res, next) => {
 export const CheckDuplicateUser = async (req, res, next) => {
     const {email, nombreUsuario} = req.body
     const userFoundedByName = await User.findOne({nombreUsuario})
-    console.log("inicio userFoundedBynombreUsuario")
-    console.log(userFoundedByName)
-    console.log("fin userFoundedByName")
     if (userFoundedByName && userFoundedByName._id.toString() !== req.params.id)  return res.status(400).json({
         error: true,
         message: `User ${nombreUsuario} founded by nombreUsuario already exists`
     })
-    console.log(email, nombreUsuario)
     const userFoundedByMail = await User.findOne({email})
-    console.log("inicio userFoundedByMail")
-    console.log(userFoundedByMail)
-    console.log("fin userFoundedByMail")
     if (userFoundedByMail && userFoundedByMail._id.toString() !== req.params.id) return res.status(400).json({
         error: true,
         message: `User ${email} founded by Mail already exists`
     })
-   
-    //return res.status(202).json({userFounded})
     next()
 }

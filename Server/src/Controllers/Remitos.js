@@ -21,9 +21,6 @@ const RecuperarOrdenesDeCompra = async (req, res, next) => {
         const ocs = await OrdenDeCompra.find({})
         let ocsdevueltas = []
         for (const elem of ocs) {
-            console.log('---------------------------------inicio elem------------------------------')
-            console.log(elem)
-            console.log('---------------------------------final elem------------------------------')
             let proveedorencontrado = await Proveedor.findById(elem.proveedor)
             let formadepagoencontrada = await FormaDePago.findById(elem.formaDePago)
             let items = []
@@ -218,15 +215,8 @@ const AgregarLineaRemito = async (req, res) => {
 
 const AgregarRemito = async (req, res) => {
     try {
-        console.log('llega al metodo agregar remito')
-        console.log(req.body)
-        console.log('linea 172 req.body')
-        console.log(req.body.detalles)
         let items = []
         for(const elem of req.body.detalles) {
-            console.log ('-------------inicio elem of req.body.detalles-------------')
-            console.log(elem)
-            console.log ('-------------fin elem of req.body.detalles-------------')
             const lr = new LineaRemito()
             lr.lineaCompra = elem.lineaCompra
             lr.cantidadIngresada = elem.cantidadIngresada
@@ -235,7 +225,14 @@ const AgregarRemito = async (req, res) => {
         }
         const remito = new Remito(req.body)
         remito.items = items
-        console.log(remito)
+        const remito_oc = await Remito.findOne({ordenCompra : req.body.ordenCompra})
+        console.log("remito encontrado")
+        console.log(remito_oc)
+        console.log("fin remito encontrado")
+        if (remito_oc) return res.status(409).json({
+            error : true,
+            message : `ya existe un remito para esa orden de compra, si necesita volver a ingresar un remito elimine el remito ${remito_oc._id}`
+        })
         const remitosaved = await remito.save()
         return res.json(remitosaved)
     } catch (error) {

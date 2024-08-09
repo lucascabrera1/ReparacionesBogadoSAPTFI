@@ -265,7 +265,12 @@ const SendMailToResetPassword = async (req, res) => {
             }
         )
         const link = `${URL_BASE}/reset-password/${userFounded._id}/${token}`
-        const result = await sendmail.sendEmail(userFounded.email, "link para recuperar password", link)
+        const htmlContent = `
+            <h2>Haga click en el siguiente link para resetear su contraseña</h2>
+            <a href = "${link}">${link}</a>
+            <h3>Recuerde que tiene 50 minutos para recuperar su contraseña antes que este link caduque</h3>
+        `
+        const result = await sendmail.sendEmail(userFounded.email, "link para recuperar password",link, htmlContent)
         console.log(result.messageId)
         /* console.log("inicio resultado de llamar a sendMail")
         console.log("fin resultado de llamar a sendMail")
@@ -319,8 +324,9 @@ const ResetPassword = async (req, res) => {
         if (verify.error) return res.status(400).json({
             message: "token invalido o expirado, repita el proceso"
         })
+        const htmlContent = `su nueva clave es ${randompassword} Le recomendamos cambiarla enseguida`
         userFounded.password = await User.schema.methods.encryptPassword(randompassword)
-        const sendedpassword = await sendmail.sendEmail(userFounded.email, "su nueva contraseña", randompassword)
+        const sendedpassword = await sendmail.sendEmail(userFounded.email, "su nueva contraseña", randompassword, htmlContent)
         console.log(sendedpassword)
         await userFounded.save()
         return res.status(200).json({
