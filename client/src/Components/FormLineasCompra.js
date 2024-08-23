@@ -56,7 +56,6 @@ function FormLineasCompra(idOc) {
               <th>Precio Unitario</th>
               <th>Cantidad</th>
               <th>Subtotal</th>
-              <th>Faltante</th>
             </tr>
           </thead>
           <tbody>
@@ -68,7 +67,6 @@ function FormLineasCompra(idOc) {
                     <td>{item.preciocompra}</td>
                     <td>{item.cantidad}</td>
                     <td>{item.subtotal}</td>
-                    <td>{item.faltante}</td>
                   </tr>
                 )})
               : "vacio"

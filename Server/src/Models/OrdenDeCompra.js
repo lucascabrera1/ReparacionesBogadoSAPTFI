@@ -1,6 +1,11 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const schemaOrdenCompra = new mongoose.Schema({
+    codigo : {
+        type: Number,
+        required: true,
+        unique : true
+    },
     fechaEmision: {
         type: Date,
         required:true

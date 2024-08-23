@@ -30,9 +30,15 @@ function FormReporteRemitos() {
   let informefxp = []
 
   for (let i = 0; i< remitos.length; i++) {
+    if (remitos[i].items) {
       for (let j = 0; j < remitos[i].items.length; j++) {
-          lineas.push(remitos[i].items[j])
+        lineas.push(remitos[i].items[j])
       }
+    } else if (remitos[i].detalles) {
+      for (let j = 0; j < remitos[i].detalles.length; j++) {
+        lineas.push(remitos[i].detalles[j])
+      }
+    }
   }
 
   lineas.forEach(function (element) {

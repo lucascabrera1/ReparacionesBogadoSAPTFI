@@ -51,6 +51,7 @@ const RecuperarOrdenesDeCompra = async (req, res, next) => {
             }
             let newElem = {
                 _id : elem._id,
+                codigo: elem.codigo,
                 formapago: formadepagoencontrada.descripcion,
                 fechaemision: elem.fechaEmision,
                 fechaentrega: elem.fechaEntrega,
@@ -90,13 +91,13 @@ const RecuperarOrdenDeCompra = async (req, res, next) => {
                 producto: productorecuperado.descripcion,
                 preciocompra: productorecuperado.preciocompra,
                 cantidad: item.cantidad,
-                subtotal: item.subtotal,
-                faltante: item.cantidad
+                subtotal: item.subtotal
             }
             items.push(newElem)
         }
         let ocDevuelta = {
             _id : oc._id,
+            codigo: oc.codigo,
             formapago: formadepagoencontrada.descripcion,
             fechaemision: oc.fechaEmision,
             fechaentrega: oc.fechaEntrega,

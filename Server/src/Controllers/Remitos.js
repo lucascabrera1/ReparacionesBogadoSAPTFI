@@ -30,6 +30,8 @@ const RecuperarOrdenesDeCompra = async (req, res, next) => {
             }
             let newElem = {
                 _id : elem._id,
+                codigo: elem.codigo,
+                estado: elem.estado,
                 formapago: formadepagoencontrada.descripcion,
                 fechaemision: elem.fechaEmision,
                 fechaentrega: elem.fechaEntrega,
@@ -114,6 +116,8 @@ const RecuperarOrdenDeCompra = async (req, res, next) => {
         }
         let ocDevuelta = {
             _id : oc._id,
+            codigo: oc.codigo,
+            estado: oc.estado,
             formapago: formadepagoencontrada.descripcion,
             fechaemision: oc.fechaEmision,
             fechaentrega: oc.fechaEntrega,
@@ -145,8 +149,7 @@ const RecuperarLineasDeCompra = async (req, res) => {
                 producto: productorecuperado.descripcion,
                 preciocompra: productorecuperado.preciocompra,
                 cantidad: lc.cantidad,
-                subtotal: lc.subtotal,
-                faltante: lc.cantidad
+                subtotal: lc.subtotal
             }
             lcsdevueltas.push(newElem)
         }

@@ -7,7 +7,8 @@ import Input from './Common/Input'
 import Form from 'react-bootstrap/Form'
 import {RecuperarProveedores, RecuperarProductosPorProveedor, RecuperarFormasDePago, AgregarOrdenDeCompra,
   SeleccionarTodosLosProductos, SeleccionarTodosLosProveedores, SeleccionarTodasLasFormasDePago,
-  EstadoProveedores, EstadoFormasDePago} from '../Features/OrdenCompraSlice.js'
+  EstadoProveedores, EstadoFormasDePago, EstadoOrdenesDeCompra,
+  RecuperarOrdenesDeCompra} from '../Features/OrdenCompraSlice.js'
 import Table from 'react-bootstrap/esm/Table.js'
 import { toFormData } from 'axios'
 
@@ -23,6 +24,7 @@ function FormOrdenCompra() {
   const productos = useSelector(SeleccionarTodosLosProductos)
   const formasdepago = useSelector(SeleccionarTodasLasFormasDePago)
   const estadoformasdepago = useSelector(EstadoFormasDePago)
+  const estadoocs = useSelector(EstadoOrdenesDeCompra)
   //form tools
   const {register, handleSubmit, formState : {errors}, control, reset, getValues} = useForm({
     proveedor: {},
@@ -60,6 +62,14 @@ function FormOrdenCompra() {
       dispatch(RecuperarFormasDePago())
     }
   }, [estadoformasdepago])
+
+  console.log(formasdepago)
+
+  useEffect(()=> {
+    if (estadoocs === "idle") {
+      dispatch(RecuperarOrdenesDeCompra())
+    }
+  })
  
   const optionProveedores = proveedores.map(p => (<option
     value={p._id} 
@@ -154,9 +164,12 @@ function FormOrdenCompra() {
     }
     try {
       const result = await dispatch(AgregarOrdenDeCompra(data)).unwrap()
+      console.log(result)
       alert('orden de compra guardada correctamente')
       e.target.reset()
+      
       navigate('/todaslasordenesdecompra')
+      //dispatch (RecuperarOrdenesDeCompra())
     } catch (error) {
       console.error(error)
     }
@@ -183,6 +196,8 @@ function FormOrdenCompra() {
         >
           {optionProveedores}
         </Form.Select>
+        <br/>
+      <p>Seleccione un producto de la grilla haciendo clic en el mismo</p>
       <Table className= 'table table-success table-bordered border-dark'>
         <thead>
             <tr>
@@ -215,7 +230,12 @@ function FormOrdenCompra() {
               <td>{producto.preciocompra}</td>
               <td>{producto.precioventa}</td>
               <td>{producto.puntopedido}</td>
-              <td>{producto.stock}</td>
+              <td 
+              style={
+                producto.stock < producto.puntopedido ? 
+                {backgroundColor : 'red'} : {backgroundColor : 'greenyellow'}
+              }>{producto.stock}
+              </td>
             </tr>
           })}
         </tbody>
@@ -340,6 +360,19 @@ function FormOrdenCompra() {
           {optionFormasDePago}
       </Form.Select>
       {errors["formaDePago"]?.type === "required" && <><span style={{color: "red"}} >Es obligatorio ingresar una forma de pago</span><br/></>}
+      <Input
+        type="number"
+        name="codigo"
+        placeholder="Código"
+        register={register}
+        registerOptions= {{required: true, minLength: 1, maxLength: 4}}
+        optionMsgErrors={{
+          required: "El codigo es obligatorio",
+          minLength : "Minimo 1 digito",
+          maxLength : "Máximo 4 dígitos"
+        }}
+        errors={errors}
+      />
       <Button type='submit'>Generar nueva orden de compra</Button>
       </Form>
       <Button

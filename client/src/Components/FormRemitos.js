@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import {useDispatch, useSelector } from 'react-redux'
-import {RecuperarRemitos, EstadoRemitos, RecuperarOrdenesDeCompra, SeleccionarTodosLosRemitos, 
-  EstadoOrdenesDeCompra,  ErroresRemitos, ErroresOrdenesDeCompra} from '../Features/RemitoSlice.js'
+import {RecuperarRemitos, EstadoRemitos, SeleccionarTodosLosRemitos, 
+  EstadoOrdenesDeCompra,  ErroresRemitos, SeleccionarTodasLasOrdenesDeCompra,
+  SeleccionarTodosLosProveedores,
+  RecuperarOrdenesDeCompra} from '../Features/RemitoSlice.js'
 import Table from 'react-bootstrap/Table'
 import Button from 'react-bootstrap/Button'
 import { NavLink, useNavigate } from 'react-router-dom'
-import { formatHumanDateTime, formatHumanDate } from '../Util/DateFormat.js'
+import { formatHumanDateTime} from '../Util/DateFormat.js'
 
 function FormRemitos() {
 
@@ -14,10 +16,16 @@ function FormRemitos() {
 
   const remitos = useSelector(SeleccionarTodosLosRemitos)
   const estadoremitos = useSelector(EstadoRemitos)
-  //const ocs = useSelector(SeleccionarTodasLasOrdenesDeCompra)
+  const proveedores = useSelector(SeleccionarTodosLosProveedores)
+  const ocs = useSelector(SeleccionarTodasLasOrdenesDeCompra)
   const estadoocs = useSelector(EstadoOrdenesDeCompra)
   const erroresremito = useSelector(ErroresRemitos)
+  //const estadoproveedores = useSelector(EstadoProveedores)
   console.log(erroresremito)
+  console.log(remitos)
+  console.log(proveedores)
+  console.log(estadoocs)
+
   
   useEffect(()=>{
     if (estadoremitos==="idle"){
@@ -25,11 +33,12 @@ function FormRemitos() {
     }
   },[estadoremitos])
 
-  useEffect(()=>{
-    if (estadoremitos==="idle"){
-      dispatch(RecuperarOrdenesDeCompra())
-    }
-  },[estadoocs])
+  useEffect(() => {
+    if (estadoocs === "idle") dispatch(RecuperarOrdenesDeCompra())
+  }, [estadoocs])
+
+
+  console.log(ocs)
 
   return erroresremito ? (<div className='alert alert-danger'>{erroresremito}</div>) :  (
     <div>
@@ -46,11 +55,29 @@ function FormRemitos() {
         <tbody>
           {
             remitos.map( remito => {
-              return <tr key={remito._id}>
-                <td>{remito.fechaemision ? formatHumanDateTime(remito.fechaemision) : "vacia"}</td>
-                <td>{remito.proveedor}</td>
-                <td>{remito.ordenCompra}</td>
-                <td><NavLink to={`/remitos/${remito._id}`}> Ver Detalles...</NavLink></td>
+              return <tr key={remito._id ? remito._id : remito.data._id}>
+                <td>{
+                  //remito.fechaemision ? 
+                  formatHumanDateTime(remito.fechaemision) 
+                  //:formatHumanDateTime(remito.data.fechaEmision)
+                }</td>
+                <td>{
+                  remito.proveedor 
+                  //? remito.proveedor : proveedores.find(x => x._id === remito.data.proveedor).razonsocial
+                }</td>
+                <td>{
+                  
+                  ocs.find(oc => oc._id === remito.ordenCompra).codigo
+                  /*remito.ordenCompra ? ocs.find(oc => oc._id === remito.ordenCompra).codigo : 
+                  remito.ordenCompra.codigo
+                  ocs.find(oc => oc._id === remito.data.ordenCompra).codigo
+                  ocs.find(oc => oc._id === remito.ordenCompra).codigo ?
+                  ocs.find(oc => oc._id === remito.ordenCompra).codigo :
+                  ocs.find(oc => oc._id === remito.data.ordenCompra).codigo ?
+                  ocs.find(oc => oc._id === remito.data.ordenCompra).codigo : "" */
+                  
+                }</td>
+                <td><NavLink to={`/remitos/${remito._id ? remito._id : remito.data._id}`}> Ver Detalles...</NavLink></td>
               </tr>
               }
             )

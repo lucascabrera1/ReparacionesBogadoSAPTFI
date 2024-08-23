@@ -168,6 +168,7 @@ export const RemitoSlice = createSlice({
         })
         .addCase(RecuperarOrdenesDeCompra.fulfilled, (state, action) => {
             state.estadoremitos = "completed"
+            //state.estadoordenesdecompra = "completed"
             if (!action.payload.error) {
                 state.ordenesDeCompra = action.payload.data
             } else {
@@ -179,8 +180,8 @@ export const RemitoSlice = createSlice({
             state.lineasCompra = action.payload
         })
         .addCase(AgregarRemito.fulfilled, (state, action) => {
-            state.estadoremitos = "completed"
-            state.remitos.push(action.payload)
+            state.estadoremitos = "idle"
+            //state.remitos.push(action.payload)
         })
         .addCase(RecuperarRemitoDeCompra.fulfilled, (state, action) => {
             state.remitos = state.remitos.map(item => {

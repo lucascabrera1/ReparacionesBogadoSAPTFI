@@ -2,20 +2,17 @@ import React from 'react'
 import { useEffect, useState } from 'react'
 import {useDispatch, useSelector } from 'react-redux'
 import {SeleccionarTodasLasOrdenesDeCompra, RecuperarOrdenesDeCompra, EstadoOrdenesDeCompra,
-  SeleccionarTodasLasLineasDeCompra, RecuperarLineasDeCompra, EstadoLineasDeCompra,
+  RecuperarLineasDeCompra, EstadoLineasDeCompra,
   SeleccionarTodosLosProveedores, RecuperarProveedores, EstadoProveedores,
-  AgregarRemito
+  AgregarRemito,
+  SeleccionarTodosLosRemitos
 } from '../Features/RemitoSlice'
-/* import {
-  SeleccionarTodosLosProveedores, RecuperarProveedores, EstadoProveedores
-} from '../Features/OrdenCompraSlice' */
 import Input from './Common/Input'
 import Table from 'react-bootstrap/Table'
 import {useForm, useFieldArray} from 'react-hook-form'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
-import { NavLink, useNavigate } from 'react-router-dom'
-import FormLineasCompra from './FormLineasCompra'
+import {useNavigate } from 'react-router-dom'
 
 function FormRemito() {
 
@@ -23,15 +20,12 @@ function FormRemito() {
   const navigate = useNavigate()
 
   const ocs = useSelector(SeleccionarTodasLasOrdenesDeCompra)
-  console.log(ocs)
-  const lcs = useSelector(SeleccionarTodasLasLineasDeCompra)
   const proveedores = useSelector(SeleccionarTodosLosProveedores)
-  console.log(proveedores)
+  const remitos = useSelector(SeleccionarTodosLosRemitos)
   const estadoocs = useSelector(EstadoOrdenesDeCompra)
   const estadoproveedores = useSelector(EstadoProveedores)
   const estadolineascompra = useSelector(EstadoLineasDeCompra)
   
-
   const [idOc, setIdOc] = useState('')
   const [idLc, setidLc] = useState('')
   const [producto, setProducto] = useState('')
@@ -70,18 +64,16 @@ function FormRemito() {
     }
   },[estadolineascompra])
 
-  console.log(ocs)
-  console.log(proveedorSeleccionado)
-  
-  let ocsfiltradas = ocs.filter(oc =>  oc.proveedor._id === proveedorSeleccionado)
-  console.log(ocsfiltradas)
+
+  let ocsfiltradas = ocs.filter(oc =>  oc.proveedor._id === proveedorSeleccionado &&
+    !remitos.find(rem => rem.ordenCompra === oc._id))
 
   const optOcsFiltradas = ocsfiltradas.map(oc =>{ 
     return <option className='optOcs' key={oc._id} value={oc._id}>
-      {oc._id}
+      {oc.codigo}
     </option>
   })
-  optOcsFiltradas.unshift(<option value="" key="">Seleccione</option>)
+  optOcsFiltradas.unshift(<option value="" key="">Seleccione una Orden de Compra</option>)
  
 
   const optProveedores = proveedores.map(proveedor => {
@@ -91,26 +83,18 @@ function FormRemito() {
       value={proveedor._id}
       onChange={e => {
         e.preventDefault()
-        console.log("llega a la lineas 94")
         let prov = proveedores.find(x => x._id === e.target.value)
-        console.log(prov)
         setProveedorSeleccionado(e.target.value)
       }}
     >
       {proveedor.razonsocial}
     </option>
   })
-  optProveedores.unshift(<option value="" key="">Seleccione</option>)
+  optProveedores.unshift(<option value="" key="">Seleccione un Proveedor</option>)
 
   let oc = ocsfiltradas.find(x => x._id === idOc)
-  console.log(oc)
 
   const AgregarLineaRemito = (id, idLc, cantidadesperada, cantidadrecibida) => {
-    console.log(proveedorSeleccionado)
-    console.log(cantidadrecibida)
-    console.log(producto)
-    console.log(id)
-    console.log(cantidadesperada)
     if (!cantidadrecibida || cantidadrecibida< 1) {
       alert(`la cantidad es obligatoria y debe ser mayor o igual a 1, y la ingresada fue: ${cantidadrecibida}`)
       return false
@@ -120,7 +104,6 @@ function FormRemito() {
       return false
     }
     let item = fields.find(x => x.producto === id)
-    console.log(item)
     if (item === undefined) {
     append({
       producto,
@@ -132,9 +115,7 @@ function FormRemito() {
       item.cantidadIngresada = item.cantidadIngresada + cantidadRecibida
       replace([...fields])
     }
-    console.log(proveedorSeleccionado)
     let proveedor = (getValues()["proveedor"]===undefined ? proveedorSeleccionado : getValues()["proveedor"])
-    console.log(proveedor)
     let fechaEmision = (getValues()["fechEemision"]===undefined?Date():Date())
     let ordenCompra = (getValues()["ordenCompra"]===undefined?null: oc._id)
     reset({
@@ -169,7 +150,7 @@ function FormRemito() {
     remove()
     //setRsp('')
     //setIdOc('')
-    setLineasC([])
+    //setLineasC([])
     setCantidadEsperada(0)
     setcantidadRecibida(0)
     //setidLc('')
@@ -188,11 +169,11 @@ function FormRemito() {
       return false
     }
     try {
-      console.log(data)
       const result = await dispatch(AgregarRemito(data)).unwrap()
-      console.log(result)
       if (result.error === true) {
-        alert(result.message)
+        e.target.reset()
+        LimpiarGrilla()
+        return alert(result.message)
       } else {
         alert('Remito guardado correctamente')
       }
@@ -212,7 +193,6 @@ function FormRemito() {
           onChange={e => {
             e.preventDefault()
             setProveedorSeleccionado(e.target.value)
-            console.log(e.target.value)
           }
         }>
           {optProveedores}
@@ -223,7 +203,6 @@ function FormRemito() {
             setIdOc(e.target.value)
             LimpiarGrilla()
             let lcs = await dispatch(RecuperarLineasDeCompra(e.target.value)).unwrap()
-            console.log(lcs)
             setLineasC(lcs)
           }
         }>
@@ -237,14 +216,14 @@ function FormRemito() {
           <p>Proveedor: </p>
           <p>Estado: </p>
         </div> : <div key={oc._id}>
-          <p>Orden seleccionada: {oc._id}</p>
+          <p>Orden seleccionada: {oc.codigo}</p>
           <p>Fecha de emision: {oc.fechaemision}</p>
           <p>Fecha de entrega: {oc.fechaentrega}</p>
           <p>Forma de pago: {oc.formapago}</p>
           <p>Proveedor: {oc.proveedor.razonsocial}</p>
           <p>Estado: {oc.estado}</p>
         </div>}
-        
+        <p>Seleccione una linea de compra e ingrese la cantidad ingresada</p>
         <Table className='table table-success table-bordered border-dark'>
             <thead>
               <tr>
@@ -252,7 +231,6 @@ function FormRemito() {
                 <th>Precio Unitario</th>
                 <th>Cantidad</th>
                 <th>Subtotal</th>
-                <th>Faltante</th>
               </tr>
             </thead>
             <tbody>
@@ -263,7 +241,6 @@ function FormRemito() {
                           key={item._id}
                           onClick={ e => {
                             e.preventDefault()
-                            console.log(item)
                             setidLc(item._id)
                             setProducto(item.producto)
                             setCantidadEsperada(parseInt(item.cantidad))
@@ -273,7 +250,6 @@ function FormRemito() {
                         <td>{item.preciocompra}</td>
                         <td>{item.cantidad}</td>
                         <td>{item.subtotal}</td>
-                        <td>{item.faltante}</td>
                       </tr>
                     )})
                   : "vacio"
@@ -289,7 +265,7 @@ function FormRemito() {
               </tr>
             </tfoot>
           </Table>
-          <p>Seleccione una linea de compra e ingrese la cantidad ingresada</p>
+          
           <p>Producto Seleccionado:  {!producto ? null : producto}</p>
           <input
             style={{width: '300px'}}
@@ -301,23 +277,13 @@ function FormRemito() {
             required = ""
             onChange={(e)=>{
               e.preventDefault()
-              console.log(typeof(e.target.value))
-              console.log(parseInt(e.target.value))
               setcantidadRecibida(parseInt(e.target.value))
-              console.log(cantidadRecibida)
           }}
         />
-          
           <Button
             onClick={ e => {
-              console.log('llega al onclick')
-              console.log()
               e.preventDefault()
-              console.log(cantidadRecibida)
               AgregarLineaRemito(producto, idLc, cantidadEsperada, cantidadRecibida)
-              console.log(typeof(cantidadRecibida))
-              console.log(idLc)
-              console.log(producto)
             }}
           > Agregar Línea de Remito
           </Button>
@@ -371,8 +337,6 @@ function FormRemito() {
                     variant='danger'
                     onClick={(e)=> {
                       e.preventDefault()
-                      console.log(item.id)
-                      console.log(item.producto)
                       QuitarLineaRemito(item.producto)
                     }}
                   >Quitar</Button>
@@ -385,7 +349,6 @@ function FormRemito() {
               variant='danger' 
               onClick={ e => {
                 e.preventDefault()
-                console.log('vaciar lista')
                 LimpiarGrilla()
               }}
             >Vaciar Lista de ítems

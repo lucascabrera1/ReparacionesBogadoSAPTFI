@@ -108,8 +108,10 @@ export const AgregarOrdenDeCompra = createAsyncThunk('/ordenCompra/AgregarOrdenD
 
 export const RecuperarOrdenesDeCompra = createAsyncThunk ('ordenCompra/RecuperarOrdenesDeCompra', async ()=> {
     try {
+        console.log("entra al recuperar todas las ordenes de compra del slice")
         const response = await axios.get(URL_BASE_OC)
         const result = {error: false, data : response.data}
+        console.log(result)
         return result
     } catch (error) {
         const result = {
@@ -168,6 +170,7 @@ export const RecuperarMarcas = createAsyncThunk ("ordenCompra/RecuperarMarcas", 
 
 export const RecuperarProductos = createAsyncThunk ("ordenCompra/RecuperarProductos", async () => {
     try {
+        console.log("llama al recuperar productos del slice")
         const response = await axios.get(URL_BASE_PRODUCTOS)
         const result = {error: false, data : response.data}
         return result
@@ -338,6 +341,7 @@ export const OrdenCompraSlice = createSlice({
             }
         })
         .addCase(RecuperarOrdenDeCompra.fulfilled, (state, action) => {
+            state.estadoordenesdecompra = "completed"
             state.ordenes = state.ordenes.map(item => {
                 if (item._id === action.payload._id) {
                     return action.payload
@@ -368,9 +372,10 @@ export const OrdenCompraSlice = createSlice({
         })
         .addCase(AgregarOrdenDeCompra.fulfilled, (state, action) => {
             console.log(action)
-            console.log(state)
-            state.estadoordenesdecompra = "completed"
-            state.ordenes.push(action.payload)
+            console.log(state.ordenes)
+            state.estadoordenesdecompra = "idle"
+            state.estadoproductos = "idle"
+            //state.ordenes.push(action.payload)
         })
         .addCase(EliminarMarca.fulfilled, (state, action) => {
             state.marcas = state.marcas.filter( (elem)=> {

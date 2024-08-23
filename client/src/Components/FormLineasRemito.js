@@ -2,7 +2,8 @@ import React from 'react'
 import { useEffect, useState } from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { RecuperarRemitoDeCompra} from '../Features/RemitoSlice'
+import { RecuperarRemitoDeCompra, SeleccionarTodasLasOrdenesDeCompra} from '../Features/RemitoSlice'
+import {RecuperarOrdenDeCompra} from '../Features/OrdenCompraSlice'
 import Table from 'react-bootstrap/Table'
 import { NavLink, useNavigate } from 'react-router-dom'
 
@@ -15,20 +16,28 @@ function FormLineasCompra(idRemito) {
   const [remito, setRemito] = useState({
     items: []
   })
+  const [oc, setOc] = useState({
+    items : []
+  })
+
+  const ocs = useSelector(SeleccionarTodasLasOrdenesDeCompra)
+  console.log(ocs)
 
   useEffect(()=> {
-  async function RecuperarUnaOrdenDeCompra(){
-   if (params.id){
-      const remitofounded = await (dispatch(RecuperarRemitoDeCompra(params.id)).unwrap())
-      console.log(remitofounded.items)
-      //setItems(remitofounded.items)
-      setRemito(remitofounded)
+    async function RecuperarUnRemito(){
+    if (params.id){
+        const remitofounded = await (dispatch(RecuperarRemitoDeCompra(params.id)).unwrap())
+        console.log(remitofounded.ordenCompra)
+        const ocfounded = await (dispatch(RecuperarOrdenDeCompra(remitofounded.ordenCompra)).unwrap())
+        setOc(ocfounded.data)
+        console.log(remitofounded.items)
+        console.log(ocfounded)
+        //setItems(remitofounded.items)
+        setRemito(remitofounded)
+      }
     }
-  }
-    RecuperarUnaOrdenDeCompra()
+    RecuperarUnRemito()
   }, [params])
-
-  console.log(remito.items)
 
   return (
       <div>
@@ -39,7 +48,12 @@ function FormLineasCompra(idRemito) {
           </div>
           <div className='col-md-4'>
             <label className='col-form-label'>Orden de Compra</label>
-            <input type='text' readonly defaultValue={remito.ordenCompra} className='form-control-plaintext'/>
+            <input type='text' readonly 
+              defaultValue={
+                oc.codigo
+              } 
+              className='form-control-plaintext'
+            />
           </div>
           <div className='col-md-4'>
             <label for="proveedor" className='col-form-label'>Proveedor</label>
