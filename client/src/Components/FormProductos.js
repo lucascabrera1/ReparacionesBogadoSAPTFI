@@ -6,6 +6,7 @@ import {SeleccionarTodosLosProductos,
   EliminarProducto,
   ErroresProductos
 } from '../Features/OrdenCompraSlice'
+import {EstadoProductos as Epr} from '../Features/RemitoSlice'
 import Table from 'react-bootstrap/Table'
 import Button from 'react-bootstrap/Button'
 import { NavLink, useNavigate } from 'react-router-dom'
@@ -16,16 +17,27 @@ function FormProductos() {
     const productos = useSelector(SeleccionarTodosLosProductos)
     const estadoproductos = useSelector(EstadoProductos)
     const errorproductos = useSelector(ErroresProductos)
+    const epr = useSelector(Epr)
+
+    console.log("epr")
+    console.log(epr)
+    console.log("epr")
 
     useEffect(()=>{
-        if (estadoproductos==="idle"){
-          dispatch(RecuperarProductos())
-        }
-      },[estadoproductos])
+      if (estadoproductos==="idle"){
+        dispatch(RecuperarProductos())
+      }
+    },[estadoproductos])
+
+    useEffect(()=>{
+      if (epr==="idle"){
+        dispatch(RecuperarProductos())
+      }
+    },[epr])
   
     const handleDelete = (_id, descripcion) => {
-        let ok = window.confirm(`¿Está seguro de que quiere eliminar:  ${descripcion}?`)
-        if (ok) {dispatch(EliminarProducto(_id))}
+      let ok = window.confirm(`¿Está seguro de que quiere eliminar:  ${descripcion}?`)
+      if (ok) {dispatch(EliminarProducto(_id))}
     }
 
     return errorproductos ? (<div className='alert alert-danger'>{errorproductos}</div>) : (

@@ -67,7 +67,7 @@ function FormRemitos() {
                 }</td>
                 <td>{
                   
-                  ocs.find(oc => oc._id === remito.ordenCompra).codigo
+                  ocs.find(oc => oc._id === remito.ordenCompra)?.codigo
                   /*remito.ordenCompra ? ocs.find(oc => oc._id === remito.ordenCompra).codigo : 
                   remito.ordenCompra.codigo
                   ocs.find(oc => oc._id === remito.data.ordenCompra).codigo

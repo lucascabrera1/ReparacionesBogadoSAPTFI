@@ -2,6 +2,7 @@ import {createSlice, createAsyncThunk} from '@reduxjs/toolkit'
 import axios from 'axios'
 import ErrorRetornado from './ReturnError'
 
+
 const initialState = {
     remitos:[],
     productos: [],
@@ -181,6 +182,8 @@ export const RemitoSlice = createSlice({
         })
         .addCase(AgregarRemito.fulfilled, (state, action) => {
             state.estadoremitos = "idle"
+            state.estadoproductos = "idle"
+            //state.estadoproductos = "idle"
             //state.remitos.push(action.payload)
         })
         .addCase(RecuperarRemitoDeCompra.fulfilled, (state, action) => {
@@ -219,6 +222,12 @@ export const EstadoRemitos = (state) => state.remitos.estadoremitos
 export const EstadoOrdenesDeCompra = (state) => state.remitos.estadoordenesdecompra
 export const EstadoLineasDeCompra = (state) => state.remitos.estadolineascompra
 export const EstadoProveedores = (state) => {console.log(state);return state.remitos.estadoproveedores}
+export const EstadoProductos = (state) => {
+    console.log(state.remitos.estadoproductos);
+    return state.remitos.estadoproductos
+}
+
+
 
 export const ErroresRemitos = (state) =>  {
     console.log(state.remitos.errorremito)

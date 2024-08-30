@@ -39,7 +39,16 @@ const GenerarOrdenDeCompra = async(req, res, next) => {
 
 const RecuperarOrdenesDeCompra = async (req, res, next) => {
     try {
-        const ocs = await OrdenDeCompra.find({})
+        let condition = {}
+        console.log(req)
+        console.log("por que jocara no funciona!!!!!!!!!!!!!!")
+        if (req.query.fechadesde) {
+            condition.$gte = req.query.fechadesde
+        }
+        if (req.query.fechahasta) {
+            condition.$lte = req.query.fechahasta
+        }
+        const ocs = await OrdenDeCompra.find((condition.$gte || condition.$lte)?{fechaEmision : condition}:{})
         let ocsdevueltas = []
         for (const elem of ocs) {
             let proveedorencontrado = await Proveedor.findById(elem.proveedor)
