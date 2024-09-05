@@ -8,6 +8,7 @@ import Categoria from '../Models/Categoria.js'
 
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
+import SendMail from '../Utils/SendMail.js'
 dotenv.config({path: '../.env'})
 //const stoken = process.env.SECRET
 
@@ -28,19 +29,68 @@ const GenerarOrdenDeCompra = async(req, res, next) => {
         }
         const oc = new OrdenDeCompra(req.body)
         oc.items = detalles
-        console.log(oc)
         const ocsaved = await oc.save()
+        const {razonsocial, email} = await Proveedor.findById(req.body.proveedor)
+        const {descripcion} = await FormaDePago.findById(req.body.formaDePago)
+        const subject = "Tiene una nueva orden de compra pendiente de confirmación o rechazo"
+        const htmlContent = `
+            <div>
+                <div className='row'>
+                    <div className='col-md-3'>
+                        <label>Fecha de Emisión</label>
+                        <input value=${oc.fechaEmision} />
+                    </div>
+                    <div className='col-md-3'>
+                        <label>Fecha de entrega</label>
+                        <input value=${oc.fechaEntrega} />
+                    </div>
+                    <div className='col-md-3'>
+                        <label>Proveedor</label>
+                        <input value=${razonsocial} />
+                    </div>
+                    <div className='col-md-3'>
+                        <label>Forma de Pago</label>
+                        <input value=${descripcion}/>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Precio Unitario</th>
+                            <th>Cantidad</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${oc.items}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                        <th></th>
+                        <th></th>
+                        <th>Total: </th>
+                        <th>{${oc.total}}</th>
+                        <th></th>
+                        </tr>
+                    </tfoot>
+                </table>
+                <button type="submit" class="button">Confirmar</button>
+                <button type="submit" class="button button-rejected">Rechazar</button>
+            </div>
+        `
+        const result = await SendMail.sendEmail(email, subject, htmlContent)
+        console.log(result)
         return res.json(ocsaved)
     } catch (error) {
         console.error(error)
-        return res.status(500).json({message : message.error})
+        return res.status(500).json({message : error})
     }
 }
 
 const RecuperarOrdenesDeCompra = async (req, res, next) => {
     try {
         let condition = {}
-        console.log(req)
         console.log("por que jocara no funciona!!!!!!!!!!!!!!")
         if (req.query.fechadesde) {
             condition.$gte = req.query.fechadesde
