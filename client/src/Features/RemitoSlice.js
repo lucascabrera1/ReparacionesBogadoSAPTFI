@@ -183,6 +183,7 @@ export const RemitoSlice = createSlice({
         .addCase(AgregarRemito.fulfilled, (state, action) => {
             state.estadoremitos = "idle"
             state.estadoproductos = "idle"
+            state.estadoordenesdecompra = "idle"
             //state.estadoproductos = "idle"
             //state.remitos.push(action.payload)
         })

@@ -11,4 +11,5 @@ export const store = configureStore ({
         auth: AuthSlice,
         users: UsersSlice
     }
+    //+ window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 })

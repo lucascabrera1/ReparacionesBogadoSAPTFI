@@ -5,7 +5,6 @@ import Marca from '../Models/Marca.js'
 import Producto from '../Models/Producto.js'
 import Proveedor from '../Models/Proveedor.js'
 import Categoria from '../Models/Categoria.js'
-
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 import SendMail from '../Utils/SendMail.js'
@@ -17,6 +16,9 @@ console.log(port)
 
 const GenerarOrdenDeCompra = async(req, res, next) => {
     try {
+        console.log("req.body linea 19")
+        console.log(req.body)
+        console.log("fin req.body linea 19")
         let detalles = []
         for(const elem of req.body.detalles) {
             console.log(elem)
@@ -30,19 +32,19 @@ const GenerarOrdenDeCompra = async(req, res, next) => {
         const oc = new OrdenDeCompra(req.body)
         oc.items = detalles
         const ocsaved = await oc.save()
-        const {razonsocial, email} = await Proveedor.findById(req.body.proveedor)
-        const {descripcion} = await FormaDePago.findById(req.body.formaDePago)
+        const {razonsocial, email} = await Proveedor.findById(ocsaved.proveedor)
+        const {descripcion} = await FormaDePago.findById(ocsaved.formaDePago)
         const subject = "Tiene una nueva orden de compra pendiente de confirmación o rechazo"
         const htmlContent = `
             <div>
                 <div className='row'>
                     <div className='col-md-3'>
                         <label>Fecha de Emisión</label>
-                        <input value=${oc.fechaEmision} />
+                        <input value=${ocsaved.fechaEmision} />
                     </div>
                     <div className='col-md-3'>
                         <label>Fecha de entrega</label>
-                        <input value=${oc.fechaEntrega} />
+                        <input value=${ocsaved.fechaEntrega} />
                     </div>
                     <div className='col-md-3'>
                         <label>Proveedor</label>
@@ -63,14 +65,20 @@ const GenerarOrdenDeCompra = async(req, res, next) => {
                         </tr>
                     </thead>
                     <tbody>
-                        ${oc.items}
+                        ${req.body.detalles.map(item => {
+                            `<tr key={${item._id}}>
+                                <td>${item.descripcion}</td>
+                                <td>${item.cantidad}</td>
+                                <td>${item.subtotal}</td>
+                            </t>`
+                        })}
                     </tbody>
                     <tfoot>
                         <tr>
                         <th></th>
                         <th></th>
                         <th>Total: </th>
-                        <th>{${oc.total}}</th>
+                        <th>{${ocsaved.total}}</th>
                         <th></th>
                         </tr>
                     </tfoot>
@@ -171,6 +179,20 @@ const RecuperarOrdenDeCompra = async (req, res, next) => {
     }
 }
 
+const ActualizarEstado = async (req, res) => {
+    try {
+        const {id} = req.params
+        const {estado} = req.body
+        let updatedOc = await OrdenDeCompra.findOne({_id : id})
+        updatedOc.estado = estado
+        await updatedOc.save()
+        return res.json(updatedOc)
+    } catch (error) {
+        console.error(error)
+        return res.status(400).json({error: error.message})
+    }
+}
+
 const ObtenerMarcas = async (req, res) => {
     try {
         const marcas = await Marca.find({})
@@ -183,7 +205,6 @@ const ObtenerMarcas = async (req, res) => {
             }
             marcasdevueltas.push(newElem)
         }
-        console.log(marcasdevueltas)
         return res.send(marcasdevueltas)
     } catch (error) {
         console.error(error.message)
@@ -490,5 +511,6 @@ export default {GenerarOrdenDeCompra,
     RecuperarCategorias,
     RecuperarOrdenDeCompra,
     RecuperarFormasDePago,
-    RecuperarProductosPorProveedor
+    RecuperarProductosPorProveedor,
+    ActualizarEstado
 }

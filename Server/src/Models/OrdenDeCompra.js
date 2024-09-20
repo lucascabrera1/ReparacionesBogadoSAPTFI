@@ -35,7 +35,7 @@ const schemaOrdenCompra = new mongoose.Schema({
     },
     estado : {
         type: String,
-        Enumerator : { value: ["Pendiente", "Confirmada", "Rechazada"]},
+        Enumerator : { value: ["Pendiente", "Confirmada", "Rechazada", "Entregada"]},
         default: "Pendiente",
         required: true
     }

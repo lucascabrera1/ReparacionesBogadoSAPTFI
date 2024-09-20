@@ -37,6 +37,10 @@ function FormOrdenesCompra() {
   console.log(ocs)
 
   useEffect( ()=>{
+      dispatch(RecuperarOrdenesDeCompra())
+  },[])
+
+  useEffect( ()=>{
     if (estadoocs==="idle"){
       dispatch(RecuperarOrdenesDeCompra())
     }
@@ -55,8 +59,8 @@ function FormOrdenesCompra() {
   },[estadofp])
 
   return erroresocs ? (<div className='alert alert-danger'>{erroresocs}</div>) :  (
-    <div>aca devolvemos todas las ordenes de compra
-      <ul><li><NavLink to={'/nuevaordendecompra'}>Generar una nueva orden de compra</NavLink></li></ul>
+    <div>
+      <h1>Todas las Órdenes de Compra generadas hasta el momento</h1>
       <Table className= 'table table-success table-bordered border-dark'>
         <thead>
           <tr>
@@ -102,12 +106,25 @@ function FormOrdenesCompra() {
           }
         </tbody>
       </Table>
-      <Button 
-      variant='secondary' 
-      onClick={e => {
-        e.preventDefault() 
-        navigate('/ordenesdecompra')
-      }}>...Atrás</Button>
+      <Button
+        variant='primary'
+        size='lg'
+        onClick={e => {
+          e.preventDefault()
+          navigate('/nuevaordendecompra')
+        }}
+      >
+        Nueva Orden de Compra
+      </Button>
+      <Button
+        size='lg'
+        variant='secondary' 
+        onClick={e => {
+          e.preventDefault() 
+          navigate('/')
+        }}>
+        ...Atrás
+      </Button>
     </div>
   )
 }

@@ -245,6 +245,13 @@ const AgregarRemito = async (req, res) => {
             console.log("producto encontrado: " + updatedProducto)
             await updatedProducto.save()
         })
+        //actualizo el estado de la oc a "entregada"
+        const updatedOc = await OrdenDeCompra.findByIdAndUpdate(
+            req.body.ordenCompra,
+            {$set : {estado: "Entregada"}},
+            {new: true}
+        )
+        await updatedOc.save()
         const remitosaved = await remito.save()
         return res.json(remitosaved)
     } catch (error) {

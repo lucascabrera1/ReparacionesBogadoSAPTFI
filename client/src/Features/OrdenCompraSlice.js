@@ -282,6 +282,17 @@ export const ModificarProducto = createAsyncThunk('ordenCompra/ModificarProducto
     }
 })
 
+export const CambiarEstadoOC = createAsyncThunk('ordenCompra/CambiarEstado', async (ocInicial) => {
+    try {
+        console.log(ocInicial)
+        const response = await axios.patch(URL_BASE_OC + ocInicial.id, ocInicial)
+        return response.data
+    } catch (error) {
+        console.error(error.message)
+        return error.message
+    }
+})
+
 export const OrdenCompraSlice = createSlice({
     name: "ordenesDeCompra",
     initialState,
@@ -409,6 +420,16 @@ export const OrdenCompraSlice = createSlice({
                     return item
                 }
             })
+        })
+        .addCase(CambiarEstadoOC.fulfilled, (state, action) => {
+            state.ordenes = state.ordenes.map(item => {
+                if (item._id === action.payload._id){
+                    return action.payload
+                } else {
+                    return item
+                }
+            })
+            state.estadoordenesdecompra = "idle"
         })
     }
 })

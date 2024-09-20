@@ -60,5 +60,6 @@ router.route('/ordenesdecompra')
 
 router.route('/ordenesdecompra/:id')
     .get([verifyToken, isEncargadoDeCompras], ocs.RecuperarOrdenDeCompra)
+    .patch([verifyToken, isEncargadoDeCompras], ocs.ActualizarEstado)
     
 export default router

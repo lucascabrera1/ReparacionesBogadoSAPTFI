@@ -2,11 +2,15 @@ import React from 'react'
 import { useEffect, useState } from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { RecuperarOrdenDeCompra} from '../Features/OrdenCompraSlice'
+import { RecuperarOrdenDeCompra, CambiarEstadoOC} from '../Features/OrdenCompraSlice'
 import Table from 'react-bootstrap/Table'
+import Button from 'react-bootstrap/Button'
 import { NavLink, useNavigate } from 'react-router-dom'
+import {useForm} from 'react-hook-form'
+
 
 function FormLineasCompra(idOc) {
+  const {register, handleSubmit, formState : {errors}} = useForm()
   console.log(idOc)
   const navigate = useNavigate()
   const params = useParams()
@@ -26,6 +30,19 @@ function FormLineasCompra(idOc) {
   }
     RecuperarUnaOrdenDeCompra()
   }, [params])
+
+  async function CambiarEstado(estado) {
+    try {
+      console.log(estado)
+      console.log(params.id)
+      const result = await dispatch(CambiarEstadoOC({estado, id: params.id})).unwrap()
+      console.log(result)
+      alert(`Orden de Compra ${estado} correctamente`)
+      navigate('/todaslasordenesdecompra')
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   console.log(oc.items)
 
@@ -82,7 +99,21 @@ function FormLineasCompra(idOc) {
             </tr>
           </tfoot>
         </Table>
-        <NavLink 
+        <Button 
+          variant="success" 
+          size="lg"
+          onClick={()=>CambiarEstado("Confirmada")}
+        >
+          Confirmar Orden de Compra
+        </Button>
+        <Button 
+          variant="danger" 
+          size="lg"
+          onClick={()=>CambiarEstado("Rechazada")}
+        >
+          Rechazar Orden de Compra
+        </Button>
+        <NavLink
           onClick={e => { e.preventDefault(); navigate('/todaslasordenesdecompra')}}>
           ...Atrás
         </NavLink>

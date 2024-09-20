@@ -66,7 +66,7 @@ function FormRemito() {
 
 
   let ocsfiltradas = ocs.filter(oc =>  oc.proveedor._id === proveedorSeleccionado &&
-    !remitos.find(rem => rem.ordenCompra === oc._id))
+    !remitos.find(rem => rem.ordenCompra === oc._id) && oc.estado === "Confirmada")
 
   const optOcsFiltradas = ocsfiltradas.map(oc =>{ 
     return <option className='optOcs' key={oc._id} value={oc._id}>
