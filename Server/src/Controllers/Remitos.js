@@ -228,12 +228,6 @@ const AgregarRemito = async (req, res) => {
         }
         const remito = new Remito(req.body)
         remito.items = items
-        const remito_oc = await Remito.findOne({ordenCompra : req.body.ordenCompra})
-        
-        if (remito_oc) return res.status(409).json({
-            error : true,
-            message : `ya existe un remito para esa orden de compra, si necesita volver a ingresar un remito elimine el remito ${remito_oc._id}`
-        })
         //Actualizo el stock de los productos
         items.forEach ( async (item) => {
             const lc = await LineaCompra.findById(item.lineaCompra)

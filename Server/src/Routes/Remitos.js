@@ -4,6 +4,7 @@ import ocs from '../Controllers/OrdenesDeCompra.js'
 import morgan from 'morgan'
 import verifyToken from "../Controllers/VerifyToken.js"
 import {isEncargadoDeDeposito, isAdmin} from '../Middlewares/authJwt.js'
+import { ValidarRemitoDeCompra } from '../Middlewares/validateEntryData.js'
 
 const router = express()
 
@@ -25,7 +26,7 @@ router.route('/linearemito')
 router.route('/linearemito/:idremito/:idlinearemito')
     .delete([verifyToken, isEncargadoDeDeposito], remitos.EliminarLineaRemito)
 router.route('/nuevoremito')
-    .post([verifyToken, isEncargadoDeDeposito], remitos.AgregarRemito)
+    .post([verifyToken, isEncargadoDeDeposito, ValidarRemitoDeCompra], remitos.AgregarRemito)
 router.route('/remito/:id')
     .delete([verifyToken, isEncargadoDeDeposito], remitos.EliminarRemito)
     .get([verifyToken, isEncargadoDeDeposito], remitos.RecuperarRemitoDeCompra)
