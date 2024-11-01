@@ -2,6 +2,7 @@ import express from 'express'
 import ocs from '../Controllers/OrdenesDeCompra.js'
 import verifyToken from "../Controllers/VerifyToken.js"
 import {isEncargadoDeCompras, isAdmin, isEncargadoDeDeposito} from '../Middlewares/authJwt.js'
+import { ValidarOrdenDeCompra } from '../Middlewares/validateEntryData.js'
 import morgan from 'morgan'
 
 const router = express()
@@ -56,7 +57,7 @@ router.route('/productos/:idProveedor')
 
 router.route('/ordenesdecompra')
     .get([verifyToken, isEncargadoDeCompras], ocs.RecuperarOrdenesDeCompra)
-    .post([verifyToken, isEncargadoDeCompras], ocs.GenerarOrdenDeCompra)
+    .post([verifyToken, isEncargadoDeCompras, ValidarOrdenDeCompra], ocs.GenerarOrdenDeCompra)
 
 router.route('/ordenesdecompra/:id')
     .get([verifyToken, isEncargadoDeCompras], ocs.RecuperarOrdenDeCompra)

@@ -110,11 +110,6 @@ export const isProveedor = async (req, res, next) => {
 
 export const validNewPassword = async (req, res, next) => {
     try {
-        /*
-            op = old password,
-            np = new password,
-            cnp = confirm new passord
-         */
         const {op, np, cnp} = req.body
         const {id} = req.params
         const user = await User.findById({_id: id})
@@ -134,5 +129,4 @@ export const validNewPassword = async (req, res, next) => {
             message: error.message
         })
     }
-    
 }

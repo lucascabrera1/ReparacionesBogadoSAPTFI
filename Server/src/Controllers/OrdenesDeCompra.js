@@ -16,9 +16,6 @@ console.log(port)
 
 const GenerarOrdenDeCompra = async(req, res, next) => {
     try {
-        console.log("req.body linea 19")
-        console.log(req.body)
-        console.log("fin req.body linea 19")
         let detalles = []
         for(const elem of req.body.detalles) {
             console.log(elem)
