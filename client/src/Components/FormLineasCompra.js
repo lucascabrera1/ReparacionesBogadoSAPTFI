@@ -49,21 +49,29 @@ function FormLineasCompra(idOc) {
   return oc === undefined ? <div>no hay oc</div> : (
       <div>
         <div className='row'>
-          <div className='col-md-3'>
+          <div className='col-md-2'>
             <label for="fechaemision" className='col-form-label'>Fecha de Emisión</label>
             <input type='text' id="fechaemision" readonly defaultValue={oc.fechaemision} className='form-control-plaintext col-auto'/>
           </div>
-          <div className='col-md-3'>
+          <div className='col-md-2'>
             <label className='col-form-label'>Fecha de entrega</label>
             <input type='text' readonly defaultValue={oc.fechaentrega} className='form-control-plaintext'/>
           </div>
-          <div className='col-md-3'>
+          <div className='col-md-2'>
             <label for="proveedor" className='col-form-label'>Proveedor</label>
             <input type='text' id="proveedor" readonly defaultValue={oc.proveedor} className='form-control-plaintext col-auto'/>
           </div>
-          <div className='col-md-3'>
+          <div className='col-md-2'>
             <label className='col-form-label'>Forma de Pago</label>
             <input type='text' readonly defaultValue={oc.formapago} className='form-control-plaintext'/>
+          </div>
+          <div className='col-md-2'>
+            <label for="proveedor" className='col-form-label'>Código</label>
+            <input type='text' id="proveedor" readonly defaultValue={oc.codigo} className='form-control-plaintext col-auto'/>
+          </div>
+          <div className='col-md-2'>
+            <label className='col-form-label'>Estado</label>
+            <input type='text' readonly defaultValue={oc.estado} className='form-control-plaintext'/>
           </div>
         </div>
         <Table className='table table-success table-bordered border-dark'>
@@ -99,20 +107,28 @@ function FormLineasCompra(idOc) {
             </tr>
           </tfoot>
         </Table>
-        <Button 
-          variant="success" 
-          size="lg"
-          onClick={()=>CambiarEstado("Confirmada")}
-        >
-          Confirmar Orden de Compra
-        </Button>
-        <Button 
-          variant="danger" 
-          size="lg"
-          onClick={()=>CambiarEstado("Rechazada")}
-        >
-          Rechazar Orden de Compra
-        </Button>
+        {
+          oc.estado === "Pendiente" ? 
+          <div>
+            <Button 
+              variant="success" 
+              size="lg"
+              onClick={()=>CambiarEstado("Confirmada")}
+            >
+              Confirmar Orden de Compra
+            </Button>
+            <Button 
+              variant="danger" 
+              size="lg"
+              onClick={()=>CambiarEstado("Rechazada")}
+            >
+              Rechazar Orden de Compra
+            </Button>
+          </div>: <div>
+            La orden de compra ya está {oc.estado}, no se pueden realizar modificaciones
+          </div>
+        }
+        
         <NavLink
           onClick={e => { e.preventDefault(); navigate('/todaslasordenesdecompra')}}>
           ...Atrás

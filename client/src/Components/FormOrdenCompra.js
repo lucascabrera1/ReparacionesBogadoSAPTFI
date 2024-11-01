@@ -365,11 +365,12 @@ function FormOrdenCompra() {
         name="codigo"
         placeholder="Código"
         register={register}
-        registerOptions= {{required: true, minLength: 1, maxLength: 4}}
+        registerOptions= {{required: true, minLength: 1, maxLength: 4, min: 0}}
         optionMsgErrors={{
           required: "El codigo es obligatorio",
           minLength : "Minimo 1 digito",
-          maxLength : "Máximo 4 dígitos"
+          maxLength : "Máximo 4 dígitos",
+          min: "El valor debe ser mayor o igual a 0"
         }}
         errors={errors}
       />
