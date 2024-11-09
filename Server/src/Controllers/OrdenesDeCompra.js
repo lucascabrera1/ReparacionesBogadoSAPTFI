@@ -29,6 +29,9 @@ const GenerarOrdenDeCompra = async(req, res, next) => {
         const oc = new OrdenDeCompra(req.body)
         oc.items = detalles
         const ocsaved = await oc.save()
+        console.log("ocsaved")
+        console.log(ocsaved)
+        console.log("fin ocsaved")
         const {razonsocial, email} = await Proveedor.findById(ocsaved.proveedor)
         const {descripcion} = await FormaDePago.findById(ocsaved.formaDePago)
         const subject = "Tiene una nueva orden de compra pendiente de confirmación o rechazo"
@@ -62,21 +65,21 @@ const GenerarOrdenDeCompra = async(req, res, next) => {
                         </tr>
                     </thead>
                     <tbody>
-                        ${req.body.detalles.map(item => {
+                        ${detalles.map(item => {
                             `<tr key={${item._id}}>
                                 <td>${item.descripcion}</td>
                                 <td>${item.cantidad}</td>
                                 <td>${item.subtotal}</td>
-                            </t>`
+                            </tr>`
                         })}
                     </tbody>
                     <tfoot>
                         <tr>
-                        <th></th>
-                        <th></th>
-                        <th>Total: </th>
-                        <th>{${ocsaved.total}}</th>
-                        <th></th>
+                            <th></th>
+                            <th></th>
+                            <th>Total: </th>
+                            <th>{${ocsaved.total}}</th>
+                            <th></th>
                         </tr>
                     </tfoot>
                 </table>

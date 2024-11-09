@@ -163,9 +163,6 @@ const RecuperarLineasDeCompra = async (req, res) => {
 
 const RecuperarRemitoDeCompra = async (req, res, next) => {
     try {
-        console.log('-----------------inicio req.params-----------------')
-        console.log(req.params)
-        console.log('-----------------fin req.params-----------------')
         const remito = await Remito.findById({_id : req.params.id})
         if (!remito){
             return res.status(404).json({
@@ -247,6 +244,9 @@ const AgregarRemito = async (req, res) => {
         )
         await updatedOc.save()
         const remitosaved = await remito.save()
+        console.log("------------------inicio remito saved---------------")
+        console.log(remitosaved)
+        console.log("---------------------fin remito saved --------------------------")
         return res.json(remitosaved)
     } catch (error) {
         console.error(error)

@@ -6,22 +6,52 @@ import LineaCompra from "../Models/LineaCompra.js";
 import Remito from "../Models/Remito.js";
 import { isValidObjectId } from "mongoose";
 
+function tieneDuplicados(arr) {
+    const elementos = new Set();
+    for (const elemento of arr) {
+        if (elementos.has(elemento.lineaCompra)) {
+            return true; // Hay un duplicado
+        }
+        elementos.add(elemento.lineaCompra);
+    }
+    return false; // No hay duplicados
+}
+
 function isValidDateFormat(date) {
     const dateRegex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
     return dateRegex.test(date);
 }
 
+function convertirFecha(fechaStr) {
+    // Crear un objeto Date a partir de la cadena de entrada
+    const fecha = new Date(fechaStr);
+    // Obtener los componentes de la fecha
+    const year = fecha.getFullYear();
+    const month = String(fecha.getMonth() + 1).padStart(2, '0'); // Meses empiezan desde 0
+    const day = String(fecha.getDate()).padStart(2, '0');
+    // Formatear la fecha como YYYY-MM-DD
+    return `${year}-${month}-${day}`;
+}
+
 export const ValidarOrdenDeCompra = async (req, res, next) => {
+    console.log("entra a validar orden de compra")
     try {
-        const today = new Date()
+        console.log("entra al try de validar orden de compra")
+        const today = convertirFecha(new Date())
         const {fechaEmision, fechaEntrega, formaDePago, proveedor, detalles, codigo, total} = req.body
-        if (!fechaEmision || fechaEmision>today || !isValidDateFormat(fechaEmision)) {
+        //const fecha = new Date(fechaEmision)
+        const fecha = convertirFecha(fechaEmision)
+        console.log("inicio fecha supuestamente convertida")
+        console.log(fecha)
+        console.log(today)
+        console.log("fin fecha supuestamente convertida")
+        if (!fecha || fecha>today || !isValidDateFormat(fecha)) {
             return res.status(400).json({
                 error: true,
                 message: "La fecha de emisión es obligatoria y debe ser anterior a la fecha actual"
             })
         }
-        if (!fechaEntrega || fechaEntrega<= today || !isValidDateFormat(fechaEmision)) {
+        if (!fechaEntrega || fechaEntrega<= today || !isValidDateFormat(fechaEntrega)) {
             return res.status(400).json({
                 error: true,
                 message: "La fecha de entrega es obligatoria y debe ser posterior a la fecha actual"
@@ -41,7 +71,7 @@ export const ValidarOrdenDeCompra = async (req, res, next) => {
         }
         const fpe = await FormaDePago.findById({_id: formaDePago})
         if (!fpe) {
-            return res.status(404).json({
+            return res.status(400).json({
                 error: true,
                 message: "La forma de pago no existe"
             })
@@ -60,7 +90,7 @@ export const ValidarOrdenDeCompra = async (req, res, next) => {
         }
         const proveedorencontrado = await Proveedor.findById({_id: proveedor})
         if (!proveedorencontrado) {
-            return res.status(404).json({
+            return res.status(400).json({
                 error: true,
                 message: "El proveedor no existe"
             })
@@ -107,7 +137,7 @@ export const ValidarOrdenDeCompra = async (req, res, next) => {
                 }
                 const productoencontrado = await Producto.findById({_id : detalles[i].id_producto})
                 if (!productoencontrado){
-                    return res.status(409).json({
+                    return res.status(404).json({
                         error: true,
                         message: "Producto inexistente"
                     })
@@ -133,12 +163,15 @@ export const ValidarOrdenDeCompra = async (req, res, next) => {
                 if (!detalles[i].subtotal || isNaN(detalles[i].subtotal) || detalles[i].subtotal.length === 0 || detalles[i].subtotal === 0) {
                     return res.status(400).json({
                         error: true,
-                        message: "El precio de compra debe ser un valor numérico mayor a 0"
+                        message: "El subtotal debe ser un valor numérico mayor a 0"
                     })
                 }
             }
         }
-        console.log("validacion correcta")
+        /* return res.status(202).json({
+            error: false,
+            message: "validación correcta"
+        }) */
         next()
     } catch (error) {
         return res.status(500).json({
@@ -149,15 +182,18 @@ export const ValidarOrdenDeCompra = async (req, res, next) => {
 }
 
 export const ValidarRemitoDeCompra = async (req, res, next) => {
+    console.log("entra a validar remito de compra")
     try {
-        const today = new Date()
+        console.log("entra a validar remito de compra")
+        const today = convertirFecha(new Date())
         const {fechaEmision, proveedor, detalles, ordenCompra} = req.body
-        //const idproveedor =  {_id} = proveedor
-        console.log(proveedor)
-        if (!fechaEmision || fechaEmision>today || !isValidDateFormat(fechaEmision)) {
+        const fecha = convertirFecha(fechaEmision)
+        if (!fechaEmision || !isValidDateFormat(fecha) || fecha>today) {
             return res.status(400).json({
                 error: true,
-                message: "La fecha de emisión es obligatoria y debe ser anterior a la fecha actual"
+                message: `La fecha de emisión es obligatoria y debe ser anterior a la fecha actual ${today}`,
+                fechaEmision,
+                fecha
             })
         }
         if(!proveedor) {
@@ -211,19 +247,13 @@ export const ValidarRemitoDeCompra = async (req, res, next) => {
                 message : `la orden de compra ${ordenCompra} no existe`
             })
         }
-        //valido cada elemento del array detalles de la orden de compra
+        //valido cada elemento del array detalles del remito de compra
         if (detalles) {
             for (let i=0; i<detalles.length; i++) {
-                if (!detalles[i].id_producto || detalles[i].id_producto.length === 0) {
-                    return res.status(400).json({
-                        error: true,
-                        message: "el producto es obligatorio"
-                    })
-                }
-                if (!(isValidObjectId(detalles[i].id_producto))) {
+                if (!detalles[i].lineaCompra) {
                     return res.status(400).json({ 
                         error: true,
-                        message: "Formato de ID de producto no válido" 
+                        message: "el id de la línea de compra asociada es obligatorio" 
                     });
                 }
                 if (!(isValidObjectId(detalles[i].lineaCompra))) {
@@ -234,20 +264,32 @@ export const ValidarRemitoDeCompra = async (req, res, next) => {
                 }
                 const lce = await LineaCompra.findById({_id : detalles[i].lineaCompra})
                 if (!lce){
-                    return res.status(409).json({
+                    return res.status(404).json({
                         error: true,
                         message: "Línea de compra inexistente"
                     })
                 }
-                if(!detalles[i].cantidad || isNaN(detalles[i].cantidad) || detalles[i].cantidad.length === 0 || detalles[i].cantidad === 0 || !Number.isInteger(detalles[i].cantidad)) {
+                if(!detalles[i].cantidadIngresada || 
+                    isNaN(detalles[i].cantidadIngresada) || 
+                    detalles[i].cantidadIngresada.length === 0 || 
+                    detalles[i].cantidadIngresada === 0 || 
+                    !Number.isInteger(detalles[i].cantidadIngresada)
+                ) {
                     return res.status(400).json({
                         error: true,
                         message: "La cantidad ingresada de la línea de remito debe ser un valor numérico entero mayor a 0"
                     })
                 }
             }
+            let td = tieneDuplicados(detalles)
+            console.log("tiene duplicados?" + td)
+            if (td) {
+                return res.status(409).json({
+                    error: true,
+                    message: "hay 2 líneas de remito que hacen referencia a una misma línea de compra"
+                })
+            }
         }
-        console.log("validacion correcta")
         next()
     } catch (error) {
         return res.status(500).json({

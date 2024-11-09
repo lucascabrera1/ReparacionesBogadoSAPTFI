@@ -101,8 +101,8 @@ export const AgregarOrdenDeCompra = createAsyncThunk('/ordenCompra/AgregarOrdenD
         console.log(response.data)
         return response.data
     } catch (error) {
-        console.error(error.message)
-        return error.message
+        console.error(error)
+        return error
     }
 })
 
