@@ -1,6 +1,6 @@
 import { Router } from "express";
 import auth from "../Controllers/Auth.js";
-import verifyToken from "../Controllers/VerifyToken.js";
+import verifyToken from "../Middlewares/VerifyToken.js";
 import {checkRoles, CheckDuplicateUser} from "../Middlewares/verifiSignUp.js"
 import { isAdmin, isAdminorFinalUser, validNewPassword } from "../Middlewares/authJwt.js";
 

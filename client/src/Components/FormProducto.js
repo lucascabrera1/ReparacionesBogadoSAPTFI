@@ -105,7 +105,7 @@ function FormProducto() {
     }
     return (
       <div className='App d-flex flex-column justify-content-md-center align-items-center'>
-        Ingrese los datos del proveedor a agregar
+        Ingrese los datos del producto a agregar
         <Form 
           style={{width: '450px', border: '2px solid black'}}
           onSubmit={handleSubmit(handleSubmitProducto)}
@@ -232,6 +232,7 @@ function FormProducto() {
             <br/>
             <Input
               type="number"
+              classname='w-50'
               name="puntopedido"
               placeholder="Punto de Pedido"
               register={register}
@@ -247,6 +248,7 @@ function FormProducto() {
             />
             <br/>
             <Input
+              classname='w-50'
               type="number"
               name="stock"
               placeholder="Stock"
@@ -264,17 +266,17 @@ function FormProducto() {
           <Form.Group>
             <Button 
               className='col-lg-4' 
-              style={{backgroundColor: 'green', float: 'left'}} 
+              style={{backgroundColor: 'green'}} //float: 'left'}} 
               type="submit" 
               size='lg'>
-                Save
+                Guardar
             </Button>
             <Button
                 className='col-lg-4'
-                style={{float: 'right'}}
+                //style={{float: 'right'}}
                 variant="secondary" size = "lg"
                 onClick={e => { e.preventDefault(); navigate('/productos')}}>
-                  Cancel
+                  Cancelar
             </Button>
           </Form.Group>
         </Form>

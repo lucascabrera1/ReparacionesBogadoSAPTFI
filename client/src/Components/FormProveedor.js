@@ -64,7 +64,9 @@ function FormProveedor() {
                 minLength: "al menos 2 caracteres"
             }}
           />
+          <br/>
           <Input
+            classname='w-50'
             type="number"
             name="cuit"
             placeholder="Cuit"
@@ -74,7 +76,7 @@ function FormProveedor() {
             }}
             errors= {errors}
             optionMsgErrors={{
-                required: "la razón social es obligatoria",
+                required: "el cuit es obligatorio",
                 maxLength: "no puede incluir mas de 11 caracteres",
                 minLength: "al menos 8 caracteres"
             }}
@@ -140,14 +142,14 @@ function FormProveedor() {
             variant='success'
             type="submit" 
             >
-              Save
+              Guardar
           </ButtonApp>
           <ButtonApp
               className='col-lg-4'
               style={{float: 'right'}}
               variant="secondary"
               onClick={e => { e.preventDefault(); navigate('/proveedores')}}>
-                Cancel
+                Cancelar
           </ButtonApp>
         </Form.Group>
         </fieldset>

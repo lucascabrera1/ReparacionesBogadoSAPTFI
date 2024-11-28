@@ -47,7 +47,6 @@ function FormMarca () {
                         minLength: "al menos 3 caracteres"
                     }}
                 />
-                <br/><br/>
                 <Input
                     type='text'
                     name='paisorigen'
@@ -63,11 +62,11 @@ function FormMarca () {
                         minLength: "al menos 2 caracteres"
                     }}
                 />
-                <Button type="submit" variant='info' size='lg'>Save</Button> {' '}
+                <Button type="submit" variant='primary' size='lg'>Guardar</Button> {' '}
                 <Button 
                     onClick={ e => { e.preventDefault(); navigate('/todaslasmarcas')}}
-                    variant='info' size='lg'>
-                    Cancel
+                    variant='secondary' size='lg'>
+                    Cancelar
                 </Button> {' '}
             </form>
         </div>

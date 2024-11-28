@@ -24,7 +24,7 @@ function FormMarcas() {
     }
 
     return erroresmarca ? (<div className='alert alert-danger'>{erroresmarca}</div>) : (<div>
-        <h2>Marcas Recuperadas</h2>
+        <h2>Todas las marcas</h2>
         {
             <Table className= 'table table-success table-bordered border-dark table-sm'>
                 <thead className='table-dark'>

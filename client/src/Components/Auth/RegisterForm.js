@@ -124,7 +124,7 @@ function RegisterForm() {
                     }) : ""
                 }</ul>
             </div>
-            : "registe un nuevo usuario"
+            : ""
         }
         <Form id="formUsuario"
             style={{width: '450px'}}

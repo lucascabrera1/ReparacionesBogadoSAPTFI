@@ -178,7 +178,7 @@ function FormOrdenCompra() {
   return (
     <div>
       <br/>
-      Acá voy a generar UNA orden de compra
+      <h2>Nueva Orden de Compra</h2>
       <Form onSubmit={handleSubmit(handleSubmitOC)} style={{border: '2px solid black'}}>
         <label>Proveedor</label>
         <Form.Select

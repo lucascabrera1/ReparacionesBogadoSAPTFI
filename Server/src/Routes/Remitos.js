@@ -2,7 +2,7 @@ import express from 'express'
 import remitos from '../Controllers/Remitos.js'
 import ocs from '../Controllers/OrdenesDeCompra.js'
 import morgan from 'morgan'
-import verifyToken from "../Controllers/VerifyToken.js"
+import verifyToken from "../Middlewares/VerifyToken.js"
 import {isEncargadoDeDeposito, isAdmin} from '../Middlewares/authJwt.js'
 import { ValidarRemitoDeCompra } from '../Middlewares/validateEntryData.js'
 
