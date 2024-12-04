@@ -3,6 +3,7 @@ import morgan from 'morgan'
 import verifyToken from "../Middlewares/VerifyToken.js"
 import {isEncargadoDeVentas} from '../Middlewares/authJwt.js'
 import { ValidarVenta } from '../Middlewares/validateEntryData.js'
+import ventas from '../Controllers/Ventas.js'
 
 const router = express()
 
@@ -18,6 +19,7 @@ router.use(morgan('short'))
 })
 
 router.route('/')
-    .post(ValidarVenta)
+    .post(ValidarVenta, ventas.AgregarVenta)
+    .get(ventas.RecuperarVentas)
 
 export default router

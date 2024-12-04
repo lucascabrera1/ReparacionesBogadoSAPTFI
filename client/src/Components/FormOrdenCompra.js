@@ -322,7 +322,12 @@ function FormOrdenCompra() {
           ))}
         </tbody>
         <tfoot>
-          <p>total acumulado: $ {getValues()["total"]}</p>
+          <tr>
+            <td></td>
+            <td></td>
+            <td style={{backgroundColor: 'greenyellow'}}>Total acumulado: $ </td>
+            <td style={{backgroundColor: 'greenyellow'}}>{getValues()["total"]}</td>
+          </tr>
           <Button variant='danger' onClick={()=>LimpiarGrilla()}>Vaciar Lista de ítems</Button>
         </tfoot>
       </Table>

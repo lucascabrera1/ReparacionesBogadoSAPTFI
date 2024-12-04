@@ -344,7 +344,7 @@ export const ValidarVenta = async (req, res, next) => {
         if (!detalles || detalles.length === 0) {
             return res.status(400).json({
                 error: true,
-                message: "La orden de compra debe poseer al menos una línea de compra"
+                message: "La venta debe poseer al menos una línea de venta"
             })
         }
         if (!codigo || codigo<1) {
@@ -406,6 +406,12 @@ export const ValidarVenta = async (req, res, next) => {
                         message: "La cantidad del producto debe ser un valor numérico entero mayor a 0"
                     })
                 }
+                if (detalles[i].cantidad > productoencontrado.stock) {
+                    return res.status(409).json({
+                        error: true,
+                        message: `para el producto ${productoencontrado._id }, el stock disponible: ${productoencontrado.stock}`
+                    })
+                }
                 if (!detalles[i].subtotal || isNaN(detalles[i].subtotal) || detalles[i].subtotal.length === 0 || detalles[i].subtotal === 0) {
                     return res.status(400).json({
                         error: true,
@@ -414,11 +420,11 @@ export const ValidarVenta = async (req, res, next) => {
                 }
             }
         }
-        return res.status(202).json({
+        /* return res.status(202).json({
             error: false,
             message: "validación de venta exitosa"
-        })
-        //next()
+        }) */
+        next()
     } catch (error) {
         return res.status(500).json({
             error: true,

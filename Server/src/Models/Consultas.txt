@@ -94,14 +94,22 @@ db.roles.insertMany ([
         "descripcion":"Puede gestionar las ventas"
     },
     {
-        "nombre": "",
-        "descripcion":""
+        "nombre": "Encargado de Depósito",
+        "descripcion":"Corrobora la mercaderia recibida con la mercadería encargada"
     },
     {
-        "nombre": "",
-        "descripcion":""
+        "nombre" : "admin",
+        "descripcion" : "gestiona los usuarios del sistema"
     },
 ])
+
+//agregar UN usuario
+db.users.insert({
+    "nombreUsuario" : "Lucas Gabriel Cabrera", 
+    "email" : "lucas_cabrera1@hotmail.com", 
+    "password" : "123456", 
+    "roles" : [ObjectId("674d30bcaf886fbd4c7218e7")]
+})
 
 //agrega roles a un usuario
 db.users.update({"_id" : ObjectId("660fa0e6910dbc24ca7e225b")}, {
@@ -130,6 +138,13 @@ db.users.update({"_id" : ObjectId("660fa0e6910dbc24ca7e225b")}, {
             "661163fac29d0eff0426cc9e"
         ]}
     }
+)
+
+//seteo en 300 el stock de todos los productos
+db.productos.update(
+    {},
+    {$set : {stock : 300}},
+    {multi : true}
 )
 
 

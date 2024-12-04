@@ -15,7 +15,7 @@ const schemaVenta = new Schema({
         ref: "FormaDePago",
         required:true
     },
-    items: [{
+    detalles: [{
         type: Schema.Types.ObjectId,
         ref: "LineaVenta",
         required: true
