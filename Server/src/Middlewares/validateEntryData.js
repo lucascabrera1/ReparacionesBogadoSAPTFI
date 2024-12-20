@@ -24,7 +24,7 @@ function isValidDateFormat(date) {
     return dateRegex.test(date);
 }
 
-function convertirFecha(fechaStr) {
+export function convertirFecha(fechaStr) {
     // Crear un objeto Date a partir de la cadena de entrada
     const fecha = new Date(fechaStr);
     // Obtener los componentes de la fecha
@@ -34,6 +34,21 @@ function convertirFecha(fechaStr) {
     // Formatear la fecha como YYYY-MM-DD
     return `${year}-${month}-${day}`;
 }
+
+export function formatNumber(input) {
+    // Convertir el string a número
+    const number = parseFloat(input);
+    
+    if (isNaN(number)) {
+      throw new Error('El valor proporcionado no es un número válido.');
+    }
+  
+    // Formatear el número
+    return number
+      .toFixed(2) // Asegurar que tenga 2 decimales
+      .replace('.', ',') // Reemplazar el punto decimal por una coma
+      .replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Agregar puntos como separadores de miles
+  }
 
 export const ValidarOrdenDeCompra = async (req, res, next) => {
     try {

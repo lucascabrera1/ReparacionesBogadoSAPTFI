@@ -9,6 +9,7 @@ import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 import SendMail from '../Utils/SendMail.js'
 dotenv.config({path: '../.env'})
+import {convertirFecha, formatNumber} from '../Middlewares/validateEntryData.js'
 //const stoken = process.env.SECRET
 
 const port = process.env.PORT
@@ -18,10 +19,13 @@ const GenerarOrdenDeCompra = async(req, res, next) => {
     try {
         let detalles = []
         for(const elem of req.body.detalles) {
+            let {preciocompra, descripcion} = await Producto.findById(elem.id_producto)
             console.log(elem)
             const lc = new LineaCompra()
             lc.producto = elem.id_producto
+            lc.descripcion = descripcion
             lc.cantidad = elem.cantidad
+            lc.preciocompra = preciocompra
             lc.subtotal = elem.subtotal
             const lcguardada = await lc.save()
             detalles.push(lcguardada)
@@ -35,56 +39,56 @@ const GenerarOrdenDeCompra = async(req, res, next) => {
         const {razonsocial, email} = await Proveedor.findById(ocsaved.proveedor)
         const {descripcion} = await FormaDePago.findById(ocsaved.formaDePago)
         const subject = "Tiene una nueva orden de compra pendiente de confirmación o rechazo"
+        const border = "style='border: 1px solid #000'"
+        const borderyalineacion = "style='border: 1px solid #000; text-align: end'"
         const htmlContent = `
             <div>
                 <div className='row'>
                     <div className='col-md-3'>
                         <label>Fecha de Emisión</label>
-                        <input value=${ocsaved.fechaEmision} />
+                        <input disabled value='${convertirFecha(ocsaved.fechaEmision)}' />
                     </div>
                     <div className='col-md-3'>
                         <label>Fecha de entrega</label>
-                        <input value=${ocsaved.fechaEntrega} />
+                        <input disabled value='${convertirFecha(ocsaved.fechaEntrega)}' />
                     </div>
                     <div className='col-md-3'>
                         <label>Proveedor</label>
-                        <input value=${razonsocial} />
+                        <input disabled value='${razonsocial}' />
                     </div>
                     <div className='col-md-3'>
                         <label>Forma de Pago</label>
-                        <input value=${descripcion}/>
+                        <input disabled value='${descripcion}'/>
                     </div>
                 </div>
-                <table>
+                <br/>
+                <table style='border-spacing: 0 0'>
                     <thead>
-                        <tr>
-                            <th>Producto</th>
-                            <th>Precio Unitario</th>
-                            <th>Cantidad</th>
-                            <th>Subtotal</th>
+                        <tr ${border}>
+                            <th ${border}>Producto</th>
+                            <th ${border}>Precio Unitario</th>
+                            <th ${border}>Cantidad</th>
+                            <th ${border}>Subtotal</th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${detalles.map(item => {
-                            `<tr key={${item._id}}>
-                                <td>${item.descripcion}</td>
-                                <td>${item.cantidad}</td>
-                                <td>${item.subtotal}</td>
+                        ${detalles.map(item =>
+                            `<tr key={${item._id}} ${border}>
+                                <td ${border}>${item.descripcion}</td>
+                                <td ${borderyalineacion}>${formatNumber(item.preciocompra)}</td>
+                                <td ${borderyalineacion}>${item.cantidad}</td>
+                                <td ${borderyalineacion}>${formatNumber(item.subtotal)}</td>
                             </tr>`
-                        })}
+                        )}
                     </tbody>
                     <tfoot>
                         <tr>
-                            <th></th>
-                            <th></th>
-                            <th>Total: </th>
-                            <th>{${ocsaved.total}}</th>
-                            <th></th>
+                            <th ${border} colspan='2'></th>
+                            <th ${border}>Total: </th>
+                            <th ${borderyalineacion}>${formatNumber(ocsaved.total)}</th>
                         </tr>
                     </tfoot>
                 </table>
-                <button type="submit" class="button">Confirmar</button>
-                <button type="submit" class="button button-rejected">Rechazar</button>
             </div>
         `
         const result = await SendMail.sendEmail(email, subject, htmlContent)

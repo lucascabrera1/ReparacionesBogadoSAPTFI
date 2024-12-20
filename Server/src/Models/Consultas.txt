@@ -69,19 +69,74 @@ db.clientes.insertMany([
     {
         "nombreyapellido":"Wynne Garrat",
         "email":"wgarrat0@people.com.cn",
-        "telefono":"594-436-9539","localidad":"Kakhovka",
-        "dni":80805544,"direccion":"wgarrat0@odnoklassniki.ru"
+        "telefono":"594-436-9539",
+        "localidad":"Kakhovka",
+        "dni":80805544,
+        "direccion":"wgarrat0@odnoklassniki.ru"
     }, {
         "nombreyapellido":"Henderson Peacher",
-        "email":"hpeacher1@aol.com","telefono":"926-835-1611","localidad":"Kalembutillu","dni":33902136,"direccion":"hpeacher1@adobe.com"},
-{"nombreyapellido":"Nappy Oddey","email":"noddey2@typepad.com","telefono":"606-378-6478","localidad":"Shilin","dni":99867015,"direccion":"noddey2@imageshack.us"},
-{"nombreyapellido":"Elia O'Dulchonta","email":"eodulchonta3@apache.org","telefono":"219-390-0892","localidad":"Balungkopi","dni":70599833,"direccion":"eodulchonta3@wiley.com"},
-{"nombreyapellido":"Fawne Tash","email":"ftash4@smugmug.com","telefono":"914-851-0977","localidad":"Futuroscope","dni":85048826,"direccion":"ftash4@deliciousdays.com"},
-{"nombreyapellido":"Heath Thonason","email":"hthonason5@com.com","telefono":"757-360-8472","localidad":"Tangzha","dni":60500048,"direccion":"hthonason5@arizona.edu"},
-{"nombreyapellido":"Felisha Abelov","email":"fabelov6@gov.uk","telefono":"170-691-9295","localidad":"Golacir","dni":33478779,"direccion":"fabelov6@qq.com"},
-{"nombreyapellido":"Torr Marguerite","email":"tmarguerite7@linkedin.com","telefono":"950-604-2066","localidad":"Birni N Konni","dni":92298832,"direccion":"tmarguerite7@usda.gov"},
-{"nombreyapellido":"Reba Cathery","email":"rcathery8@opera.com","telefono":"225-449-5278","localidad":"Heting","dni":36466390,"direccion":"rcathery8@fastcompany.com"},
-{"nombreyapellido":"Chip Brettoner","email":"cbrettoner9@wikia.com","telefono":"749-119-1342","localidad":"Valencia","dni":81040501,"direccion":"cbrettoner9@cnet.com"}])
+        "email":"hpeacher1@aol.com",
+        "telefono":"926-835-1611",
+        "localidad":"Kalembutillu","dni":33902136,
+        "direccion":"hpeacher1@adobe.com"
+    }, {
+        "nombreyapellido":"Nappy Oddey",
+        "email":"noddey2@typepad.com",
+        "telefono":"606-378-6478",
+        "localidad":"Shilin",
+        "dni":99867015,
+        "direccion":"noddey2@imageshack.us"
+    }, {
+        "nombreyapellido":"Elia O'Dulchonta",
+        "email":"eodulchonta3@apache.org",
+        "telefono":"219-390-0892",
+        "localidad":"Balungkopi",
+        "dni":70599833,
+        "direccion":"eodulchonta3@wiley.com"
+    }, {
+        "nombreyapellido":"Fawne Tash",
+        "email":"ftash4@smugmug.com",
+        "telefono":"914-851-0977",
+        "localidad":"Futuroscope",
+        "dni":85048826,
+        "direccion":"ftash4@deliciousdays.com"
+    }, {
+        "nombreyapellido":"Heath Thonason",
+        "email":"hthonason5@com.com",
+        "telefono":"757-360-8472",
+        "localidad":"Tangzha",
+        "dni":60500048,
+        "direccion":"hthonason5@arizona.edu"
+    }, {
+        "nombreyapellido":"Felisha Abelov",
+        "email":"fabelov6@gov.uk",
+        "telefono":"170-691-9295",
+        "localidad":"Golacir",
+        "dni":33478779,
+        "direccion":"fabelov6@qq.com"
+    }, {
+        "nombreyapellido":"Torr Marguerite",
+        "email":"tmarguerite7@linkedin.com",
+        "telefono":"950-604-2066",
+        "localidad":"Birni N Konni",
+        "dni":92298832,
+        "direccion":"tmarguerite7@usda.gov"
+    }, {
+        "nombreyapellido":"Reba Cathery",
+        "email":"rcathery8@opera.com",
+        "telefono":"225-449-5278",
+        "localidad":"Heting",
+        "dni":36466390,
+        "direccion":"rcathery8@fastcompany.com"
+    }, {
+        "nombreyapellido":"Chip Brettoner",
+        "email":"cbrettoner9@wikia.com",
+        "telefono":"749-119-1342",
+        "localidad":"Valencia",
+        "dni":81040501,
+        "direccion":"cbrettoner9@cnet.com"
+    }
+])
 
 //agregar roles
 db.roles.insertMany ([

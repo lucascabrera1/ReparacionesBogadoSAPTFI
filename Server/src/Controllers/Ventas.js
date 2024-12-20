@@ -46,17 +46,32 @@ const RecuperarVentas = async (req, res) => {
         const ventas = await Venta.find()
         let ventasRecuperadas = []
         for (const elem of ventas) {
-            const {cliente, formaDePago} = elem
-            let clienteencontrado = await Cliente.findById(cliente)
-            let fpe = await FormaDePago.findById(formaDePago)
+            const {cliente, formaDePago, fechaEmision, codigo, total} = elem
+            let {nombreyapellido} = await Cliente.findById(cliente)
+            let {descripcion} = await FormaDePago.findById(formaDePago)
             let detalles = []
             for (const newItem of elem.detalles){
-                let item = await LineaVenta.findById(newItem)
-                detalles.push(item)
+                let {producto, cantidad, subtotal} = await LineaVenta.findById(newItem)
+                let {descripcion, precioventa} = await Producto.findById(producto)
+                let newLv = {
+                    producto : descripcion,
+                    cantidad,
+                    precioventa,
+                    subtotal
+                }
+                detalles.push(newLv)
             }
+            let newVenta = {
+                codigo,
+                fechaEmision,
+                formaDePago : descripcion,
+                cliente : nombreyapellido,
+                total,
+                detalles
+            }
+            ventasRecuperadas.push(newVenta)
         }
-        console.log(ventas)
-        return res.send(ventas)
+        return res.send(ventasRecuperadas)
     } catch (error) {
         return res.status(500).json({
             error: true,
