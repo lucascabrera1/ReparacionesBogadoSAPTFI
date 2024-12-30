@@ -103,7 +103,6 @@ const GenerarOrdenDeCompra = async(req, res, next) => {
 const RecuperarOrdenesDeCompra = async (req, res, next) => {
     try {
         let condition = {}
-        console.log("por que jocara no funciona!!!!!!!!!!!!!!")
         if (req.query.fechadesde) {
             condition.$gte = req.query.fechadesde
         }

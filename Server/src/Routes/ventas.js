@@ -20,6 +20,6 @@ router.use(morgan('short'))
 
 router.route('/')
     .post(ValidarVenta, ventas.AgregarVenta)
-    .get(ventas.RecuperarVentas)
+    .get([verifyToken, isEncargadoDeVentas], ventas.RecuperarVentas)
 
 export default router

@@ -22,8 +22,12 @@ export const isEncargadoDeCompras = async (req, res, next) => {
 }
 
 export const isEncargadoDeVentas = async (req, res, next) => {
-    const user = await User.findById({_id: req.params.idUser})
-    console.log(user)
+    const token = req.headers.authorization.split(' ')[1]
+    const decoded = jwt.verify(token, stoken)
+    const user = await User.findById(decoded.id)
+    console.log("inicio decoded")
+    console.log(decoded)
+    console.log("fin decoded")
     const roles = await Role.find({_id: {$in: user.roles}})
     console.log(roles)
     for (let i=0; i< roles.length; i++) {
