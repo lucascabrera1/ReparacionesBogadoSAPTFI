@@ -21,5 +21,6 @@ router.use(morgan('short'))
 router.route('/')
     .post(ValidarVenta, ventas.AgregarVenta)
     .get([verifyToken, isEncargadoDeVentas], ventas.RecuperarVentas)
+router.route('/clientes').post([verifyToken, isEncargadoDeVentas], ventas.AgregarCliente)
 
 export default router
