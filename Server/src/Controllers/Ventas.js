@@ -112,14 +112,15 @@ const RecuperarVentas = async (req, res) => {
         const ventas = await Venta.find()
         let ventasRecuperadas = []
         for (const elem of ventas) {
-            const {cliente, formaDePago, fechaEmision, codigo, total} = elem
+            const {cliente, formaDePago, fechaEmision, codigo, total, _id} = elem
             let {nombreyapellido} = await Cliente.findById(cliente)
             let {descripcion} = await FormaDePago.findById(formaDePago)
             let detalles = []
             for (const newItem of elem.detalles){
-                let {producto, cantidad, subtotal} = await LineaVenta.findById(newItem)
+                let {producto, cantidad, subtotal, _id} = await LineaVenta.findById(newItem)
                 let {descripcion, precioventa} = await Producto.findById(producto)
                 let newLv = {
+                    _id,
                     producto : descripcion,
                     cantidad,
                     precioventa,
@@ -128,6 +129,7 @@ const RecuperarVentas = async (req, res) => {
                 detalles.push(newLv)
             }
             let newVenta = {
+                _id,
                 codigo,
                 fechaEmision,
                 formaDePago : descripcion,
@@ -143,6 +145,46 @@ const RecuperarVentas = async (req, res) => {
             error: true,
             message: error.message
         })
+    }
+}
+
+const RecuperarVenta = async (req, res, next) => {
+    try {
+        const venta = await Venta.findById({_id : req.params.id})
+        if (!venta){
+            return res.status(404).json({
+                error: true,
+                message: "Venta no encontrada"
+            })
+        }
+        const {cliente, formaDePago, fechaEmision, codigo, total, _id} = venta
+        let {nombreyapellido} = await Cliente.findById(cliente)
+        let {descripcion} = await FormaDePago.findById(formaDePago)
+        let detalles = []
+        for (const newItem of venta.detalles){
+            let {producto, cantidad, subtotal, _id} = await LineaVenta.findById(newItem)
+            let {descripcion, precioventa} = await Producto.findById(producto)
+            let newLv = {
+                _id,
+                producto : descripcion,
+                cantidad,
+                precioventa,
+                subtotal
+            }
+            detalles.push(newLv)
+        }
+        let newVenta = {
+            _id,
+            codigo,
+            fechaEmision,
+            formaDePago : descripcion,
+            cliente : nombreyapellido,
+            total,
+            detalles
+        }
+        return res.send(newVenta)
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
     }
 }
 
@@ -221,9 +263,16 @@ const RecuperarClientes = async (req, res) => {
         }
         return res.send(clientesdevueltos)
     } catch (error) {
-        console.error(error.message)
-        return res.status(500).json({message: error.message})
+        console.error(error)
+        return res.status(500).json({message: error})
     }
 }
 
-export default {AgregarVenta, RecuperarVentas, AgregarCliente, ModificarCliente, EliminarCliente, RecuperarClientes}
+export default {AgregarVenta, 
+    RecuperarVentas, 
+    AgregarCliente, 
+    ModificarCliente, 
+    EliminarCliente, 
+    RecuperarClientes,
+    RecuperarVenta
+}

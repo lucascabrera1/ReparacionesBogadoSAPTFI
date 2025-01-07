@@ -28,6 +28,8 @@ import FormLinkResetPwd from './Components/FormLinkResetPwd.js'
 import FormResetPwd from './Components/FormResetPwd.js'
 import FormChangePassword from './Components/FormChangePassword.js'
 import FormReporteRemitos from './Components/Reportes/FormReporteRemitos.js'
+import FormVentas from './Components/FormVentas.js'
+import FormLineasVenta from './Components/FormLineasVenta.js'
 
 function App() {
   return <div  className="container-fluid">
@@ -52,6 +54,7 @@ function App() {
             <Route path='/register' element= {<ProtectedRoute><RegisterForm/></ProtectedRoute>}/>
             <Route path='/nuevaordendecompra' element={<ProtectedRoute><FormOrdenCompra/></ProtectedRoute>}/>
             <Route path='/ordenesdecompra/:id' element={<ProtectedRoute><FormLineasCompra/></ProtectedRoute>}></Route>
+            <Route path='/ventas/venta/:id' element={<ProtectedRoute><FormLineasVenta/></ProtectedRoute>}></Route>
             <Route path='/remitos' element={<ProtectedRoute><FormRemitos/></ProtectedRoute>}/>
             <Route path='/nuevoremito' element={<ProtectedRoute><FormRemito/></ProtectedRoute>}/>
             <Route path='/users' element={<ProtectedRoute><FormUsuarios/></ProtectedRoute>} />
@@ -64,6 +67,7 @@ function App() {
             <Route path='/' element= {<Welcome/>}/>
             <Route path='/reset-password/:id/:token' element={<FormResetPwd/> }/>
             <Route path='/change-password/:id' element={<ProtectedRoute><FormChangePassword/></ProtectedRoute>}/>
+            <Route path='/ventas' element={<ProtectedRoute><FormVentas/></ProtectedRoute>}></Route>
             {/*<Route path='/' element={<FormTodasLasOC/>} />
             <Route path='/home' element={<Home/>} />
                                                                                                                 
