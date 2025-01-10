@@ -30,6 +30,9 @@ import FormChangePassword from './Components/FormChangePassword.js'
 import FormReporteRemitos from './Components/Reportes/FormReporteRemitos.js'
 import FormVentas from './Components/FormVentas.js'
 import FormLineasVenta from './Components/FormLineasVenta.js'
+import FormVenta from './Components/FormVenta.js'
+import FormClientes from './Components/FormClientes.js'
+import FormCliente from './Components/FormCliente.js'
 
 function App() {
   return <div  className="container-fluid">
@@ -68,6 +71,10 @@ function App() {
             <Route path='/reset-password/:id/:token' element={<FormResetPwd/> }/>
             <Route path='/change-password/:id' element={<ProtectedRoute><FormChangePassword/></ProtectedRoute>}/>
             <Route path='/ventas' element={<ProtectedRoute><FormVentas/></ProtectedRoute>}></Route>
+            <Route path='/nuevaventa' element={<ProtectedRoute><FormVenta/></ProtectedRoute>}></Route>
+            <Route path='/clientes' element= {<ProtectedRoute><FormClientes/></ProtectedRoute>}></Route>
+            <Route path='/clientes/:id' element= {<ProtectedRoute><FormCliente/></ProtectedRoute>}></Route>
+            <Route path='/nuevocliente' element= {<ProtectedRoute><FormCliente/></ProtectedRoute>}></Route>
             {/*<Route path='/' element={<FormTodasLasOC/>} />
             <Route path='/home' element={<Home/>} />
                                                                                                                 

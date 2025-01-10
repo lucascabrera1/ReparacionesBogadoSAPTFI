@@ -40,8 +40,10 @@ export default function NavBarBootstrap() {
                             <NavLink className="nav-link" to="/remitos">Ingreso de Remitos</NavLink>
                             <NavLink className="nav-link" to="/reporteremitos">Ver Reporte de Productos Faltantes</NavLink>
                         </NavDropdown>
-                        <NavLink className="nav-link" to="/ventas">Ventas</NavLink>
-                        
+                        <NavDropdown title = "Ventas" id="basic-nav-dropdown">
+                            <NavLink className="nav-link" to="/ventas">Ventas</NavLink>
+                            <NavLink className="nav-link" to="/clientes">Clientes</NavLink>
+                        </NavDropdown>
                         <NavLink className="nav-link" to="/reparaciones">Ordenes de Reparaciones</NavLink>
                         <NavDropdown title="Seguridad" id="basic-nav-dropdown">
                             <NavDropdown.Item onClick={() => {navegar('/register')}}>Agregar Usuario</NavDropdown.Item>

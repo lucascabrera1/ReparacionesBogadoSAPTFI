@@ -29,5 +29,6 @@ router.route('/clientes')
 router.route('/clientes/:id')
     .patch([verifyToken, isEncargadoDeVentas], ventas.ModificarCliente)
     .delete([verifyToken, isEncargadoDeVentas], ventas.EliminarCliente)
+    .get([verifyToken, isEncargadoDeVentas], ventas.RecuperarCliente)
 
 export default router

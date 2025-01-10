@@ -268,11 +268,34 @@ const RecuperarClientes = async (req, res) => {
     }
 }
 
+export const RecuperarCliente = async (req, res) => {
+    try {
+        const {id} = req.params
+        const result = await ValidarFormatoIdYBuscarCliente(id)
+        if (result.error) return res.status(400).json({
+            error : true,
+            message : result.message
+        })
+        const cliente = result.message
+        return res.status(200).json({
+            error: false,
+            message : cliente
+        })
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({
+            error: true,
+            message: error.message
+        })
+    }
+}
+
 export default {AgregarVenta, 
     RecuperarVentas, 
     AgregarCliente, 
     ModificarCliente, 
     EliminarCliente, 
     RecuperarClientes,
+    RecuperarCliente,
     RecuperarVenta
 }

@@ -13,6 +13,27 @@
   }
 }
 
+.input-uniform {
+  width: 100%; /* Ancho adaptable */
+  padding: 8px; /* Espaciado interno */
+  font-size: 16px; /* Tamaño de fuente consistente */
+  border: 1px solid #3cff00; /* Borde estándar */
+  border-radius: 4px; /* Bordes redondeados */
+  outline: none; /* Quita el contorno azul */
+  box-sizing: border-box; /* Incluye padding y borde en el ancho */
+}
+
+/* Quita las flechas de incremento/decremento en navegadores compatibles */
+.input-uniform[type="number"]::-webkit-inner-spin-button,
+.input-uniform[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.input-uniform[type="number"] {
+  -moz-appearance: textfield; /* Firefox: Quita los controles de flechas */
+}
+
 .App-header {
   background-color: black;
   min-height: 0vh;

@@ -34,7 +34,10 @@ export const AgregarCliente = createAsyncThunk('venta/AgregarCliente', async (cl
 
 export const ModificarCliente = createAsyncThunk('venta/ModificarCliente', async(cliente) => {
     try {
-        const response = await axios.patch(URL_BASE_CLIENTES + cliente.id, cliente)
+        console.log(cliente)
+        const url = `${URL_BASE_CLIENTES}/${cliente.id}`
+        console.log(url)
+        const response = await axios.patch(url, cliente)
         console.log(response.data)
         return response.data
     } catch (error) {
@@ -49,7 +52,10 @@ export const ModificarCliente = createAsyncThunk('venta/ModificarCliente', async
 
 export const EliminarCliente = createAsyncThunk('venta/EliminarCliente', async (_id)=> {
     try {
-        const response = await axios.delete(URL_BASE_CLIENTES + _id)
+        const url = `${URL_BASE_CLIENTES}/${_id}`
+        console.log(url)
+        //const response = await axios.delete(URL_BASE_CLIENTES + _id)
+        const response = await axios.delete(url)
         console.log(response.data)
         return response.data
     } catch (error) {
@@ -120,6 +126,21 @@ export const RecuperarVenta = createAsyncThunk("venta/RecuperarVenta", async (id
         const response = await axios.get(url)
         const result = {error: false, data : response.data}
         return result
+    } catch (error) {
+        const result = {error: true, message: ReturnError(error)}
+        console.log(console.error(error))
+        return result
+    }
+})
+
+export const RecuperarCliente = createAsyncThunk("venta/RecuperarCliente", async (id) => {
+    try {
+        const url = `${URL_BASE_CLIENTES}/${id}`
+        console.log(url)
+        const response = await axios.get(url)
+        const result = {error: false, data : response}
+        console.log(result)
+        return result.data.data.message
     } catch (error) {
         const result = {error: true, message: ReturnError(error)}
         console.log(console.error(error))
