@@ -45,7 +45,8 @@ export const ModificarCliente = createAsyncThunk('venta/ModificarCliente', async
             error: true, 
             message: ReturnError(error)
         }
-        console.log(console.error(error))
+        console.log(result)
+        console.error(error)
         return result
     }
 })

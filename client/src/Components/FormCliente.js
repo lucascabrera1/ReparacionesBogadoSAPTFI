@@ -6,7 +6,7 @@ import Input from './Common/Input'
 import {AgregarCliente, ModificarCliente, RecuperarCliente} from '../Features/VentaSlice.js'
 import Form from 'react-bootstrap/Form'
 import "../App.css"
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 function FormCliente() {
     const params = useParams()
@@ -20,11 +20,21 @@ function FormCliente() {
             try {
                 console.log(data)
                 const result = await dispatch(ModificarCliente({...data, id: params.id})).unwrap()
+                if (result.error) {
+                    alert(result.message)
+                    navigate(`/clientes/${params.id}`)
+                    const cliente = await dispatch(RecuperarCliente(params.id)).unwrap()
+                    console.log(cliente)
+                    reset(cliente)
+                } else {
+                    alert("Cliente modificado correctamente")
+                    navigate('/clientes')
+                }
                 console.log(result)
-                alert("Cliente modificado correctamente")
                 e.target.reset()
-                navigate('/clientes')
+                
             } catch (error) {
+                alert(error)
                 console.error(error)
             }
         } else {
@@ -43,9 +53,9 @@ function FormCliente() {
     useEffect(()=> {
         async function buscarCliente() {
             if (params.id) {
-                const cliente = await (dispatch (RecuperarCliente(params.id)).unwrap())
-                console.log(cliente)
-                reset(cliente)
+                const clienteencontrado = await (dispatch (RecuperarCliente(params.id)).unwrap())
+                console.log(clienteencontrado)
+                reset(clienteencontrado)
             }
         }
         buscarCliente()
