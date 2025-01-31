@@ -409,10 +409,10 @@ export const ValidarVenta = async (req, res, next) => {
                         message: "La descripción del producto es obligatoria y debe tener al menos un caracter"
                     })
                 }
-                if (!detalles[i].preciocompra || isNaN(detalles[i].preciocompra) || detalles[i].preciocompra.length === 0 || detalles[i].preciocompra === 0) {
+                if (!detalles[i].precioventa || isNaN(detalles[i].precioventa) || detalles[i].precioventa.length === 0 || detalles[i].precioventa === 0) {
                     return res.status(400).json({
                         error: true,
-                        message: "El precio de compra debe ser un valor numérico mayor a 0"
+                        message: "El precio de venta debe ser un valor numérico mayor a 0"
                     })
                 }
                 if(!detalles[i].cantidad || isNaN(detalles[i].cantidad) || detalles[i].cantidad.length === 0 || detalles[i].cantidad === 0 || !Number.isInteger(detalles[i].cantidad)) {

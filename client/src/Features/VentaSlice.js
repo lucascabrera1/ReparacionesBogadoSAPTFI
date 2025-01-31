@@ -172,8 +172,9 @@ export const VentaSlice = createSlice({
             }
         })
         .addCase(AgregarVenta.fulfilled, (state, action) => {
-            state.estadoventas = "completed"
-            state.ventas.push(action.payload)
+            state.estadoventas = "idle"
+
+            //state.ventas.push(action.payload)
         })
         .addCase(AgregarCliente.fulfilled, (state, action) => {
             state.estadoclientes = "completed"

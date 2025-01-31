@@ -456,6 +456,10 @@ export const SeleccionarTodosLosProductos = (state) => {
     return state.ordenesDeCompra.productos
 }
 
+export const SeleccionarProductosParaVenta = (state) => {
+    return state.ordenesDeCompra.productos.filter(product => product.categoria !== "Repuesto")
+}
+
 export const SeleccionarTodasLasLineasCompra = (state) => { 
     return state.ordenesDeCompra.lineasCompra
 }
