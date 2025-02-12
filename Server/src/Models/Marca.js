@@ -9,7 +9,12 @@ const schemaMarca = new mongoose.Schema({
     paisorigen: {
         type: String, 
         required: false
-    }
+    },
+    modelos : [{
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Modelo'
+    }]
 })
 
 export default mongoose.model('Marca', schemaMarca)

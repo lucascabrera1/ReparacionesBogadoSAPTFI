@@ -29,14 +29,8 @@ const URL_BASE_OC = process.env.REACT_APP_URI_API + `/ordenesdecompra/`
 const URL_BASE_PROVEEDORES = process.env.REACT_APP_URI_API + `/proveedores/`
 const URL_BASE_MARCAS = process.env.REACT_APP_URI_API + `/marcas/`
 const URL_BASE_PRODUCTOS = process.env.REACT_APP_URI_API + `/productos/`
-const URL_BASE_LINEASCOMPRA = process.env.REACT_APP_URI_API + `/lineascompra/`
 const URL_BASE_CATEGORIAS = process.env.REACT_APP_URI_API + `/categorias/`
 const URL_BASE_FORMASDEPAGO = process.env.REACT_APP_URI_API + `/formasdepago`
-
-/* const ErrorRetornado = (error) => {
-    if (error === 403) return "Error 403: el servidor ha recibido y ha entendido la petición, pero rechaza enviar una respuesta"
-    else if (error === 401) return "Error 401: carece de credenciales válidas de autenticación para el recurso solicitado"
-} */
 
 const ErrorRetornado = (error) => {
     let errorrecibido = error.response.status
@@ -68,6 +62,20 @@ export const AgregarProveedor = createAsyncThunk('/ordenCompra/AgregarProveedor'
         return response.data
     } catch (error) {
         console.error(error.message)
+        return error.message
+    }
+})
+
+export const AgregarModelo = createAsyncThunk("ordenCompra/AgregarModelo", async(modeloInicial)=> {
+    try {
+        console.log(modeloInicial)
+        const url = `${URL_BASE_MARCAS}modelos/${modeloInicial.marca}`
+        console.log(url)
+        const response = await axios.post(url, modeloInicial)
+        console.log(response)
+        return response.data
+    } catch (error) {
+        console.error(error)
         return error.message
     }
 })
@@ -207,6 +215,20 @@ export const RecuperarOrdenDeCompra = createAsyncThunk("ordenCompra/RecuperarOrd
     } catch (error) {
         const result = {error: true, message: error.message}
         console.log(console.error(error))
+        return result
+    }
+})
+
+export const RecuperarModelos = createAsyncThunk('ordenCompra/RecuperarModelos', async(id)=> {
+    try {
+        const url = `${URL_BASE_MARCAS}modelos/${id}`
+        console.log(url)
+        const response = await axios.get(url)
+        const result = {error: false, data : response.data}
+        return result
+    } catch (error) {
+        const result = {error: true, message: error}
+        console.error(error)
         return result
     }
 })
@@ -387,6 +409,9 @@ export const OrdenCompraSlice = createSlice({
             state.estadoordenesdecompra = "idle"
             state.estadoproductos = "idle"
             //state.ordenes.push(action.payload)
+        })
+        .addCase(AgregarModelo.fulfilled, (state, action) => {
+            state.estadomarcas = "idle"
         })
         .addCase(EliminarMarca.fulfilled, (state, action) => {
             state.marcas = state.marcas.filter( (elem)=> {

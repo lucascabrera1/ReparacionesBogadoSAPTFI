@@ -14,6 +14,8 @@ function FormMarcas() {
     const marcas = useSelector(SeleccionarTodasLasMarcas)
     const estadomarcas = useSelector(EstadoMarcas)
 
+    console.log(marcas)
+
     useEffect(()=> {
         if (estadomarcas === "idle") {dispatch(RecuperarMarcas())}
     }, [estadomarcas])
@@ -31,7 +33,8 @@ function FormMarcas() {
                     <tr>
                         <th>Nombre</th>
                         <th>Pais de Origen</th>
-                        <th></th>
+                        <th>Modelos</th>
+                        <th>Eliminar...</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -40,6 +43,7 @@ function FormMarcas() {
                             return <tr key={marca._id}>
                                 <td>{marca.nombre}</td>
                                 <td>{marca.paisorigen}</td>
+                                <td><NavLink to={`/marcas/modelos/${marca._id}`}>Ver Modelos</NavLink></td>
                                 <td><ButtonApp variant='danger' 
                                     onClick={()=> handleDelete(marca._id, marca.nombre)}>
                                         Eliminar

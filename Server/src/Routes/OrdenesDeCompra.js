@@ -43,6 +43,13 @@ router.route('/categorias')
 router.route('/marcas/:id')
     .delete([verifyToken, isEncargadoDeCompras], ocs.EliminarMarca)
 
+router.route('/marcas/modelos/:idMarca')
+    .post([verifyToken, isEncargadoDeCompras], ocs.AgregarModelo)
+    .get([verifyToken, isEncargadoDeCompras], ocs.RecuperarModelos)
+
+router.route('/marcas/modelos/:idMarca/:id')
+    .delete([verifyToken, isEncargadoDeCompras], ocs.EliminarModelo)
+
 router.route('/proveedores/:id')
     .delete( [verifyToken, isAdmin], ocs.EliminarProveedor)
     .patch([verifyToken, isAdmin], ocs.ModificarProveedor)

@@ -5,22 +5,62 @@ import Marca from '../Models/Marca.js'
 import Producto from '../Models/Producto.js'
 import Proveedor from '../Models/Proveedor.js'
 import Categoria from '../Models/Categoria.js'
-import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 import SendMail from '../Utils/SendMail.js'
 dotenv.config({path: '../.env'})
 import {convertirFecha, formatNumber} from '../Middlewares/validateEntryData.js'
-//const stoken = process.env.SECRET
+import Modelo from '../Models/Modelo.js'
 
-const port = process.env.PORT
-console.log(port)
+const validarAnio = (aniostring) => {
+    const anio = parseInt(aniostring)
+    if (!anio) return {
+        error : true,
+        message : "Indique el año"
+    }
+    if (Number.isInteger(anio) && anio >= 2007 && anio <= 2025) return {
+        error : false,
+        message: "año correcto"
+    }
+    return {
+        error : true,
+        message : "El año debe ser un numero entero y debe ser entre 2007 y 2025"
+    }
+}
+
+const validarModelo = async (modelo, anio) => {
+    try {
+        if (!modelo) return {
+            error : true,
+            message: "Campo vacío"
+        }
+        const modelfounded = await Modelo.findOne({nombre : modelo})
+        if (modelfounded) return {
+            error : true,
+            message : `El modelo ${modelo} ya existe`
+        }
+        const resultanio = validarAnio(anio)
+        if (resultanio.error) return {
+            error : true,
+            message : resultanio.message
+        }
+        return {
+            error : false,
+            message : "modelo agregado correctamente"
+        }
+    } catch (error) {
+        return res.status(500).json({
+            error: true,
+            message : error
+        })
+    }
+}
+
 
 const GenerarOrdenDeCompra = async(req, res, next) => {
     try {
         let detalles = []
         for(const elem of req.body.detalles) {
             let {preciocompra, descripcion} = await Producto.findById(elem.id_producto)
-            console.log(elem)
             const lc = new LineaCompra()
             lc.producto = elem.id_producto
             lc.descripcion = descripcion
@@ -33,9 +73,6 @@ const GenerarOrdenDeCompra = async(req, res, next) => {
         const oc = new OrdenDeCompra(req.body)
         oc.items = detalles
         const ocsaved = await oc.save()
-        console.log("ocsaved")
-        console.log(ocsaved)
-        console.log("fin ocsaved")
         const {razonsocial, email} = await Proveedor.findById(ocsaved.proveedor)
         const {descripcion} = await FormaDePago.findById(ocsaved.formaDePago)
         const subject = "Tiene una nueva orden de compra pendiente de confirmación o rechazo"
@@ -92,7 +129,6 @@ const GenerarOrdenDeCompra = async(req, res, next) => {
             </div>
         `
         const result = await SendMail.sendEmail(email, subject, htmlContent)
-        console.log(result)
         return res.json(ocsaved)
     } catch (error) {
         console.error(error)
@@ -201,10 +237,17 @@ const ObtenerMarcas = async (req, res) => {
         const marcas = await Marca.find({})
         let marcasdevueltas = []
         for (const elem of marcas) {
+            let modelos = []
+            for (const model of elem.modelos) {
+                const {anio, nombre} = await Modelo.findById(model)
+                let newModel = {anio, nombre}
+                modelos.push(newModel)
+            }
             let newElem = {
                 _id: elem._id,
                 paisorigen : elem.paisorigen,
-                nombre: elem.nombre
+                nombre: elem.nombre,
+                modelos
             }
             marcasdevueltas.push(newElem)
         }
@@ -219,10 +262,51 @@ const ObtenerMarcas = async (req, res) => {
 const AgregarMarca = async (req, res) => {
     try {
         const marca = new Marca(req.body)
-        console.log(marca)
         const marcasaved = await marca.save()
-        console.log(marcasaved)
         return res.send(marcasaved)
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({message : message.error})
+    }
+}
+
+const AgregarModelo = async (req, res) => {
+    try {
+        const {nombre, anio} = req.body
+        const result = await validarModelo(nombre, anio)
+        if (result.error) return res.status(400).json({
+            error : true,
+            message : result.message
+        })
+        const modelo = new Modelo(req.body)
+        const newmodel = await modelo.save()
+        await Marca.findByIdAndUpdate(
+            {_id : req.params.idMarca},
+            {$push : {'modelos' : newmodel._id}},
+            {new : true},
+        )
+        return res.status(200).json(newmodel)
+    } catch (error) {
+        return res.status(500).json({message : error.message})
+    }
+}
+
+const EliminarModelo = async (req, res) => {
+    try {
+        const modelfounded = await Modelo.findOneAndRemove({_id : req.params.id})
+        const marca = await Marca.findByIdAndUpdate(
+            {_id : req.params.idMarca},
+            {$pull : {modelos : req.params.id}},
+            {new: true}
+        )
+        if (!modelfounded || modelfounded.length === 0){
+            return res.status(404).json({
+                error: true,
+                message: "Modelo no encontrado"
+            })
+        }
+
+        return res.status(200).json(modelfounded)
     } catch (error) {
         console.error(error)
         return res.status(500).json({message : message.error})
@@ -280,9 +364,7 @@ const EliminarProveedor = async (req, res) => {
 const AgregarFormaDePago = async (req, res) => {
     try {
         const fp = new FormaDePago(req.body)
-        console.log(fp)
         const fpsaved = await fp.save()
-        console.log(fpsaved)
         return res.send(fpsaved)
     } catch (error) {
         console.error(error)
@@ -293,9 +375,7 @@ const AgregarFormaDePago = async (req, res) => {
 const AgregarProducto = async (req, res) => {
     try {
         const producto = new Producto(req.body)
-        console.log(producto)
         const productosaved = await producto.save()
-        console.log(productosaved)
         return res.send(productosaved)
     } catch (error) {
         console.error(error)
@@ -306,9 +386,7 @@ const AgregarProducto = async (req, res) => {
 const AgregarProveedor = async (req, res) => {
     try {
         const proveedor = new Proveedor(req.body)
-        console.log(proveedor)
         const proveedorsaved = await proveedor.save()
-        console.log(proveedorsaved)
         return res.send(proveedorsaved)
     } catch (error) {
         console.error(error)
@@ -318,10 +396,7 @@ const AgregarProveedor = async (req, res) => {
 
 const ModificarProveedor = async (req, res) => {
     try {
-       //const proveedor =  new Proveedor(req.body)
-       console.log(req.body)
        const updatedProveedor = await Proveedor.findByIdAndUpdate({_id: req.params.id}, req.body, {new: true})
-       console.log(updatedProveedor)
        return res.send(updatedProveedor)
    } catch (error) {
        return res.status(500).json({message: error})
@@ -330,10 +405,7 @@ const ModificarProveedor = async (req, res) => {
 
 const ModificarProducto = async (req, res) => {
     try {
-        //const proveedor =  new Proveedor(req.body)
-        console.log(req.body)
         const updatedProducto = await Producto.findByIdAndUpdate({_id: req.params.id}, req.body, {new: true})
-        console.log(updatedProducto)
         return res.send(updatedProducto)
     } catch (error) {
         return res.status(500).json({message: error})
@@ -343,9 +415,7 @@ const ModificarProducto = async (req, res) => {
 const AgregarLineaCompra = async (req, res) => {
     try {
         const lc = new LineaCompra(req.body)
-        console.log(lc)
         const lcsaved = await lc.save()
-        console.log(lcsaved)
         return res.send(lcsaved)
     } catch (error) {
         console.error(error)
@@ -369,10 +439,29 @@ const RecuperarProveedores = async (req, res) => {
             }
             proveedoresdevueltos.push(newElem)
         }
-        console.log(proveedoresdevueltos)
         return res.send(proveedoresdevueltos)
     } catch (error) {
         console.error(error.message)
+        return res.status(500).json({message: error.message})
+    }
+}
+
+const RecuperarModelos = async (req, res) => {
+    try {
+        const marca = await Marca.findById({_id : req.params.idMarca})
+        if (!marca){
+            return res.status(404).json({
+                error: true,
+                message: "Marca no encontrada"
+            })
+        }
+        let modelos = []
+        for (const elem of marca.modelos) {
+            const newElem = await Modelo.findById(elem)
+            modelos.push(newElem)
+        }
+        return res.send(modelos)
+    } catch (error) {
         return res.status(500).json({message: error.message})
     }
 }
@@ -407,7 +496,6 @@ const RecuperarFormasDePago = async (req, res) => {
             }
             formasdepagodevueltas.push(newElem)
         }
-        console.log(formasdepagodevueltas)
         return res.send(formasdepagodevueltas)
     } catch (error) {
         console.error(error.message)
@@ -437,7 +525,6 @@ const RecuperarProductos = async (req, res) => {
             }
             productosdevueltos.push(newElem)
         }
-        console.log(productosdevueltos)
         return res.send(productosdevueltos)
     } catch (error) {
         console.error(error.message)
@@ -447,7 +534,6 @@ const RecuperarProductos = async (req, res) => {
 
 const RecuperarProductosPorProveedor = async (req, res) => {
     try {
-        console.log(req.params)
         const productos = await Producto.find({proveedor : req.params.idProveedor})
         let productosdevueltos = []
         for (const elem of productos) {
@@ -468,7 +554,6 @@ const RecuperarProductosPorProveedor = async (req, res) => {
             }
             productosdevueltos.push(newElem)
         }
-        console.log(productosdevueltos)
         return res.send(productosdevueltos)
     } catch (error) {
         console.error(error.message)
@@ -487,7 +572,6 @@ const RecuperarCategorias = async (req, res) => {
             }
             categoriasdevueltas.push(newElem)
         }
-        console.log(categoriasdevueltas)
         return res.send(categoriasdevueltas)
     } catch (error) {
         console.error(error.message)
@@ -509,11 +593,14 @@ export default {GenerarOrdenDeCompra,
     ModificarProveedor,
     ModificarProducto,
     EliminarProducto,
+    EliminarModelo,
     RecuperarProductos,
     RecuperarUnProveedor,
     RecuperarCategorias,
     RecuperarOrdenDeCompra,
     RecuperarFormasDePago,
     RecuperarProductosPorProveedor,
-    ActualizarEstado
+    RecuperarModelos,
+    ActualizarEstado,
+    AgregarModelo
 }
