@@ -31,7 +31,8 @@ function RegisterForm() {
             rolAdmin : false,
             rolCompras: false,
             rolVentas: false,
-            rolDeposito: false
+            rolDeposito: false,
+            rolReparaciones : false
         }
     })
     
@@ -44,12 +45,13 @@ function RegisterForm() {
     console.log(fields)
 
     const handleSubmitUser = async (data, e) => {
-        const {nombreUsuario, email, password, rolAdmin, rolDeposito, rolCompras, rolVentas} = data
+        const {nombreUsuario, email, password, rolAdmin, rolDeposito, rolCompras, rolVentas, rolReparaciones} = data
         let nomRoles = [];
         if (rolAdmin) nomRoles.push('admin')
         if (rolCompras) nomRoles.push('Encargado de Compras')
         if (rolDeposito) nomRoles.push('Encargado de Depósito')
         if (rolVentas) nomRoles.push('Encargado de Ventas')
+        if (rolReparaciones) nomRoles.push('Encargado de Reparaciones')
         let user = {
             email: email,
             nombreUsuario: nombreUsuario,
@@ -96,7 +98,8 @@ function RegisterForm() {
                     rolAdmin: roles?.find(rol=> rol.nombre === "admin")?true:false,
                     rolCompras: roles?.find(rol=> rol.nombre === "Encargado de Compras")?true:false,
                     rolVentas: roles?.find(rol=> rol.nombre === "Encargado de Ventas")?true:false,
-                    rolDeposito: roles?.find(rol=> rol.nombre === "Encargado de Depósito")?true:false
+                    rolDeposito: roles?.find(rol=> rol.nombre === "Encargado de Depósito")?true:false,
+                    rolReparaciones: roles?.find(rol=> rol.nombre === "Encargado de Reparaciones")?true:false
                 }
                 console.log(userFounded)
                 reset(user)
@@ -244,6 +247,19 @@ function RegisterForm() {
                         />
                         <label class="form-check-label" for="flexCheckChecked">
                             Encargado de Ventas
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <Input
+                            register={register}
+                            name="rolReparaciones"
+                            errors = {errors}
+                            classname="checkbox" 
+                            type="checkbox" 
+                            id="rolReparaciones"
+                        />
+                        <label class="form-check-label" for="flexCheckChecked">
+                            Encargado de Reparaciones
                         </label>
                     </div>
                 </Form.Group>

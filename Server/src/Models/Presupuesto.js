@@ -9,12 +9,13 @@ const schemaPresupuesto = new Schema ({
     },
     cliente : {
         type: Schema.Types.ObjectId,
-        ref : "Cliente",
+        ref : "User",
         required : true
     },
     estado : {
         type : String,
-        Enumerator : {value : ["A Diagnosticar", "Presupuestado", "Confirmado", "Descartado", "Reparado"]},
+        Enumerator : {value : ["Ingresado", "Presupuestado", "Confirmado", "Descartado", "Reparado", 
+            "Reparado y retirado", "Descartado y retirado"]},
         required : true,
         default : "A Diagnosticar"
     },
@@ -26,13 +27,18 @@ const schemaPresupuesto = new Schema ({
         type: Date,
         required: true
     },
+    marca : {
+        type: Schema.Types.ObjectId,
+        ref : 'Marca',
+        required : true
+    },
     modelo : {
         type : Schema.Types.ObjectId,
         ref : "Modelo",
         required : true
     },
     //una vez diagnosticado se registran los siguientes atributos
-    observaciones : {
+    diagnostico : {
         type: String
     },
     precioAproximado : {
@@ -47,7 +53,16 @@ const schemaPresupuesto = new Schema ({
     },
     precio: {
         type: Number
+    },
+    //una vez retirado se registran
+    fechaRetiro : {
+        type : Date
+    },
+    formaDePago : {
+        type : Schema.Types.ObjectId,
+        ref : 'FormaDePago'
     }
+    
 })
 
 export default model('Presupuesto', schemaPresupuesto)

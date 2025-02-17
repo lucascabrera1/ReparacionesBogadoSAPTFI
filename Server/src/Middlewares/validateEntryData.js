@@ -7,6 +7,9 @@ import Remito from "../Models/Remito.js";
 import Venta from "../Models/Venta.js";
 import { isValidObjectId } from "mongoose";
 import Cliente from "../Models/Cliente.js";
+import Marca from "../Models/Marca.js";
+import Modelo from "../Models/Modelo.js";
+import Presupuesto from "../Models/Presupuesto.js";
 
 function tieneDuplicados(arr) {
     const elementos = new Set();
@@ -19,7 +22,7 @@ function tieneDuplicados(arr) {
     return false; // No hay duplicados
 }
 
-function isValidDateFormat(date) {
+export function isValidDateFormat(date) {
     const dateRegex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
     return dateRegex.test(date);
 }
@@ -48,6 +51,16 @@ export function formatNumber(input) {
       .toFixed(2) // Asegurar que tenga 2 decimales
       .replace('.', ',') // Reemplazar el punto decimal por una coma
       .replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Agregar puntos como separadores de miles
+  }
+
+  function esEntero(valor) {
+    if (typeof valor === 'number' && Number.isInteger(valor)) {
+      return true;
+    }
+    if (typeof valor === 'string' && valor.trim() !== '' && !isNaN(valor)) {
+      return Number.isInteger(Number(valor));
+    }
+    return false;
   }
 
 export const ValidarOrdenDeCompra = async (req, res, next) => {
@@ -439,6 +452,104 @@ export const ValidarVenta = async (req, res, next) => {
             error: false,
             message: "validación de venta exitosa"
         }) */
+        next()
+    } catch (error) {
+        return res.status(500).json({
+            error: true,
+            message: error.message
+        })
+    }
+}
+
+export const ValidarPresupuesto = async (req, res, next) => {
+    try {
+        const today = convertirFecha(new Date())
+        const {codigo, cliente, falla, fechaIngreso, marca, modelo} = req.body
+        if (!codigo || codigo.length === 0 || !esEntero(codigo)) {
+            return res.status(400).json({
+                error : true,
+                message : "el codigo es obligatorio"
+            })
+        }
+        const pres = await Presupuesto.findOne({codigo: codigo})
+        console.log("presupuesto encontrado")
+        console.log(pres)
+        console.log("fin presupuesto encontrado")
+        if (pres) {
+            return res.status(409).json({
+                error : true,
+                messsage : `El presupuesto con codigo ${codigo} ya existe`
+            })
+        }
+        if (!falla || falla.length === 0) {
+            return res.status(400).json({
+                error : true,
+                message : "la falla es obligatoria"
+            })
+        }
+        if (!fechaIngreso || fechaIngreso>today || !isValidDateFormat(fechaIngreso)) {
+            return res.status(400).json({
+                error: true,
+                message: "La fecha de ingreso es obligatoria y debe ser anterior a la fecha actual"
+            })
+        }
+        if (!marca) {
+            return res.status(400).json({
+                error: true,
+                message: "La marca es obligatoria"
+            })
+        }
+        if (!(isValidObjectId(marca))) {
+            return res.status(400).json({ 
+                error: true,
+                message: "Formato de ID de marca no válido" 
+            });
+        }
+        const marcae = await Marca.findById({_id: marca})
+        if (!marcae) {
+            return res.status(400).json({
+                error: true,
+                message: "La marca no existe"
+            })
+        }
+        if(!cliente) {
+            return res.status(400).json({
+                error: true,
+                message: "El cliente es obligatorio"
+            })
+        }
+        if (!(isValidObjectId(cliente))) {
+            return res.status(400).json({ 
+                error: true,
+                message: "Formato de ID de cliente no válido" 
+            });
+        }
+        const clienteencontrado = await Cliente.findById({_id: cliente})
+        if (!clienteencontrado) {
+            return res.status(400).json({
+                error: true,
+                message: `el cliente ${cliente} no existe`
+            })
+        }
+        if(!modelo) {
+            return res.status(400).json({
+                error: true,
+                message: "El modelo es obligatorio"
+            })
+        }
+        if (!(isValidObjectId(modelo))) {
+            return res.status(400).json({ 
+                error: true,
+                message: "Formato de ID de modelo no válido" 
+            });
+        }
+        const modeloencontrado = await Modelo.findById({_id: modelo})
+        if (!modeloencontrado) {
+            return res.status(400).json({
+                error: true,
+                message: `el modelo ${modelo} no existe`
+            })
+        }
         next()
     } catch (error) {
         return res.status(500).json({

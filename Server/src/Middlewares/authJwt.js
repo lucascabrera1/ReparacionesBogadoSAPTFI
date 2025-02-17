@@ -97,8 +97,46 @@ export const isEncargadoDeDeposito = async (req, res, next) => {
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
-    
 }
+
+export const isEncargadoDeReparaciones = async (req, res, next) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1]
+        const decoded = jwt.verify(token, stoken)
+        req.userId = decoded.id
+        const user = await User.findById(req.userId)
+        const roles = await Role.find({_id: {$in: user.roles}})
+        for (let i=0; i< roles.length; i++) {
+            if (roles[i].nombre === "Encargado de Reparaciones") {
+                next();
+                return;
+            }
+        }
+        return res.status(403).json({message: "Requiere el rol de Encargado de Reparaciones"})
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+export const isUser = async (req, res, next) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1]
+        const decoded = jwt.verify(token, stoken)
+        req.userId = decoded.id
+        const user = await User.findById(req.userId)
+        const roles = await Role.find({_id: {$in: user.roles}})
+        for (let i=0; i< roles.length; i++) {
+            if (roles[i].nombre === "user") {
+                next();
+                return;
+            }
+        }
+        return res.status(403).json({message: "Requiere registrarse como cliente"})
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
 
 export const isProveedor = async (req, res, next) => {
     const user = await User.findById({_id: req.params.idUser})
