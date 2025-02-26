@@ -35,6 +35,9 @@ import FormClientes from './Components/FormClientes.js'
 import FormCliente from './Components/FormCliente.js'
 import FormModelos from './Components/FormModelos.js'
 import FormModelo from './Components/FormModelo.js'
+import RegisterUserForm from './Components/Auth/RegisterUserForm.js'
+import FormMisReparaciones from './Components/FormMisReparaciones.js'
+import FormNuevoPresupuesto from './Components/FormNuevoPresupuesto.js'
 
 function App() {
   return <div  className="container-fluid">
@@ -79,6 +82,9 @@ function App() {
             <Route path='/nuevocliente' element= {<ProtectedRoute><FormCliente/></ProtectedRoute>}></Route>
             <Route path='/marcas/modelos/:id' element = {<ProtectedRoute><FormModelos/></ProtectedRoute>}></Route>
             <Route path='/nuevomodelo/:id' element = {<ProtectedRoute><FormModelo/></ProtectedRoute>}></Route>
+            <Route path='/registerclient' element = {<RegisterUserForm/>}></Route>
+            <Route path='/misreparaciones' element = {<ProtectedRoute><FormMisReparaciones/></ProtectedRoute>}></Route>
+            <Route path='/nuevopresupuesto' element = {<ProtectedRoute><FormNuevoPresupuesto/></ProtectedRoute>}></Route>
             {/*<Route path='/' element={<FormTodasLasOC/>} />
             <Route path='/home' element={<Home/>} />
                                                                                                                 

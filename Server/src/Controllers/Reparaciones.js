@@ -5,6 +5,7 @@ import Modelo from '../Models/Modelo.js'
 import FormaDePago from '../Models/FormaDePago.js'
 import { formatNumber, convertirFecha, isValidDateFormat } from '../Middlewares/validateEntryData.js'
 import { isValidObjectId } from 'mongoose'
+import User from '../Models/User.js'
 
 const ValidarDiagnosticar = async (presdiag) => {
     const {precioAproximado, fechaAproxEntrega, diagnostico} = presdiag
@@ -16,10 +17,10 @@ const ValidarDiagnosticar = async (presdiag) => {
             message : "Falta el precio o el formato no es el adecuado"
         }
     }
-    if (!isValidDateFormat(fecha) || fecha>today) {
+    if (!isValidDateFormat(fecha) || fecha<today) {
         return {
             error : true,
-            message : "La fecha es obligatoria y debe tener el formato correcto"
+            message : "La fecha es obligatoria, debe tener el formato correcto y ser posterior a hoy"
         }
     }
     if (!diagnostico || diagnostico.length === 0) {
@@ -231,6 +232,107 @@ const RecuperarPresupuestosReparados = async (req, res) => {
     }
 }
 
+const RecuperarPresupuestosPorCliente = async (req, res) => {
+    try {
+        const presupuestos = await Presupuesto.find({cliente : req.params.idCliente})
+        let presupuestosrecuperados = []
+        for (const elem of presupuestos) {
+            const {codigo, cliente, estado, falla, fechaIngreso, marca, modelo, diagnostico,
+                fechaAproxEntrega, precioAproximado, fechaEntrega, precio, formaDePago, fechaRetiro
+            } = elem
+            console.log('inicio elem')
+            console.log(elem)
+            console.log('fin elem')
+            const {nombreUsuario} = await User.findById({_id : cliente})
+            const {nombre : nombremarca} = await Marca.findById({_id: marca})
+            const {nombre : nombremodelo} = await Modelo.findById({_id: modelo})
+            let newPresupuesto = {}
+            switch(estado) {
+                case "Ingresado" : 
+                    console.log("Ingresa por donde el presupuesto fue ingresado")
+                    console.log(estado)
+                    newPresupuesto = { 
+                        codigo, 
+                        cliente : nombreUsuario, 
+                        estado, 
+                        falla, 
+                        fechaIngreso,
+                        marca: nombremarca, 
+                        modelo : nombremodelo,
+                    }
+                case "Presupuestado" || "Confirmado" || "Descartado" : 
+                    console.log("Ingresa por donde el presupuesto fue presupuestado confirmado o descartado")
+                    console.log(estado)
+                    newPresupuesto = {
+                        codigo, 
+                        cliente : nombreUsuario, 
+                        estado, 
+                        falla, 
+                        fechaIngreso,
+                        marca: nombremarca, 
+                        modelo : nombremodelo,
+                        fechaAproxEntrega, 
+                        precioAproximado,  
+                        diagnostico
+                    }
+                case "Reparado" : 
+                    console.log("Ingresa por donde el presupuesto fue Reparado")
+                    console.log(estado)
+                    newPresupuesto = {
+                        codigo, 
+                        cliente : nombreUsuario, 
+                        estado, 
+                        falla, 
+                        fechaIngreso,
+                        marca: nombremarca, 
+                        modelo : nombremodelo,
+                        fechaAproxEntrega, 
+                        precioAproximado,  
+                        diagnostico,
+                        fechaEntrega, 
+                        precio
+                    }
+                case "Reparado y Entregado" || "Descartado y Entregado" : 
+                    console.log("entra donde el estado es entregado y reparado")
+                    console.log(estado)
+                    console.log(formaDePago)
+                    console.log("arriba estado y forma de pago")
+                    //const {descripcion} = await FormaDePago.findById({_id : formaDePago})
+                    //console.log(descripcion)
+                    newPresupuesto = {
+                        codigo, 
+                        cliente : nombreUsuario, 
+                        estado, 
+                        falla, 
+                        fechaIngreso,
+                        marca: nombremarca, 
+                        modelo : nombremodelo,
+                        fechaAproxEntrega, 
+                        precioAproximado,  
+                        diagnostico,
+                        fechaEntrega, 
+                        precio,
+                        fechaRetiro,
+                        //formaDePago : descripcion
+                    }
+                default : console.log("no se encontró ningún presupuesto con el estado " + estado)
+            }
+            presupuestosrecuperados.push(newPresupuesto)
+        }
+        return res.status(200).json(presupuestosrecuperados)
+    } catch (error) {
+        return res.status(500).json({message : error.message})
+    }
+}
+
+const RecuperarUsuarios = async (req, res) => {
+    try {
+        
+    } catch (error) {
+        
+    }
+}
+
 export default {
     AgregarPresupuesto,
     DiagnosticarPresupuesto,
@@ -239,5 +341,6 @@ export default {
     AgregarReparacion,
     RecuperarPresupuestosDiagnosticadosConfimadosYDescartados,
     RecuperarPresupuestosIngresados,
-    RecuperarPresupuestosReparados
+    RecuperarPresupuestosReparados,
+    RecuperarPresupuestosPorCliente
 }

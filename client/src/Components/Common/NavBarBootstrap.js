@@ -7,7 +7,9 @@ import {logOut, selectCurrentUser} from '../../Features/AuthSlice'
 import { useDispatch, useSelector } from 'react-redux';
 import { reinicializar as reinicializarOcs } from '../../Features/OrdenCompraSlice';
 import { reinicializar as reinicializarRemito} from '../../Features/RemitoSlice';
-import { reinicializar as reinicializarUsuario} from '../../Features/UsersSlice'
+import { reinicializar as reinicializarUsuario} from '../../Features/UsersSlice';
+import { reinicializar as reinicializarVenta } from '../../Features/VentaSlice';
+import { reinicializar as reinicializarReparacion } from '../../Features/ReparacionesSlice';
 
 export default function NavBarBootstrap() {
     const navigate = useNavigate();
@@ -20,6 +22,8 @@ export default function NavBarBootstrap() {
         dispatch(reinicializarOcs())
         dispatch(reinicializarRemito())
         dispatch(reinicializarUsuario())
+        dispatch(reinicializarVenta())
+        dispatch(reinicializarReparacion())
     }
     const userlogged = useSelector(selectCurrentUser)
 
@@ -37,17 +41,26 @@ export default function NavBarBootstrap() {
                             <NavDropdown.Item onClick={() => {navegar('/reporteproveedores')}}>Reporte Proveedores</NavDropdown.Item>
                         </NavDropdown>
                         <NavDropdown title="Remitos" id="basic-nav-dropdown">
-                            <NavLink className="nav-link" to="/remitos">Ingreso de Remitos</NavLink>
-                            <NavLink className="nav-link" to="/reporteremitos">Ver Reporte de Productos Faltantes</NavLink>
+                            <NavDropdown.Item onClick={()=> navegar('/remitos')}>Ingreso de Remitos</NavDropdown.Item>
+                            <NavDropdown.Item onClick={()=> navegar('/reporteremitos')}>Ver Reporte de Productos Faltantes</NavDropdown.Item>
                         </NavDropdown>
                         <NavDropdown title = "Ventas" id="basic-nav-dropdown">
-                            <NavLink className="nav-link" to="/ventas">Ventas</NavLink>
-                            <NavLink className="nav-link" to="/clientes">Clientes</NavLink>
+                            <NavDropdown.Item onClick={()=> navegar('/ventas')} >Ventas</NavDropdown.Item>
+                            <NavDropdown.Item onClick={()=> navegar('/clientes')}>Clientes</NavDropdown.Item>
                         </NavDropdown>
-                        <NavLink className="nav-link" to="/reparaciones">Ordenes de Reparaciones</NavLink>
+                        <NavDropdown title="Órdenes de Reparaciones" id="basic-nav-dropdown">
+                            <NavDropdown.Item onClick={()=> {navegar('/nuevopresupuesto')}}>Nuevo Presupuesto</NavDropdown.Item>
+                            <NavDropdown.Item onClick={()=> {navegar('/diagnosticar')}}>Diagnosticar Presupuesto</NavDropdown.Item>
+                            <NavDropdown.Item onClick={()=> {navegar('/nuevareparacion')}}>Ingresar Reparación</NavDropdown.Item>
+                            <NavDropdown.Item onClick={()=> {navegar('/finalizarreparacion')}}>Finalizar Reparación</NavDropdown.Item>
+                        </NavDropdown>
                         <NavDropdown title="Seguridad" id="basic-nav-dropdown">
                             <NavDropdown.Item onClick={() => {navegar('/register')}}>Agregar Usuario</NavDropdown.Item>
                             <NavDropdown.Item onClick={() => {navegar('/users')}}>Modificar o Eliminar Usuario</NavDropdown.Item>
+                        </NavDropdown>
+                        <NavDropdown title="Mis Reparaciones" id="basic-nav-dropdown">
+                            <NavDropdown.Item onClick={() => {navegar('/registerclient')}}>Registrarme</NavDropdown.Item>
+                            <NavDropdown.Item onClick={() => {navegar('/misreparaciones')}}>Ver mis Reparaciones</NavDropdown.Item>
                         </NavDropdown>
                     </Nav>
                 </Navbar.Collapse>

@@ -2,7 +2,9 @@ import express from 'express'
 import ocs from '../Controllers/OrdenesDeCompra.js'
 import reparaciones from '../Controllers/Reparaciones.js'
 import verifyToken from "../Middlewares/VerifyToken.js"
-import {isEncargadoDeReparaciones} from '../Middlewares/authJwt.js'
+import {isEncargadoDeReparaciones, isUser} from '../Middlewares/authJwt.js'
+import { CheckDuplicateUser } from '../Middlewares/verifiSignUp.js'
+import auth from '../Controllers/Auth.js'
 import { ValidarPresupuesto } from '../Middlewares/validateEntryData.js'
 import morgan from 'morgan'
 
@@ -27,5 +29,7 @@ router.route('/diagnosticar/:id').patch([verifyToken, isEncargadoDeReparaciones]
 router.route('/confirmar/:id').patch([verifyToken, isEncargadoDeReparaciones], reparaciones.ConfirmarPresupuesto)
 router.route('/descartar/:id').patch([verifyToken, isEncargadoDeReparaciones], reparaciones.DescartarPresupuesto)
 router.route('/ingresar/:id').patch([verifyToken, isEncargadoDeReparaciones], reparaciones.AgregarReparacion)
+router.route('/registrarme').post([CheckDuplicateUser], auth.SignUp)
+router.route('/misreparaciones/:idCliente').get([verifyToken, isUser], reparaciones.RecuperarPresupuestosPorCliente)
 
 export default router

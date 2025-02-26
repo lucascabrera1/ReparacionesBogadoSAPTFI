@@ -152,7 +152,11 @@ export const RecuperarCliente = createAsyncThunk("venta/RecuperarCliente", async
 export const VentaSlice = createSlice({
     name: "Venta",
     initialState,
-    reducers: {},
+    reducers: {
+        reinicializar : (state, action) => {
+            return initialState
+        }
+    },
     extraReducers: (builder) =>{ builder
         .addCase(RecuperarClientes.fulfilled, (state, action) => {
             console.log("entra al extrarreducer 'recuperar clientes'")
@@ -198,6 +202,7 @@ export const VentaSlice = createSlice({
 })
 
 export default VentaSlice.reducer
+export const {reinicializar} = VentaSlice.actions
 
 export const SeleccionarTodosLosClientes = (state) => {
     console.log(state)

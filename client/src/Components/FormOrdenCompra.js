@@ -112,7 +112,7 @@ function FormOrdenCompra() {
     }
     let total = (getValues()["total"]===undefined?0.0:getValues()["total"])
     let proveedor = (getValues()["proveedor"]===undefined?{}:getValues()["proveedor"])
-    let fechaEmision = (getValues()["fechEemision"]===undefined?Date():Date())
+    let fechaEmision = (getValues()["fechaEmision"]===undefined?Date():Date())
     reset({
       ...getValues(),
       total : total + cantidad * preciocompra,

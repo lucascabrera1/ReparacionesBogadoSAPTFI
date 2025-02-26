@@ -1,0 +1,5 @@
+/APP
+-Filtros en la venta para marca y categoría
+-Cuando voy a registrar un usuario ¿cómo capto confirmPassword?
+/API
+-En el metodo recuperarreparacionesporcliente el switch case pasa por todos los casos

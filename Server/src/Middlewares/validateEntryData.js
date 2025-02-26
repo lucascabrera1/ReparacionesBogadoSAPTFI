@@ -10,6 +10,7 @@ import Cliente from "../Models/Cliente.js";
 import Marca from "../Models/Marca.js";
 import Modelo from "../Models/Modelo.js";
 import Presupuesto from "../Models/Presupuesto.js";
+import User from '../Models/User.js'
 
 function tieneDuplicados(arr) {
     const elementos = new Set();
@@ -524,7 +525,7 @@ export const ValidarPresupuesto = async (req, res, next) => {
                 message: "Formato de ID de cliente no válido" 
             });
         }
-        const clienteencontrado = await Cliente.findById({_id: cliente})
+        const clienteencontrado = await User.findById({_id: cliente})
         if (!clienteencontrado) {
             return res.status(400).json({
                 error: true,
