@@ -19,12 +19,12 @@ function RegisterUserForm() {
             nombreUsuario : "",
             email : "",
             password : "",
-            confirmPassword : ""
+            confirmpassword : ""
         }
     })
 
     const handleSubmitUser = async (data, e) => {
-        const {nombreUsuario, email, password, confirmPassword} = data
+        const {nombreUsuario, email, password, confirmpassword} = data
         let nomRoles = [];
         nomRoles.push('user')
         let user = {
@@ -36,8 +36,8 @@ function RegisterUserForm() {
         
         try {
             console.log(data)
-            console.log(password, confirmPassword)
-            if (password !== data.onfirmPassword) {
+            console.log(password, confirmpassword)
+            if (password !== confirmpassword) {
                 alert("las claves no coinciden")
                 reset(user)
             } else {
@@ -112,6 +112,7 @@ function RegisterUserForm() {
                             type="password"
                             name="confirmpassword"
                             placeholder="Confirmar Contraseña"
+                            //register={register}
                             register={register}
                             registerOptions= { {
                                 required: true, maxLength: 20, minLength: 6

@@ -17,7 +17,7 @@ const schemaPresupuesto = new Schema ({
         Enumerator : {value : ["Ingresado", "Presupuestado", "Confirmado", "Descartado", "Reparado", 
             "Reparado y retirado", "Descartado y retirado"]},
         required : true,
-        default : "A Diagnosticar"
+        default : "Ingresado"
     },
     falla : {
         type : String,

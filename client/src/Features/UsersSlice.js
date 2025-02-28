@@ -93,7 +93,7 @@ export const usersSlice = createSlice ({
         .addCase(AgregarUsuario.fulfilled, (state, action) => {
             console.log("entra al agregar usuario extrareducer ")
             console.log(action)
-            state.estadousuarios = "completed"
+            state.estadousuarios = "idle"
             state.usuarios.push(action.payload)
         })
         .addCase(RecuperarUsuarios.fulfilled, (state, action) => {

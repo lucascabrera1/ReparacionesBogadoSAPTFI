@@ -6,6 +6,7 @@ import FormaDePago from '../Models/FormaDePago.js'
 import { formatNumber, convertirFecha, isValidDateFormat } from '../Middlewares/validateEntryData.js'
 import { isValidObjectId } from 'mongoose'
 import User from '../Models/User.js'
+import Role from '../Models/Role.js'
 
 const ValidarDiagnosticar = async (presdiag) => {
     const {precioAproximado, fechaAproxEntrega, diagnostico} = presdiag
@@ -327,9 +328,11 @@ const RecuperarPresupuestosPorCliente = async (req, res) => {
 
 const RecuperarUsuarios = async (req, res) => {
     try {
-        
+        const roluser = await Role.findOne({nombre : 'user'})
+        const usuarios = await User.find({roles : roluser._id})
+        return res.send(usuarios)
     } catch (error) {
-        
+        return res.status(500).json({message : error.message})
     }
 }
 
@@ -342,5 +345,6 @@ export default {
     RecuperarPresupuestosDiagnosticadosConfimadosYDescartados,
     RecuperarPresupuestosIngresados,
     RecuperarPresupuestosReparados,
-    RecuperarPresupuestosPorCliente
+    RecuperarPresupuestosPorCliente,
+    RecuperarUsuarios
 }

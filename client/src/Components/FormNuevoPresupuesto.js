@@ -60,7 +60,7 @@ function FormNuevoPresupuesto() {
                     name='cliente'
                     {...register('cliente')}
                 >
-                    Option CLientes
+                    Option Clientes
                 </Form.Select>
                 <Input
                     type="textarea"

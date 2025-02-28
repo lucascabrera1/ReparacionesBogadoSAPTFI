@@ -31,5 +31,8 @@ router.route('/descartar/:id').patch([verifyToken, isEncargadoDeReparaciones], r
 router.route('/ingresar/:id').patch([verifyToken, isEncargadoDeReparaciones], reparaciones.AgregarReparacion)
 router.route('/registrarme').post([CheckDuplicateUser], auth.SignUp)
 router.route('/misreparaciones/:idCliente').get([verifyToken, isUser], reparaciones.RecuperarPresupuestosPorCliente)
+router.route('/marcas').get([verifyToken, isEncargadoDeReparaciones], ocs.ObtenerMarcas)
+router.route('/modelos/:idMarca').get([verifyToken, isEncargadoDeReparaciones], ocs.RecuperarModelos)
+router.route('/usuarios').get([verifyToken, isEncargadoDeReparaciones], reparaciones.RecuperarUsuarios)
 
 export default router

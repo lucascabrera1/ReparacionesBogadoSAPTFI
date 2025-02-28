@@ -36,10 +36,28 @@ export const AgregarPresupuesto = createAsyncThunk('Reparaciones/AgregarPresupue
     }
 })
 
+export const RecuperarUsuarios = createAsyncThunk('Reparaciones/RecuperarUsuarios', async ()=> {
+    try {
+        const url = URL_BASE_REPARACIONES + "/usuarios"
+        const response = await axios.get(url)
+        console.log(response)
+        const result = {
+            error : false,
+            data : response.data
+        }
+        return result
+    } catch (error) {
+        const result = {
+            error : true,
+            message : error.message
+        }
+        console.error(error.message)
+        return result
+    }
+})
+
 export const RecuperarReparaciones = createAsyncThunk('Reparaciones/RecuperarReparaciones', async(iduser) => {
     try {
-        console.log(iduser)
-        console.log("entra al slice reparaciones metodo recuperar reparaciones")
         const url = `${URL_BASE_REPARACIONES}/misreparaciones/${iduser}`
         const response = await axios.get(url)
         console.log(response)
@@ -71,6 +89,14 @@ export const ReparacionesSlice = createSlice({
                 state.reparaciones = action.payload.data
             } else {
                 state.erroresreparaciones = action.payload.message
+            }
+        })
+        .addCase(RecuperarUsuarios.fulfilled, (state, action) => {
+            state.estadousuarios = "completed"
+            if (!action.payload.error) {
+                state.usuarios = action.payload.data
+            } else {
+                state.erroresusuarios = action.payload.message
             }
         })
     }
