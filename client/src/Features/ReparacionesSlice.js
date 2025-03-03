@@ -1,13 +1,20 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit'
 import axios from 'axios'
+//import { RecuperarModelos } from './OrdenCompraSlice'
 
 const initialState = {
     reparaciones : [],
     usuarios : [],
+    marcas : [],
+    modelos : [],
     estadoreparaciones : "idle",
     estadousuarios : "idle",
+    estadomarcas : "idle",
+    estadomodelos : "idle",
     erroresreparaciones : null,
-    erroresusuarios : null
+    erroresusuarios : null,
+    erroresmarcas : null,
+    erroresmodelos : null
 }
 
 const URL_BASE_REPARACIONES = process.env.REACT_APP_URI_API + '/reparaciones'
@@ -28,10 +35,11 @@ export const AgregarPresupuesto = createAsyncThunk('Reparaciones/AgregarPresupue
     try {
         const url = URL_BASE_REPARACIONES + "/ingresar"
         const response = await axios.post(url, presupuesto)
+        console.log("respuesta del slice en agregar presupuesto")
         console.log(response)
         return response.data
     } catch (error) {
-        console.error(error.message)
+        console.error(error)
         return error.message
     }
 })
@@ -70,6 +78,34 @@ export const RecuperarReparaciones = createAsyncThunk('Reparaciones/RecuperarRep
     }
 })
 
+export const RecuperarMarcas = createAsyncThunk('Reparaciones/RecuperarMarcas', async()=> {
+    try {
+        const url = URL_BASE_REPARACIONES + "/marcas"
+        const response = await axios.get(url)
+        console.log(response)
+        const result = {error : false, data : response.data}
+        return result
+    } catch (error) {
+        const result = {error: true, message: error}
+        console.error(error)
+        return result
+    }
+})
+
+export const RecuperarModelos = createAsyncThunk('Reparaciones/RecuperarModelos', async(idMarca)=> {
+    try {
+        const url = `${URL_BASE_REPARACIONES}/modelos/${idMarca}`
+        const response = await axios.get(url)
+        console.log(response)
+        const result = {error : false, data : response.data}
+        return result
+    } catch (error) {
+        const result = {error: true, message: error}
+        console.error(error)
+        return result
+    }
+})
+
 export const ReparacionesSlice = createSlice({
     name : 'reparaciones',
     initialState,
@@ -80,7 +116,7 @@ export const ReparacionesSlice = createSlice({
     },
     extraReducers : (builder) => { builder
         .addCase(AgregarUsuario.fulfilled, (state, action) => {
-            state.estadoreparaciones = "completed"
+            state.estadoreparaciones = "idle"
             state.reparaciones.push(action.payload)
         })
         .addCase(RecuperarReparaciones.fulfilled, (state, action) => {
@@ -99,6 +135,22 @@ export const ReparacionesSlice = createSlice({
                 state.erroresusuarios = action.payload.message
             }
         })
+        .addCase(RecuperarMarcas.fulfilled, (state, action) => {
+            state.estadomarcas = "completed"
+            if (!action.payload.error) {
+                state.marcas = action.payload.data
+            } else {
+                state.erroresmarcas = action.payload.message
+            }
+        })
+        .addCase(RecuperarModelos.fulfilled, (state, action) => {
+            state.estadomodelos = "completed"
+            if (!action.payload.error) {
+                state.modelos = action.payload.data
+            } else {
+                state.erroresmodelos = action.payload.message
+            }
+        })
     }
 })
 
@@ -113,8 +165,21 @@ export const SeleccionarTodosLosUsuarios = (state) => {
     return state.reparaciones.usuarios
 }
 
+export const SeleccionarTodasLasMarcas = (state) => {
+    return state.reparaciones.marcas
+}
+
+
+export const SeleccionarModelos = (state) => {
+    return state.reparaciones.modelos
+}
+
 export const EstadoReparaciones = (state) => state.reparaciones.estadoreparaciones
 export const EstadoUsuarios = (state) => state.reparaciones.estadousuarios
+export const EstadoMarcas = (state) => state.reparaciones.estadomarcas
+export const EstadoModelos = (state) => state.reparaciones.estadomodelos
 
 export const ErroresReparaciones = (state) => state.reparaciones.erroresreparaciones
 export const ErroresUsuarios = (state) => state.reparaciones.erroresusuarios
+export const ErroresMarcas = (state) => state.reparaciones.erroresmarcas
+export const ErroresModelos = (state) => state.reparaciones.erroresmodelos

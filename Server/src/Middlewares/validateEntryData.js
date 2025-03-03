@@ -466,6 +466,7 @@ export const ValidarPresupuesto = async (req, res, next) => {
     try {
         const today = convertirFecha(new Date())
         const {codigo, cliente, falla, fechaIngreso, marca, modelo} = req.body
+        const fechaIngresoConvertida = convertirFecha(fechaIngreso)
         if (!codigo || codigo.length === 0 || !esEntero(codigo)) {
             return res.status(400).json({
                 error : true,
@@ -476,6 +477,9 @@ export const ValidarPresupuesto = async (req, res, next) => {
         console.log("presupuesto encontrado")
         console.log(pres)
         console.log("fin presupuesto encontrado")
+        console.log("fecha ingreso inicio")
+        console.log(fechaIngreso)
+        console.log("fechaIngreso fin")
         if (pres) {
             return res.status(409).json({
                 error : true,
@@ -488,10 +492,10 @@ export const ValidarPresupuesto = async (req, res, next) => {
                 message : "la falla es obligatoria"
             })
         }
-        if (!fechaIngreso || fechaIngreso>today || !isValidDateFormat(fechaIngreso)) {
+        if (!fechaIngresoConvertida || !isValidDateFormat(fechaIngresoConvertida)) {
             return res.status(400).json({
                 error: true,
-                message: "La fecha de ingreso es obligatoria y debe ser anterior a la fecha actual"
+                message: "La fecha de ingreso es obligatoria"
             })
         }
         if (!marca) {

@@ -84,7 +84,7 @@ function FormMisReparaciones() {
                                             >
                                                 <ButtonApp variant='danger'>Descartar</ButtonApp>
                                             </div>
-                                        </td> : ""
+                                        </td> : <td>{rep.estado} </td>
                                     }
                                 </tr>
                             })
