@@ -106,6 +106,49 @@ export const RecuperarModelos = createAsyncThunk('Reparaciones/RecuperarModelos'
     }
 })
 
+export const RecuperarPresupuestosIngresados = createAsyncThunk("Reparaciones/RecuperarPresupuestosIngresados", async() => {
+    try {
+        const url = URL_BASE_REPARACIONES + "/presupuestosingresados"
+        const response = await axios.get(url)
+        console.log(response)
+        const result = {error : false, data : response.data}
+        return result
+    } catch (error) {
+        const result = {error: true, message: error}
+        console.error(error)
+        return result
+    }
+})
+
+export const RecuperarPresupuestoIngresado = createAsyncThunk("Reparaciones/RecuperarPresupuestoIngresado", async(id) => {
+    try {
+        const url = URL_BASE_REPARACIONES + "/diagnosticar/" + id
+        const response = await axios.get(url)
+        console.log(response)
+        const result = {error : false, data : response.data}
+        return result
+    } catch (error) {
+        const result = {error: true, message: error}
+        console.error(error)
+        return result
+    }
+})
+
+export const DiagnosticarPresupuesto = createAsyncThunk("Reparaciones/DiagnosticarPresupuesto", async (pres) => {
+    try {
+        const url = URL_BASE_REPARACIONES + "/diagnosticar/" + pres.id
+        console.log(pres)
+        const response = await axios.patch(url, pres)
+        console.log(response)
+        const result = {error : false, data : response.data}
+        return result
+    } catch (error) {
+        const result = {error: true, message: error}
+        console.error(error)
+        return result
+    }
+})
+
 export const ReparacionesSlice = createSlice({
     name : 'reparaciones',
     initialState,
@@ -116,6 +159,10 @@ export const ReparacionesSlice = createSlice({
     },
     extraReducers : (builder) => { builder
         .addCase(AgregarUsuario.fulfilled, (state, action) => {
+            state.estadoreparaciones = "idle"
+            state.reparaciones.push(action.payload)
+        })
+        .addCase(AgregarPresupuesto.fulfilled, (state, action) => {
             state.estadoreparaciones = "idle"
             state.reparaciones.push(action.payload)
         })
@@ -150,6 +197,32 @@ export const ReparacionesSlice = createSlice({
             } else {
                 state.erroresmodelos = action.payload.message
             }
+        })
+        .addCase(RecuperarPresupuestosIngresados.fulfilled, (state, action) => {
+            state.estadoreparaciones = "completed"
+            if (!action.payload.error) {
+                state.reparaciones = action.payload.data
+            } else {
+                state.erroresreparaciones = action.payload.message
+            }
+        })
+        .addCase(RecuperarPresupuestoIngresado.fulfilled, (state, action) => {
+            state.estadoreparaciones = "completed"
+            if (!action.payload.error) {
+                state.reparaciones = action.payload.data
+            } else {
+                state.erroresreparaciones = action.payload.message
+            }
+        })
+        .addCase(DiagnosticarPresupuesto.fulfilled, (state, action) => {
+            state.estadoreparaciones = "idle"
+            state.reparaciones = state.reparaciones.map(item => {
+                if (item._id === action.payload._id) {
+                    return action.payload
+                } else {
+                    return item
+                }
+            })
         })
     }
 })

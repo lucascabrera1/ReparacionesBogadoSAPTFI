@@ -170,16 +170,35 @@ const RecuperarPresupuestosIngresados = async (req, res) => {
         console.log(presupuestos)
         let presupuestosrecuperados = []
         for (const elem of presupuestos) {
-            const {codigo, cliente, estado, falla, fechaIngreso, marca, modelo} = elem
-            const {nombreyapellido} = await Cliente.findById({_id : cliente})
+            const {_id, codigo, cliente, estado, falla, fechaIngreso, marca, modelo} = elem
+            const {nombreUsuario} = await User.findById({_id : cliente})
             const {nombre : nombremarca} = await Marca.findById({_id: marca})
             const {nombre : nombremodelo} = await Modelo.findById({_id: modelo})
-            let newPresupuesto = { codigo, cliente : nombreyapellido, estado, falla, fechaIngreso,
+            let newPresupuesto = {_id, codigo, cliente : nombreUsuario, estado, falla, fechaIngreso,
                 marca: nombremarca, modelo : nombremodelo,
             }
             presupuestosrecuperados.push(newPresupuesto)
         }
         return res.status(200).json(presupuestosrecuperados)
+    } catch (error) {
+        return res.status(500).json({message : error.message})
+    }
+}
+
+const RecuperarPresupuestoIngresado = async (req, res) => {
+    try {
+        const presupuesto = await Presupuesto.findById({_id : req.params.id})
+        console.log("llega a la linea 191")
+        console.log(presupuesto)
+        console.log("fin presupuesto")
+        const {codigo, cliente, estado, falla, fechaIngreso, marca, modelo} = presupuesto
+        const {nombreUsuario} = await User.findById({_id : cliente})
+        const {nombre : nombremarca} = await Marca.findById({_id: marca})
+        const {nombre : nombremodelo} = await Modelo.findById({_id: modelo})
+        let newPresupuesto = {codigo, cliente : nombreUsuario, estado, falla, fechaIngreso,
+            marca: nombremarca, modelo : nombremodelo,
+        }
+        return res.status(200).json(newPresupuesto)
     } catch (error) {
         return res.status(500).json({message : error.message})
     }
@@ -344,6 +363,7 @@ export default {
     AgregarReparacion,
     RecuperarPresupuestosDiagnosticadosConfimadosYDescartados,
     RecuperarPresupuestosIngresados,
+    RecuperarPresupuestoIngresado,
     RecuperarPresupuestosReparados,
     RecuperarPresupuestosPorCliente,
     RecuperarUsuarios
