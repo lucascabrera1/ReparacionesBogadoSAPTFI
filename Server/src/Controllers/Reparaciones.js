@@ -257,7 +257,7 @@ const RecuperarPresupuestosPorCliente = async (req, res) => {
         const presupuestos = await Presupuesto.find({cliente : req.params.idCliente})
         let presupuestosrecuperados = []
         for (const elem of presupuestos) {
-            const {codigo, cliente, estado, falla, fechaIngreso, marca, modelo, diagnostico,
+            const {_id, codigo, cliente, estado, falla, fechaIngreso, marca, modelo, diagnostico,
                 fechaAproxEntrega, precioAproximado, fechaEntrega, precio, formaDePago, fechaRetiro
             } = elem
             console.log('inicio elem')
@@ -272,6 +272,7 @@ const RecuperarPresupuestosPorCliente = async (req, res) => {
                     console.log("Ingresa por donde el presupuesto fue ingresado")
                     console.log(estado)
                     newPresupuesto = { 
+                        _id,
                         codigo, 
                         cliente : nombreUsuario, 
                         estado, 
@@ -280,10 +281,13 @@ const RecuperarPresupuestosPorCliente = async (req, res) => {
                         marca: nombremarca, 
                         modelo : nombremodelo,
                     }
-                case "Presupuestado" || "Confirmado" || "Descartado" : 
+                case "Confirmado" :
+                case "Presupuestado" :
+                case "Descartado" :
                     console.log("Ingresa por donde el presupuesto fue presupuestado confirmado o descartado")
                     console.log(estado)
                     newPresupuesto = {
+                        _id,
                         codigo, 
                         cliente : nombreUsuario, 
                         estado, 
@@ -299,6 +303,7 @@ const RecuperarPresupuestosPorCliente = async (req, res) => {
                     console.log("Ingresa por donde el presupuesto fue Reparado")
                     console.log(estado)
                     newPresupuesto = {
+                        _id,
                         codigo, 
                         cliente : nombreUsuario, 
                         estado, 
@@ -320,6 +325,7 @@ const RecuperarPresupuestosPorCliente = async (req, res) => {
                     //const {descripcion} = await FormaDePago.findById({_id : formaDePago})
                     //console.log(descripcion)
                     newPresupuesto = {
+                        _id,
                         codigo, 
                         cliente : nombreUsuario, 
                         estado, 

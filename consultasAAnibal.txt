@@ -1,5 +1,12 @@
 /APP
--Filtros en la venta para marca y categoría
--Cuando voy a registrar un usuario ¿cómo capto confirmPassword?
+-Aplicar simultáneamente Filtros en la venta para marca y categoría, en lo posible 
+sin llamar a la api cada vez que cambia el valor de alguno de los filtros
+-Si un usuario user (que solo tiene acceso para confirmar/descartar sus presupuestos) lo primero que 
+intenta hacer es ingresar a nuevo presupuesto y despues va a mis reparaciones, no recupera las reparaciones
+(debe ser un problema con el estado). Pero si primero pasa por misreparaciones y despues intenta acceder
+a nuevo presupuesto, funciona bien. No se si esta solucionado, pero aparentemente, no cambiando el 
+estadoreparaciones = "completed" funciona
+-state.reparaciones.findIndex() is not a function
+
 /API
 -En el metodo recuperarreparacionesporcliente el switch case pasa por todos los casos

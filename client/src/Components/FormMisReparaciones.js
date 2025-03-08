@@ -1,5 +1,6 @@
 //Reemplazar por recuperar reparaciones por cliente
-import {RecuperarReparaciones, EstadoReparaciones, SeleccionarTodasLasReparaciones} from "../Features/ReparacionesSlice"
+import {RecuperarReparaciones, EstadoReparaciones, SeleccionarTodasLasReparaciones,
+    ConfirmarPresupuesto, DescartarPresupuesto } from "../Features/ReparacionesSlice"
 import { selectCurrentUser } from "../Features/AuthSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
@@ -31,6 +32,28 @@ function FormMisReparaciones() {
         }
         RecuperarReparacionesPorCliente()
     }, [estadoreparaciones])
+
+    async function Confirmar (rep) {
+        try {
+            const presconf = await dispatch(ConfirmarPresupuesto(rep)).unwrap()
+            console.log(presconf)
+            alert(`presupuesto ${presconf.data.codigo} confirmado correctamente`)
+        } catch (error) {
+            console.error(error)
+            alert(error)
+        }
+    }
+
+    async function Descartar (rep) {
+        try {
+            const presconf = await dispatch(DescartarPresupuesto(rep)).unwrap()
+            console.log(presconf)
+            alert(`presupuesto ${presconf.data.codigo} rechazado correctamente`)
+        } catch (error) {
+            console.error(error)
+            alert(error)
+        }
+    }
 
     return (
         <div>
@@ -77,12 +100,20 @@ function FormMisReparaciones() {
                                     <td>{rep.formaDePago ? rep.formaDePago : "Pendiente"}</td>
                                     {
                                         rep.estado === "Presupuestado" ? <td>
-                                            <ButtonApp variant='primary'>Confirmar</ButtonApp>
+                                            <ButtonApp 
+                                                variant='primary'
+                                                onClick={()=> Confirmar(rep)}
+                                            >Confirmar
+                                            </ButtonApp>
                                             <div 
                                                 className="align-items-right" 
                                                 //style={{ height: "100vh" }}
                                             >
-                                                <ButtonApp variant='danger'>Descartar</ButtonApp>
+                                                <ButtonApp 
+                                                    variant='danger'
+                                                    onClick={()=> Descartar(rep)}
+                                                >Descartar
+                                                </ButtonApp>
                                             </div>
                                         </td> : <td>{rep.estado} </td>
                                     }

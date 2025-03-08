@@ -41,6 +41,7 @@ function FormNuevoPresupuesto() {
             console.log(result)
             if (result.error) {
                 alert(result.message)
+                navigate('/')
             } else {
                 alert('presupuesto guardado correctamente')
                 e.target.reset()

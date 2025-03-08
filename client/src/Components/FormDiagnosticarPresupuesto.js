@@ -6,7 +6,7 @@ import Button from "react-bootstrap/esm/Button";
 import Input from "./Common/Input";
 import { useForm } from "react-hook-form";
 import Form from "react-bootstrap/Form"
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 function FormDiagnosticarPresupuesto() {
 
@@ -17,14 +17,18 @@ function FormDiagnosticarPresupuesto() {
     console.log(params)
 
     const estadoreparaciones = useSelector(EstadoReparaciones)
-    const reparaciones = useSelector(SeleccionarTodasLasReparaciones)
+    const presupuesto = useSelector(SeleccionarTodasLasReparaciones)
 
-    console.log(reparaciones)
+    console.log(presupuesto)
 
     useEffect(() => {
-        if (estadoreparaciones === "idle") {
-            dispatch(RecuperarPresupuestoIngresado(params.id))
+        async function RecuperarPresupuesto() {
+            if (estadoreparaciones === "idle") {
+                const result = await dispatch(RecuperarPresupuestoIngresado(params.id)).unwrap()
+                console.log(result)
+            }
         }
+        RecuperarPresupuesto()
     }, [params.id])
 
     const handleSubmitPresupuesto = async (data, e) => {
@@ -45,19 +49,14 @@ function FormDiagnosticarPresupuesto() {
     return (
         <div>
             <h1>Presupuesto a diagnosticar</h1>
-            {
-                reparaciones.map(rep => {
-                    return <div key={rep._id}>
-                        <p>codigo: {rep.codigo}</p>
-                        <p>cliente: {rep.cliente}</p>
-                        <p>estado: {rep.estado}</p>
-                        <p>falla que presenta : {rep.falla}</p>
-                        <p>fecha de ingreso: {rep.fechaIngreso}</p>
-                        <p>marca: {rep.marca}</p>
-                        <p>modelo: {rep.modelo}</p>
-                    </div>
-                })
-            }
+            <p>codigo: {presupuesto.codigo}</p>
+            <p>cliente: {presupuesto.cliente}</p>
+            <p>estado: {presupuesto.estado}</p>
+            <p>falla que presenta : {presupuesto.falla}</p>
+            <p>fecha de ingreso: {presupuesto.fechaIngreso}</p>
+            <p>marca: {presupuesto.marca}</p>
+            <p>modelo: {presupuesto.modelo}</p>
+            
             <Form onSubmit={handleSubmit(handleSubmitPresupuesto)}>
                 <Input
                     type="text"

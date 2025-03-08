@@ -149,6 +149,36 @@ export const DiagnosticarPresupuesto = createAsyncThunk("Reparaciones/Diagnostic
     }
 })
 
+export const ConfirmarPresupuesto = createAsyncThunk("Reparaciones/ConfirmarPresupuesto", async (pres) => {
+    try {
+        const url = URL_BASE_REPARACIONES + "/confirmar/" + pres._id
+        console.log(url)
+        const response = await axios.patch(url, pres)
+        console.log(response)
+        const result = {error : false, data : response.data}
+        return result
+    } catch (error) {
+        const result = {error: true, message: error}
+        console.error(error)
+        return result
+    }
+})
+
+export const DescartarPresupuesto = createAsyncThunk("Reparaciones/DescartarPresupuesto", async (pres) => {
+    try {
+        const url = URL_BASE_REPARACIONES + "/descartar/" + pres._id
+        console.log(pres)
+        const response = await axios.patch(url, pres)
+        console.log(response)
+        const result = {error : false, data : response.data}
+        return result
+    } catch (error) {
+        const result = {error: true, message: error}
+        console.error(error)
+        return result
+    }
+})
+
 export const ReparacionesSlice = createSlice({
     name : 'reparaciones',
     initialState,
@@ -199,7 +229,7 @@ export const ReparacionesSlice = createSlice({
             }
         })
         .addCase(RecuperarPresupuestosIngresados.fulfilled, (state, action) => {
-            state.estadoreparaciones = "completed"
+            //state.estadoreparaciones = "completed"
             if (!action.payload.error) {
                 state.reparaciones = action.payload.data
             } else {
@@ -207,22 +237,61 @@ export const ReparacionesSlice = createSlice({
             }
         })
         .addCase(RecuperarPresupuestoIngresado.fulfilled, (state, action) => {
-            state.estadoreparaciones = "completed"
+            //state.estadoreparaciones = "completed"
             if (!action.payload.error) {
                 state.reparaciones = action.payload.data
+                /* state.reparaciones = []
+                state.reparaciones.push(action.payload.data) */
             } else {
                 state.erroresreparaciones = action.payload.message
             }
         })
         .addCase(DiagnosticarPresupuesto.fulfilled, (state, action) => {
             state.estadoreparaciones = "idle"
-            state.reparaciones = state.reparaciones.map(item => {
+            /* state.reparaciones = state.reparaciones.map(item => {
                 if (item._id === action.payload._id) {
-                    return action.payload
+                    return action.payload.data
                 } else {
-                    return item
+                    return action.payload.message
                 }
-            })
+            }) */
+           console.log(state)
+           console.log(state.reparaciones.reparaciones)
+            const index = state.reparaciones.findIndex(item => item.id === action.payload.data._id);
+            if (index !== -1) {
+                state.reparaciones[index] = action.payload.data; // Actualiza el elemento
+            }
+        })
+        .addCase(ConfirmarPresupuesto.fulfilled, (state, action) => {
+            /* state.reparaciones = state.reparaciones.map (item => {
+                if (item._id === action.payload._id) {
+                    return action.payload.data
+                } else {
+                    return action.payload.message
+                }
+            }) */
+           state.estadoreparaciones = "idle"
+           //state.reparaciones.push(action.payload.data)
+           console.log(state.reparaciones)
+           const index = state.reparaciones.findIndex(item => item.id === action.payload.data._id);
+            if (index !== -1) {
+                state.reparaciones[index] = action.payload.data; // Actualiza el elemento
+            }
+        })
+        .addCase(DescartarPresupuesto.fulfilled, (state, action) => {
+            /* state.reparaciones = state.reparaciones.map (item => {
+                if (item._id === action.payload._id) {
+                    return action.payload.data
+                } else {
+                    return action.payload.message
+                }
+            }) */
+           state.estadoreparaciones = "idle"
+           console.log(state.reparaciones)
+            const index = state.reparaciones.findIndex(item => item.id === action.payload.data._id);
+            if (index !== -1) {
+                state.reparaciones[index] = action.payload.data; // Actualiza el elemento
+            }
         })
     }
 })
