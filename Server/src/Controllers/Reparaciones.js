@@ -227,6 +227,30 @@ const RecuperarPresupuestosDiagnosticadosConfimadosYDescartados = async (req, re
     }
 }
 
+const RecuperarPresupuestosConfirmados = async (req, res) => {
+    try {
+        const presupuestos = await Presupuesto.find({estado : "Confirmado"})
+        console.log(presupuestos)
+        let presupuestosrecuperados = []
+        for (const elem of presupuestos) {
+            const {_id, codigo, cliente, estado, falla, fechaIngreso, marca, modelo, diagnostico,
+                fechaAproxEntrega, precioAproximado, fechaEntrega, precio, formaDePago
+            } = elem
+            const {nombreUsuario} = await User.findById({_id : cliente})
+            const {nombre : nombremarca} = await Marca.findById({_id: marca})
+            const {nombre : nombremodelo} = await Modelo.findById({_id: modelo})
+            let newPresupuesto = {_id, codigo, cliente : nombreUsuario, estado, falla, fechaIngreso,
+                fechaAproxEntrega, precioAproximado, marca: nombremarca, modelo : nombremodelo,
+                fechaEntrega, precio, diagnostico
+            }
+            presupuestosrecuperados.push(newPresupuesto)
+        }
+        return res.status(200).json(presupuestosrecuperados)
+    } catch (error) {
+        return res.status(500).json({message : error.message})
+    }
+}
+
 const RecuperarPresupuestosReparados = async (req, res) => {
     try {
         const presupuestos = await Presupuesto.find({estado : "Reparado"})
@@ -370,6 +394,7 @@ export default {
     RecuperarPresupuestosDiagnosticadosConfimadosYDescartados,
     RecuperarPresupuestosIngresados,
     RecuperarPresupuestoIngresado,
+    RecuperarPresupuestosConfirmados,
     RecuperarPresupuestosReparados,
     RecuperarPresupuestosPorCliente,
     RecuperarUsuarios

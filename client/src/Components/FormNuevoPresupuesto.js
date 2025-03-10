@@ -41,11 +41,11 @@ function FormNuevoPresupuesto() {
             console.log(result)
             if (result.error) {
                 alert(result.message)
-                navigate('/')
+                navigate(`/nuevopresupuesto`)
             } else {
                 alert('presupuesto guardado correctamente')
                 e.target.reset()
-                navigate(`/nuevopresupuesto`)
+                navigate('/')
             }
         } catch (error) {
             console.error(error)

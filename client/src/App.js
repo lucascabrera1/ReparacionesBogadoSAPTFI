@@ -40,6 +40,7 @@ import FormMisReparaciones from './Components/FormMisReparaciones.js'
 import FormNuevoPresupuesto from './Components/FormNuevoPresupuesto.js'
 import FormPresupuestosIngresados from './Components/FormPresupuestosIngresados.js'
 import FormDiagnosticarPresupuesto from './Components/FormDiagnosticarPresupuesto.js'
+import FormPresupuestosConfirmados from './Components/FormPresupuestosConfirmados.js'
 
 function App() {
   return <div  className="container-fluid">
@@ -88,6 +89,7 @@ function App() {
             <Route path='/misreparaciones' element = {<ProtectedRoute><FormMisReparaciones/></ProtectedRoute>}></Route>
             <Route path='/nuevopresupuesto' element = {<ProtectedRoute><FormNuevoPresupuesto/></ProtectedRoute>}></Route>
             <Route path='/presupuestosingresados' element = {<ProtectedRoute><FormPresupuestosIngresados/></ProtectedRoute>}></Route>
+            <Route path='/presupuestosconfirmados' element = {<ProtectedRoute><FormPresupuestosConfirmados/></ProtectedRoute>}></Route>
             <Route path='/diagnosticar/:id' element = {<ProtectedRoute><FormDiagnosticarPresupuesto/></ProtectedRoute>}></Route>
             {/*<Route path='/' element={<FormTodasLasOC/>} />
             <Route path='/home' element={<Home/>} />
