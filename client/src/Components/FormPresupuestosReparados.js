@@ -1,5 +1,4 @@
-//la idea es, en este formulario, ver los presupuestos ingresados para diagnosticarlos
-import { RecuperarPresupuestosConfirmados, EstadoReparaciones, SeleccionarTodasLasReparaciones
+import { RecuperarPresupuestosReparados, EstadoReparaciones, SeleccionarTodasLasReparaciones
 } from "../Features/ReparacionesSlice";
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -9,18 +8,18 @@ import Table from "react-bootstrap/esm/Table";
 import { useEffect } from "react";
 import { selectCurrentUser } from "../Features/AuthSlice";
 
-function FormPresupuestosConfirmados() {
+function FormPresupuestosReparados() {
 
    const dispatch = useDispatch()
    const navigate = useNavigate()
    const estadoreparaciones = useSelector(EstadoReparaciones)
-   const presupuestosconfirmados = useSelector(SeleccionarTodasLasReparaciones)
+   const presupuestosreparados = useSelector(SeleccionarTodasLasReparaciones)
 
-   console.log(presupuestosconfirmados)
+   console.log(presupuestosreparados)
 
    useEffect(() => {
        if (estadoreparaciones === "idle") {
-           dispatch(RecuperarPresupuestosConfirmados())
+           dispatch(RecuperarPresupuestosReparados())
        }
    }, [estadoreparaciones])
 
@@ -46,12 +45,14 @@ function FormPresupuestosConfirmados() {
                        <th>Diagnóstico</th>
                        <th>Precio Aproximado</th>
                        <th>Fecha Aproximada de Entrega</th>
-                       <th>Ingresar Reparación</th>
+                       <th>Precio Final</th>
+                       <th>Fecha de Reparación</th>
+                       <th>Finalizar Reparación</th>
                    </tr>
                </thead>
                <tbody>
-                   { Array.isArray(presupuestosconfirmados) ? 
-                       presupuestosconfirmados.map(pres => {
+                   { Array.isArray(presupuestosreparados) ? 
+                       presupuestosreparados.map(pres => {
                            return <tr key={pres._id}>
                                <td>{pres.codigo}</td>
                                <td>{pres.cliente}</td>
@@ -63,20 +64,24 @@ function FormPresupuestosConfirmados() {
                                <td>{pres.diagnostico}</td>
                                <td>{pres.precioAproximado}</td>
                                <td>{pres.fechaAproxEntrega}</td>
-                               <td><Button onClick={()=> navigate(`/nuevareparacion/${pres._id}`)}>Ingresar Reparación</Button></td>
+                               <td>{pres.precio}</td>
+                               <td>{pres.fechaEntrega}</td>
+                               <td><Button onClick={()=> navigate(`/finalizarreparacion/${pres._id}`)}>Finalizar Reparación</Button></td>
                            </tr>
-                       }) :  <tr key={presupuestosconfirmados._id}>
-                            <td>{presupuestosconfirmados.codigo}</td>
-                            <td>{presupuestosconfirmados.cliente}</td>
-                            <td>{presupuestosconfirmados.estado}</td>
-                            <td>{presupuestosconfirmados.falla}</td>
-                            <td>{presupuestosconfirmados.fechaIngreso}</td>
-                            <td>{presupuestosconfirmados.marca}</td>
-                            <td>{presupuestosconfirmados.modelo}</td>
-                            <td>{presupuestosconfirmados.diagnostico}</td>
-                            <td>{presupuestosconfirmados.precioAproximado}</td>
-                            <td>{presupuestosconfirmados.fechaAproxEntrega}</td>
-                            <td><Button onClick={()=> navigate(`/nuevareparacion/${presupuestosconfirmados._id}`)}>Ingresar Reparación</Button></td>
+                       }) :  <tr key={presupuestosreparados._id}>
+                            <td>{presupuestosreparados.codigo}</td>
+                            <td>{presupuestosreparados.cliente}</td>
+                            <td>{presupuestosreparados.estado}</td>
+                            <td>{presupuestosreparados.falla}</td>
+                            <td>{presupuestosreparados.fechaIngreso}</td>
+                            <td>{presupuestosreparados.marca}</td>
+                            <td>{presupuestosreparados.modelo}</td>
+                            <td>{presupuestosreparados.diagnostico}</td>
+                            <td>{presupuestosreparados.precioAproximado}</td>
+                            <td>{presupuestosreparados.fechaAproxEntrega}</td>
+                            <td>{presupuestosreparados.precio}</td>
+                            <td>{presupuestosreparados.fechaEntrega}</td>
+                            <td><Button onClick={()=> navigate(`/finalizarreparacion/${presupuestosreparados._id}`)}>Finalizar Reparación</Button></td>
                         </tr>
                     }
                </tbody>
@@ -85,11 +90,11 @@ function FormPresupuestosConfirmados() {
                variant="secondary" 
                onClick={(e)=> {
                    e.preventDefault()
-                   dispatch(RecuperarPresupuestosConfirmados())
+                   dispatch(RecuperarPresupuestosReparados())
                    navigate("/")
                }}
            >
-                   Atrás
+                Atrás
            </Button>
        </div> : <div className='alert alert-danger'>
            {userlogged.nombreUsuario} no tiene el rol de encargado de reparaciones
@@ -97,4 +102,4 @@ function FormPresupuestosConfirmados() {
    )
 }
 
-export default FormPresupuestosConfirmados
+export default FormPresupuestosReparados

@@ -1,6 +1,6 @@
 //Reemplazar por recuperar reparaciones por cliente
 import {RecuperarReparaciones, EstadoReparaciones, SeleccionarTodasLasReparaciones,
-    ConfirmarPresupuesto, DescartarPresupuesto } from "../Features/ReparacionesSlice"
+    ConfirmarPresupuesto, DescartarPresupuesto, ErroresReparaciones } from "../Features/ReparacionesSlice"
 import { selectCurrentUser } from "../Features/AuthSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
@@ -18,10 +18,12 @@ function FormMisReparaciones() {
     const estadoreparaciones = useSelector(EstadoReparaciones)
     const reparaciones = useSelector(SeleccionarTodasLasReparaciones)
     const userlogged = useSelector(selectCurrentUser)
+    const erroresreparaciones = useSelector(ErroresReparaciones)
 
     console.log(userlogged)
     console.log(reparaciones)
     console.log(estadoreparaciones)
+    console.log(erroresreparaciones)
 
     useEffect( () => {
         async function RecuperarReparacionesPorCliente () {
@@ -56,7 +58,9 @@ function FormMisReparaciones() {
     }
 
     return (
-        <div>
+        erroresreparaciones ? <div className='alert alert-danger'>
+            {erroresreparaciones.response.data.message}
+        </div> : <div>
             <h1>Mis Reparaciones</h1>
             <h2>Podés confirmar o rechazar un presupuesto de reparación de tu equipo</h2>
             <Form className='d-flex flex-column justify-content-md-center align-items-center text-center'>
@@ -102,7 +106,10 @@ function FormMisReparaciones() {
                                         rep.estado === "Presupuestado" ? <td>
                                             <ButtonApp 
                                                 variant='primary'
-                                                onClick={()=> Confirmar(rep)}
+                                                onClick={()=> {
+                                                    Confirmar(rep)
+                                                    dispatch(RecuperarReparaciones(userlogged._id))
+                                                }}
                                             >Confirmar
                                             </ButtonApp>
                                             <div 
@@ -111,7 +118,10 @@ function FormMisReparaciones() {
                                             >
                                                 <ButtonApp 
                                                     variant='danger'
-                                                    onClick={()=> Descartar(rep)}
+                                                    onClick={()=> {
+                                                        Descartar(rep)
+                                                        dispatch(RecuperarReparaciones(userlogged._id))
+                                                    }}
                                                 >Descartar
                                                 </ButtonApp>
                                             </div>

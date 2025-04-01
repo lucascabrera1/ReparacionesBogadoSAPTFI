@@ -1,5 +1,6 @@
-import { IngresarReparacion, RecuperarPresupuestoConfirmado, EstadoReparaciones,
-    SeleccionarTodasLasReparaciones} from "../Features/ReparacionesSlice";
+import { FinalizarReparacion , RecuperarPresupuestoReparado, EstadoReparaciones,
+    SeleccionarTodasLasReparaciones, RecuperarFormasDePago, SeleccionarTodasLasFormasDePago,
+    EstadoFormasDePago } from "../Features/ReparacionesSlice";
 import { useNavigate, useParams } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 import Button from "react-bootstrap/esm/Button";
@@ -8,27 +9,36 @@ import { useForm } from "react-hook-form";
 import Form from "react-bootstrap/Form"
 import { useEffect, useState } from "react";
 
-function FormDiagnosticarPresupuesto() {
+function FormFinalizarReparacion() {
 
     const params = useParams()
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const {register, handleSubmit, formState : {errors}} = useForm({
         defaultValues : {
-            fechaEntrega : new Date()
+            fechaRetiro : new Date()
         }
     })
     console.log(params)
 
     const estadoreparaciones = useSelector(EstadoReparaciones)
     const presupuesto = useSelector(SeleccionarTodasLasReparaciones)
+    const fps = useSelector(SeleccionarTodasLasFormasDePago)
+    const estadofps = useSelector(EstadoFormasDePago)
+    console.log(fps)
+
+    useEffect(() => {
+        if (estadofps === "idle") {
+            dispatch(RecuperarFormasDePago())
+        }
+    }, [estadofps])
 
     console.log(presupuesto)
 
     useEffect(() => {
         async function RecuperarPresupuesto() {
             if (estadoreparaciones === "idle") {
-                const result = await dispatch(RecuperarPresupuestoConfirmado(params.id)).unwrap()
+                const result = await dispatch(RecuperarPresupuestoReparado(params.id)).unwrap()
                 console.log(result)
             }
         }
@@ -38,11 +48,11 @@ function FormDiagnosticarPresupuesto() {
     const handleSubmitPresupuesto = async (data, e) => {
         console.log(data)
         try {
-            const result = await dispatch(IngresarReparacion(data)).unwrap()
+            const result = await dispatch(FinalizarReparacion(data)).unwrap()
             if (result.error) {
                 alert(result.message)
             } else {
-                alert("Reparación ingresada exitosamente")
+                alert("Reparación finalizada exitosamente")
                 e.target.reset()
                 navigate("/")
             }
@@ -50,6 +60,13 @@ function FormDiagnosticarPresupuesto() {
             console.error(error)
         }
     }
+
+    const optionFormasDePago = fps.map(p => <option
+        value={p._id}
+        key={p._id}
+      >{p.descripcion}</option>)
+    
+    optionFormasDePago.unshift(<option value="" key="">Seleccione</option>)
 
     return (
         <div>
@@ -64,17 +81,10 @@ function FormDiagnosticarPresupuesto() {
             <p>fecha aproximada de entrega: {presupuesto.fechaAproxEntrega}</p>
             <p>diagnóstico: {presupuesto.diagnostico}</p>
             <p>precio aproximado: {presupuesto.precioAproximado}</p>
+            <p>precio final : {presupuesto.precio}</p>
+            <p>fecha de reparación : {presupuesto.fechaEntrega}</p>
             
             <Form onSubmit={handleSubmit(handleSubmitPresupuesto)}>
-                <Input
-                    type="float"
-                    name="precio"
-                    placeholder="Precio final"
-                    register={register}
-                    registerOptions= {{required: true}}
-                    errors= {errors}
-                    optionMsgErrors={{required: "el precio final es obligatorio"}}
-                />
                 <Input
                     type="hidden"
                     name = "id"
@@ -82,10 +92,28 @@ function FormDiagnosticarPresupuesto() {
                     errors={errors}
                     value={params.id}
                 />
-                <Button variant="primary" type="submit">Ingresar Reparación</Button>
+                <label>Forma de Pago</label>
+                <Form.Select 
+                    aria-label='FormaPago'
+                    className='col-md-2'
+                    size='sm'
+                    name='formaDePago'
+                    {...register('formaDePago', {required: true})}
+                    onChange={(e) => {
+                        e.preventDefault()
+                    }}
+                >
+                    {optionFormasDePago}
+                </Form.Select>
+                {errors["formaDePago"]?.type === "required" && <>
+                    <span style={{color: "red"}}>
+                        Es obligatorio ingresar una forma de pago
+                    </span><br/>
+                </>}
+                <Button variant="primary" type="submit">Finalizar Reparación</Button>
                 <Button 
                     variant="secondary" 
-                    onClick={()=> navigate("/presupuestosconfirmados")}
+                    onClick={()=> navigate("/finalizarreparacion")}
                 >
                     Salir
                 </Button>
@@ -94,4 +122,4 @@ function FormDiagnosticarPresupuesto() {
     )
 }
 
-export default FormDiagnosticarPresupuesto
+export default FormFinalizarReparacion

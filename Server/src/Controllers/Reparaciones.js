@@ -37,7 +37,7 @@ const ValidarDiagnosticar = async (presdiag) => {
 }
 
 const validarReparacion = async (reparacion) => {
-    const {fechaEntrega, precio, formaDePago} = reparacion
+    const {fechaEntrega, precio} = reparacion
     console.log(reparacion)
     console.log(precio)
     const fecha = convertirFecha(fechaEntrega)
@@ -52,25 +52,6 @@ const validarReparacion = async (reparacion) => {
         return {
             error : true,
             message : "La fecha es obligatoria, debe tener el formato correcto y no ser inferior a hoy"
-        }
-    }
-    if (!formaDePago) {
-        return {
-            error: true,
-            message: "La forma de pago es obligatoria"
-        }
-    }
-    if (!(isValidObjectId(formaDePago))) {
-        return { 
-            error: true,
-            message: "Formato de ID de forma de pago no válido" 
-        }
-    }
-    const fpe = await FormaDePago.findById({_id: formaDePago})
-    if (!fpe) {
-        return {
-            error: true,
-            message: "La forma de pago no existe"
         }
     }
     return {
@@ -144,13 +125,49 @@ const AgregarReparacion = async (req,res) => {
     try {
         const result = await validarReparacion(req.body)
         if (!result.error) {
-            const {fechaEntrega, precio, formaDePago} = req.body
+            const {fechaEntrega, precio} = req.body
             const presupuesto = await Presupuesto.findByIdAndUpdate(
                 {_id : req.params.id},
                 {$set : {
                     estado : "Reparado",
                     fechaEntrega,
-                    precio, 
+                    precio
+                }},
+                {new : true}
+            )
+            return res.status(200).json(presupuesto)
+        } else {
+            return res.status(400).json(result.message)
+        }
+    } catch (error) {
+        return res.status(500).json({message : error.message})
+    }
+}
+
+const validarFinReparacion = async (newrep) => {
+    const {formaDePago} = newrep
+    const fpe = await FormaDePago.findById({_id : formaDePago})
+    if (!fpe) return {
+        error : true,
+        message : "Forma de pago no encontrada"
+    } 
+    return {
+        error : false,
+        message : fpe.descripcion
+    }
+
+}
+
+const FinalizarReparacion = async (req,res) => {
+    try {
+        const result = await validarFinReparacion(req.body)
+        if (!result.error) {
+            const {fechaRetiro, formaDePago} = req.body
+            const presupuesto = await Presupuesto.findByIdAndUpdate(
+                {_id : req.params.id},
+                {$set : {
+                    estado : "Reparado y Entregado",
+                    fechaRetiro,
                     formaDePago
                 }},
                 {new : true}
@@ -204,6 +221,48 @@ const RecuperarPresupuestoIngresado = async (req, res) => {
     }
 }
 
+const RecuperarPresupuestoConfirmado = async (req, res) => {
+    try {
+        const presupuesto = await Presupuesto.findById({_id : req.params.id})
+        console.log("llega a la linea 210")
+        console.log(presupuesto)
+        console.log("fin presupuesto")
+        const {codigo, cliente, estado, falla, fechaIngreso, marca, modelo,
+            diagnostico, precioAproximado, fechaAproxEntrega} = presupuesto
+        const {nombreUsuario} = await User.findById({_id : cliente})
+        const {nombre : nombremarca} = await Marca.findById({_id: marca})
+        const {nombre : nombremodelo} = await Modelo.findById({_id: modelo})
+        let newPresupuesto = {codigo, cliente : nombreUsuario, estado, falla, fechaIngreso,
+            marca: nombremarca, modelo : nombremodelo, diagnostico, precioAproximado, fechaAproxEntrega
+        }
+        return res.status(200).json(newPresupuesto)
+    } catch (error) {
+        return res.status(500).json({message : error.message})
+    }
+}
+
+const RecuperarPresupuestoReparado = async (req, res) => {
+    try {
+        const presupuesto = await Presupuesto.findById({_id : req.params.id})
+        console.log("llega a la linea 210")
+        console.log(presupuesto)
+        console.log("fin presupuesto")
+        const {codigo, cliente, estado, falla, fechaIngreso, marca, modelo,
+            diagnostico, precioAproximado, fechaAproxEntrega, precio, fechaEntrega
+        } = presupuesto
+        const {nombreUsuario} = await User.findById({_id : cliente})
+        const {nombre : nombremarca} = await Marca.findById({_id: marca})
+        const {nombre : nombremodelo} = await Modelo.findById({_id: modelo})
+        let newPresupuesto = {codigo, cliente : nombreUsuario, estado, falla, fechaIngreso,
+            marca: nombremarca, modelo : nombremodelo, diagnostico, precioAproximado, fechaAproxEntrega,
+            precio, fechaEntrega
+        }
+        return res.status(200).json(newPresupuesto)
+    } catch (error) {
+        return res.status(500).json({message : error.message})
+    }
+}
+
 const RecuperarPresupuestosDiagnosticadosConfimadosYDescartados = async (req, res) => {
     try {
         const presupuestos = await Presupuesto.find({estado : "Presupuestado" || "Confirmado" || "Descartado"})
@@ -234,7 +293,7 @@ const RecuperarPresupuestosConfirmados = async (req, res) => {
         let presupuestosrecuperados = []
         for (const elem of presupuestos) {
             const {_id, codigo, cliente, estado, falla, fechaIngreso, marca, modelo, diagnostico,
-                fechaAproxEntrega, precioAproximado, fechaEntrega, precio, formaDePago
+                fechaAproxEntrega, precioAproximado, fechaEntrega, precio
             } = elem
             const {nombreUsuario} = await User.findById({_id : cliente})
             const {nombre : nombremarca} = await Marca.findById({_id: marca})
@@ -257,16 +316,16 @@ const RecuperarPresupuestosReparados = async (req, res) => {
         console.log(presupuestos)
         let presupuestosrecuperados = []
         for (const elem of presupuestos) {
-            const {codigo, cliente, estado, falla, fechaIngreso, marca, modelo, diagnostico,
-                fechaAproxEntrega, precioAproximado, fechaEntrega, precio, formaDePago
+            const {_id, codigo, cliente, estado, falla, fechaIngreso, marca, modelo, diagnostico,
+                fechaAproxEntrega, precioAproximado, fechaEntrega, precio
             } = elem
-            const {nombreyapellido} = await Cliente.findById({_id : cliente})
+            const {nombreUsuario} = await User.findById({_id : cliente})
             const {nombre : nombremarca} = await Marca.findById({_id: marca})
             const {nombre : nombremodelo} = await Modelo.findById({_id: modelo})
-            const {descripcion} = await FormaDePago.findById({_id : formaDePago})
-            let newPresupuesto = { codigo, cliente : nombreyapellido, estado, falla, fechaIngreso,
+            //const {descripcion} = await FormaDePago.findById({_id : formaDePago})
+            let newPresupuesto = {_id,  codigo, cliente : nombreUsuario, estado, falla, fechaIngreso,
                 fechaAproxEntrega, precioAproximado, marca: nombremarca, modelo : nombremodelo,
-                fechaEntrega, precio, diagnostico, formaDePago : descripcion
+                fechaEntrega, precio, diagnostico
             }
             presupuestosrecuperados.push(newPresupuesto)
         }
@@ -395,7 +454,10 @@ export default {
     RecuperarPresupuestosIngresados,
     RecuperarPresupuestoIngresado,
     RecuperarPresupuestosConfirmados,
+    RecuperarPresupuestoConfirmado,
     RecuperarPresupuestosReparados,
+    RecuperarPresupuestoReparado,
     RecuperarPresupuestosPorCliente,
-    RecuperarUsuarios
+    RecuperarUsuarios,
+    FinalizarReparacion
 }

@@ -39,11 +39,11 @@ function FormDiagnosticarPresupuesto() {
             } else {
                 alert("presupuesto diagnosticado exitosamente")
                 e.target.reset()
-                navigate("/")
             }
         } catch (error) {
             console.error(error)
         }
+        navigate("/")
     }
 
     return (
