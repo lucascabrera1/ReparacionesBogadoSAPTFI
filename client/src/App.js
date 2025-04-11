@@ -44,6 +44,8 @@ import FormPresupuestosConfirmados from './Components/FormPresupuestosConfirmado
 import FormNuevaReparacion from './Components/FormNuevaReparacion.js'
 import FormPresupuestosReparados from './Components/FormPresupuestosReparados.js'
 import FormFinalizarReparacion from './Components/FormFinalizarReparacion.js'
+import FormReporteVentas from './Components/Reportes/ReporteVentas.js'
+import FormReporteReparaciones from './Components/Reportes/ReporteReparaciones.js'
 
 function App() {
   return <div  className="container-fluid">
@@ -76,6 +78,8 @@ function App() {
             <Route path='/edit-user/:id' element={<ProtectedRoute><RegisterForm/></ProtectedRoute>}/>
             <Route path='/reporteproveedores' element={<ProtectedRoute><ReporteProveedores/></ProtectedRoute>}/>
             <Route path='/reporteremitos' element={<ProtectedRoute><FormReporteRemitos/></ProtectedRoute>}/>
+            <Route path='/reporteventas' element={<ProtectedRoute><FormReporteVentas/></ProtectedRoute>}/>
+            <Route path='/reportereparaciones' element={<ProtectedRoute><FormReporteReparaciones/></ProtectedRoute>}/>
             <Route path='/login' element={<Login/>}></Route>
             <Route path='/reset-password' element={<FormLinkResetPwd/>}></Route>
             <Route path='/' element= {<Welcome/>}/>

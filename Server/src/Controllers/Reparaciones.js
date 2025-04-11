@@ -444,6 +444,27 @@ const RecuperarUsuarios = async (req, res) => {
     }
 }
 
+const RecuperarReparacionesParaReporte = async (req, res) => {
+    try {
+        const reparaciones = await Presupuesto.find()
+        let reparacionesdevueltas = []
+        for (const elem of reparaciones) {
+            const { _id, marca, modelo} = elem
+            const {nombre : nombremarca} = await Marca.findById({_id: marca})
+            const {nombre : nombremodelo} = await Modelo.findById({_id: modelo})
+            const newPresupuesto = {
+                _id,
+                marca: nombremarca, 
+                modelo : nombremodelo,
+            }
+            reparacionesdevueltas.push(newPresupuesto)
+        }
+        return res.status(200).json({message : reparacionesdevueltas})
+    } catch (error) {
+        return res.status(500).json({message : error.message})
+    }
+}
+
 export default {
     AgregarPresupuesto,
     DiagnosticarPresupuesto,
@@ -459,5 +480,6 @@ export default {
     RecuperarPresupuestoReparado,
     RecuperarPresupuestosPorCliente,
     RecuperarUsuarios,
-    FinalizarReparacion
+    FinalizarReparacion,
+    RecuperarReparacionesParaReporte
 }

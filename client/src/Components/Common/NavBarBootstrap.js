@@ -47,12 +47,14 @@ export default function NavBarBootstrap() {
                         <NavDropdown title = "Ventas" id="basic-nav-dropdown">
                             <NavDropdown.Item onClick={()=> navegar('/ventas')} >Ventas</NavDropdown.Item>
                             <NavDropdown.Item onClick={()=> navegar('/clientes')}>Clientes</NavDropdown.Item>
+                            <NavDropdown.Item onClick={()=> navegar('/reporteventas')}>Reporte de Ventas</NavDropdown.Item>
                         </NavDropdown>
                         <NavDropdown title="Órdenes de Reparaciones" id="basic-nav-dropdown">
                             <NavDropdown.Item onClick={()=> {navegar('/nuevopresupuesto')}}>Nuevo Presupuesto</NavDropdown.Item>
                             <NavDropdown.Item onClick={()=> {navegar('/presupuestosingresados')}}>Diagnosticar Presupuesto</NavDropdown.Item>
                             <NavDropdown.Item onClick={()=> {navegar('/presupuestosconfirmados')}}>Ingresar Reparación</NavDropdown.Item>
                             <NavDropdown.Item onClick={()=> {navegar('/finalizarreparacion')}}>Finalizar Reparación</NavDropdown.Item>
+                            <NavDropdown.Item onClick={()=> {navegar('/reportereparaciones')}}>Reporte de Reparaciones</NavDropdown.Item>
                         </NavDropdown>
                         <NavDropdown title="Seguridad" id="basic-nav-dropdown">
                             <NavDropdown.Item onClick={() => {navegar('/register')}}>Agregar Usuario</NavDropdown.Item>
