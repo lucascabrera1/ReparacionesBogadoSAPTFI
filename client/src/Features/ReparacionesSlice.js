@@ -286,6 +286,20 @@ export const RecuperarFormasDePago = createAsyncThunk("Reparaciones/RecuperarFor
     }
 })
 
+export const ArmarReporteReparaciones = createAsyncThunk("Reparaciones/ArmarReporteReparaciones", async() => {
+    try {
+        const url = URL_BASE_REPARACIONES + "/todaslasreparaciones"
+        const response = await axios.get(url)
+        console.log(response)
+        const result = {error : false, data : response.data}
+        return result
+    } catch (error) {
+        const result = {error: true, message: error}
+        console.error(error)
+        return result
+    }
+})
+
 export const ReparacionesSlice = createSlice({
     name : 'reparaciones',
     initialState,
@@ -324,6 +338,14 @@ export const ReparacionesSlice = createSlice({
                 state.formasdepago = action.payload.data
             } else {
                 state.erroresformasdepago = action.payload.message
+            }
+        })
+        .addCase(ArmarReporteReparaciones.fulfilled, (state, action) => {
+            //state.estadoreparaciones = "completed"
+            if (!action.payload.error) {
+                state.reparaciones = action.payload.data
+            } else {
+                state.erroresreparaciones = action.payload.message
             }
         })
         .addCase(RecuperarMarcas.fulfilled, (state, action) => {

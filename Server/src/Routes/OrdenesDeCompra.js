@@ -1,7 +1,7 @@
 import express from 'express'
 import ocs from '../Controllers/OrdenesDeCompra.js'
 import verifyToken from "../Middlewares/VerifyToken.js"
-import {isEncargadoDeCompras, isAdmin, isEncargadoDeDeposito} from '../Middlewares/authJwt.js'
+import {isEncargadoDeCompras, isAdmin, isEncargadoDeDeposito, isEncargadoDeVentas, isECoEV} from '../Middlewares/authJwt.js'
 import { ValidarOrdenDeCompra } from '../Middlewares/validateEntryData.js'
 import morgan from 'morgan'
 
@@ -16,19 +16,21 @@ router.use(morgan('short'))
     console.log("paso por la funcion app.use")
     console.log(req.params)
     next()
-}) 
+})
+
+//const validarSeguridadMarcas = ()
 
 router.route('/marcas')
     .post([verifyToken, isEncargadoDeCompras], ocs.AgregarMarca)
-    .get([verifyToken, isEncargadoDeCompras], ocs.ObtenerMarcas)
+    .get([verifyToken, isECoEV], ocs.ObtenerMarcas)
 
 router.route('/formasdepago')
     .post([verifyToken, isEncargadoDeCompras], ocs.AgregarFormaDePago)
-    .get([verifyToken, isEncargadoDeCompras], ocs.RecuperarFormasDePago)
+    .get([verifyToken, isECoEV], ocs.RecuperarFormasDePago)
 
 router.route('/productos')
     .post([verifyToken, isEncargadoDeCompras], ocs.AgregarProducto)
-    .get([verifyToken, isEncargadoDeCompras], ocs.RecuperarProductos)
+    .get([verifyToken, isECoEV], ocs.RecuperarProductos)
 
 router.route('/lineacompra')
     .post([verifyToken, isEncargadoDeCompras], ocs.AgregarLineaCompra)
@@ -38,7 +40,7 @@ router.route('/proveedores')
     .post([verifyToken, isEncargadoDeCompras], ocs.AgregarProveedor)
 
 router.route('/categorias')
-    .get([verifyToken, isEncargadoDeCompras], ocs.RecuperarCategorias)
+    .get([verifyToken, isECoEV], ocs.RecuperarCategorias)
 
 router.route('/marcas/:id')
     .delete([verifyToken, isEncargadoDeCompras], ocs.EliminarMarca)

@@ -63,7 +63,7 @@ function FormReporteVentas () {
 
     return (
         <div style={{width: '100%', height: 500}}>
-            <h1>Mejores Proveedores</h1>
+            <h1>Productos más vendidos</h1>
             <h2>A continuación, se enuncia un gráfico de tortas donde se indica
                 por cada producto la cantidad de ventas
             </h2>

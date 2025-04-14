@@ -8,5 +8,6 @@ a nuevo presupuesto, funciona bien. No se si esta solucionado, pero aparentement
 estadoreparaciones = "completed" funciona
 -state.reparaciones.findIndex() is not a function
 
+
 /API
 -En el metodo recuperarreparacionesporcliente el switch case pasa por todos los casos

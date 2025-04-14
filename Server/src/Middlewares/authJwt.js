@@ -39,6 +39,28 @@ export const isEncargadoDeVentas = async (req, res, next) => {
     return res.status(403).json({message: "Requiere el rol de Encargados de Ventas"})
 }
 
+export const isECoEV = async (req, res, next) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1]
+        const decoded = jwt.verify(token, stoken)
+        const user = await User.findById(decoded.id)
+        console.log("inicio decoded")
+        console.log(decoded)
+        console.log("fin decoded")
+        const roles = await Role.find({_id: {$in: user.roles}})
+        console.log(roles)
+        for (let i=0; i< roles.length; i++) {
+            if (roles[i].nombre === "Encargado de Ventas" || roles[i].nombre === "Encargado de Compras") {
+                next();
+                return;
+            }
+        }
+        return res.status(403).json({message: "Requiere el rol de Encargados de Ventas o Compras"})
+    } catch (error) {
+        
+    }
+}
+
 export const isAdmin = async (req, res, next) => {
     try {
         const token = req.headers.authorization.split(' ')[1]

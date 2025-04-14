@@ -2,8 +2,10 @@
 
 import { useSelector, useDispatch } from 'react-redux'
 import { useEffect, useState } from 'react'
-import {SeleccionarTodasLasReparaciones, EstadoReparaciones, RecuperarReparaciones}from '../../Features/ReparacionesSlice'
-import {SeleccionarTodasLasMarcas}from '../../Features/OrdenCompraSlice'
+import {ArmarReporteReparaciones, EstadoReparaciones, SeleccionarTodasLasReparaciones,
+  SeleccionarTodasLasMarcas, EstadoMarcas, RecuperarMarcas
+}from '../../Features/ReparacionesSlice'
+
 import React, { PureComponent } from 'react';
 import {
   BarChart,
@@ -23,24 +25,55 @@ function FormReporteReparaciones() {
   const dispatch = useDispatch()
   const estadoreparaciones = useSelector(EstadoReparaciones)
   const reparaciones = useSelector(SeleccionarTodasLasReparaciones)
+  const marcas = useSelector(SeleccionarTodasLasMarcas)
+  const estadomarcas = useSelector(EstadoMarcas)
 
   useEffect(()=>{
     if (estadoreparaciones==="idle"){
-      dispatch(RecuperarReparaciones())
+      dispatch(ArmarReporteReparaciones())
     }
   },[estadoreparaciones])
 
-  console.log(reparaciones)
+  useEffect(() => {
+    if (estadomarcas === "idle") {
+      dispatch(RecuperarMarcas())
+    }
+  })
+
   console.log(estadoreparaciones)
+  console.log(reparaciones)
+  console.log(marcas)
+
+  let marcaymodelos = []
+  let cantReparaciones = []
+
+  reparaciones.message.forEach(element => {
+    const marcaymodelo = element.marca + " " + element.modelo
+    console.log(marcaymodelo)
+    marcaymodelos[marcaymodelo] = (marcaymodelos[marcaymodelo] || 0) + 1
+  });
+
+  marcas.forEach(marca => {
+    marca.modelos.forEach (modelo => {
+      let newInforme = {
+        marcaymodelo : marca.nombre + " " + modelo.nombre,
+        cantRep : marcaymodelos[marca.nombre + " " + modelo.nombre]
+      }
+      cantReparaciones.push(newInforme)
+    })
+  })
+
+  console.log(marcaymodelos)
+  console.log(cantReparaciones)
 
   return (
     <div>
-      <h3>Cantidad de unidades faltante por cada producto</h3>
+      <h3>Cantidad de reparaciones por cada equipo por marca y modelo</h3>
       <ResponsiveContainer width={600} height={300}>
         <BarChart
           width={500}
           height={300}
-          //data={informefxp}
+          data={cantReparaciones}
           margin={{
             top: 5,
             right: 30,
@@ -49,16 +82,14 @@ function FormReporteReparaciones() {
           }}
         >
           <CartesianGrid strokeDasharray="3 3" stroke='#ccc'/>
-          <XAxis dataKey="producto" />
-          <YAxis dataKey="faltante"/>
+          <XAxis dataKey= "marcaymodelo" />
+          <YAxis dataKey="cantRep"/>
           <Tooltip />
           <Legend />
           <ReferenceLine y={0} stroke="#000" />
-          <Bar dataKey="faltante" fill="#0884d8" />
+          <Bar dataKey="cantRep" fill="#0884d8" />
         </BarChart>
       </ResponsiveContainer>
-      <h5>Aclaración importante: un valor negativo indica que sobran productos, 
-      un valor positivo indica que faltan productos</h5>
     </div>
     
   )
