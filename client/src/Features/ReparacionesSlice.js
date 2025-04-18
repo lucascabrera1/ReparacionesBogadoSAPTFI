@@ -291,9 +291,11 @@ export const ArmarReporteReparaciones = createAsyncThunk("Reparaciones/ArmarRepo
         const url = URL_BASE_REPARACIONES + "/todaslasreparaciones"
         const response = await axios.get(url)
         console.log(response)
+        console.log("ejecuta correctamente armar reporte reparaciones")
         const result = {error : false, data : response.data}
         return result
     } catch (error) {
+        console.log("error al armar reporte de reparaciones")
         const result = {error: true, message: error}
         console.error(error)
         return result

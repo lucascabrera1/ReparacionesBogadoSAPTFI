@@ -29,16 +29,17 @@ function FormReporteReparaciones() {
   const estadomarcas = useSelector(EstadoMarcas)
 
   useEffect(()=>{
-    if (estadoreparaciones==="idle"){
+    if (estadoreparaciones === "idle"){
       dispatch(ArmarReporteReparaciones())
     }
   },[estadoreparaciones])
+
 
   useEffect(() => {
     if (estadomarcas === "idle") {
       dispatch(RecuperarMarcas())
     }
-  })
+  }, [estadomarcas])
 
   console.log(estadoreparaciones)
   console.log(reparaciones)
@@ -47,11 +48,14 @@ function FormReporteReparaciones() {
   let marcaymodelos = []
   let cantReparaciones = []
 
-  reparaciones.message.forEach(element => {
-    const marcaymodelo = element.marca + " " + element.modelo
-    console.log(marcaymodelo)
-    marcaymodelos[marcaymodelo] = (marcaymodelos[marcaymodelo] || 0) + 1
-  });
+  if (reparaciones.length > 0){
+    reparaciones.forEach(element => {
+      const marcaymodelo = element.marca + " " + element.modelo
+      console.log(marcaymodelo)
+      marcaymodelos[marcaymodelo] = (marcaymodelos[marcaymodelo] || 0) + 1
+    });
+  }
+  
 
   marcas.forEach(marca => {
     marca.modelos.forEach (modelo => {
@@ -59,7 +63,7 @@ function FormReporteReparaciones() {
         marcaymodelo : marca.nombre + " " + modelo.nombre,
         cantRep : marcaymodelos[marca.nombre + " " + modelo.nombre]
       }
-      cantReparaciones.push(newInforme)
+      if (newInforme.cantRep > 0) cantReparaciones.push(newInforme)
     })
   })
 
@@ -69,10 +73,10 @@ function FormReporteReparaciones() {
   return (
     <div>
       <h3>Cantidad de reparaciones por cada equipo por marca y modelo</h3>
-      <ResponsiveContainer width={600} height={300}>
+      <ResponsiveContainer width={1354} height={357}>
         <BarChart
-          width={500}
-          height={300}
+          width={730}
+          height={250}
           data={cantReparaciones}
           margin={{
             top: 5,

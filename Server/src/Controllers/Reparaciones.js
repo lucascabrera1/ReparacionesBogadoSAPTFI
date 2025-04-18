@@ -7,6 +7,7 @@ import { formatNumber, convertirFecha, isValidDateFormat } from '../Middlewares/
 import { isValidObjectId } from 'mongoose'
 import User from '../Models/User.js'
 import Role from '../Models/Role.js'
+import SendMail from '../Utils/SendMail.js'
 
 const ValidarDiagnosticar = async (presdiag) => {
     const {precioAproximado, fechaAproxEntrega, diagnostico} = presdiag
@@ -60,7 +61,6 @@ const validarReparacion = async (reparacion) => {
     }
 }
 
-
 const AgregarPresupuesto = async (req, res) => {
     try {
         const presupuesto = new Presupuesto(req.body)
@@ -86,6 +86,55 @@ const DiagnosticarPresupuesto = async (req, res) => {
                 }},
                 {new: true}
             )
+            const {cliente, marca, modelo, codigo, falla, estado, fechaIngreso} = await Presupuesto.findById({_id : req.params.id})
+            const {email, nombreUsuario : nombrecliente} = await User.findById({_id : cliente})
+            const {nombre : nombremarca} = await Marca.findById({_id : marca})
+            const {nombre : nombremodelo} = await Modelo.findById({_id: modelo})
+            const subject = `La orden de reparación ${codigo} fue diagnosticada`
+            const htmlContent = `<div className='row'>
+                <div className='col-md-3'>
+                    <label>Código</label>
+                    <input disabled value='${codigo}' />
+                </div>
+                <div className='col-md-3'>
+                    <label>Estado</label>
+                    <input disabled value='${estado}' />
+                </div>
+                <div className='col-md-3'>
+                    <label>Cliente</label>
+                    <input disabled value='${nombrecliente}' />
+                </div>
+                <div className='col-md-3'>
+                    <label>Marca</label>
+                    <input disabled value='${nombremarca}'/>
+                </div>
+                <div className='col-md-3'>
+                    <label>Modelo</label>
+                    <input disabled value='${nombremodelo}' />
+                </div>
+                <div className='col-md-3'>
+                    <label>Falla</label>
+                    <input disabled value='${falla}' />
+                </div>
+                <div className='col-md-3'>
+                    <label>Marca</label>
+                    <input disabled value='${fechaIngreso}'/>
+                </div>
+                <div className='col-md-3'>
+                    <label>Precio Aproximado</label>
+                    <input disabled value='${precioAproximado}' />
+                </div>
+                <div className='col-md-3'>
+                    <label>Diagnóstico</label>
+                    <input disabled value='${diagnostico}' />
+                </div>
+                <div className='col-md-3'>
+                    <label>Fecha aproximada de entrega</label>
+                    <input disabled value='${fechaAproxEntrega}'/>
+                </div>
+                <p>Diríjase a la sección /reparaciones y confirme o rechace su presupuesto</p>
+            </div>`
+            await SendMail.sendEmail(email, subject, htmlContent)
             return res.status(200).json(presupuesto)
         } else {
             return res.status(400).json(result.message)
@@ -135,6 +184,63 @@ const AgregarReparacion = async (req,res) => {
                 }},
                 {new : true}
             )
+            const {cliente, marca, modelo, codigo, falla, estado, fechaIngreso, diagnostico,
+            precioAproximado, fechaAproxEntrega } = await Presupuesto.findById({_id : req.params.id})
+            const {email, nombreUsuario : nombrecliente} = await User.findById({_id : cliente})
+            const {nombre : nombremarca} = await Marca.findById({_id : marca})
+            const {nombre : nombremodelo} = await Modelo.findById({_id: modelo})
+            const subject = `La orden de reparación ${codigo} fue reparada exitosamente y se encuentra lista para retirar`
+            const htmlContent = `<div className='row'>
+                <div className='col-md-3'>
+                    <label>Código</label>
+                    <input disabled value='${codigo}' />
+                </div>
+                <div className='col-md-3'>
+                    <label>Estado</label>
+                    <input disabled value='${estado}' />
+                </div>
+                <div className='col-md-3'>
+                    <label>Cliente</label>
+                    <input disabled value='${nombrecliente}' />
+                </div>
+                <div className='col-md-3'>
+                    <label>Marca</label>
+                    <input disabled value='${nombremarca}'/>
+                </div>
+                <div className='col-md-3'>
+                    <label>Modelo</label>
+                    <input disabled value='${nombremodelo}' />
+                </div>
+                <div className='col-md-3'>
+                    <label>Falla</label>
+                    <input disabled value='${falla}' />
+                </div>
+                <div className='col-md-3'>
+                    <label>Marca</label>
+                    <input disabled value='${fechaIngreso}'/>
+                </div>
+                <div className='col-md-3'>
+                    <label>Precio Aproximado</label>
+                    <input disabled value='${precioAproximado}' />
+                </div>
+                <div className='col-md-3'>
+                    <label>Diagnóstico</label>
+                    <input disabled value='${diagnostico}' />
+                </div>
+                <div className='col-md-3'>
+                    <label>Fecha aproximada de entrega</label>
+                    <input disabled value='${fechaAproxEntrega}'/>
+                </div>
+                <div className='col-md-3'>
+                    <label>Fecha en que fue realizada la reparación</label>
+                    <input disabled value='${fechaEntrega}}' />
+                </div>
+                <div className='col-md-3'>
+                    <label>Precio final de la reparación</label>
+                    <input disabled value='${precio}'/>
+                </div>
+            </div>`
+            await SendMail.sendEmail(email, subject, htmlContent)
             return res.status(200).json(presupuesto)
         } else {
             return res.status(400).json(result.message)
@@ -459,7 +565,7 @@ const RecuperarReparacionesParaReporte = async (req, res) => {
             }
             reparacionesdevueltas.push(newPresupuesto)
         }
-        return res.status(200).json({message : reparacionesdevueltas})
+        return res.status(200).json(reparacionesdevueltas)
     } catch (error) {
         return res.status(500).json({message : error.message})
     }
