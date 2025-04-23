@@ -1,8 +1,8 @@
 import {Cell, Pie, PieChart, ResponsiveContainer, Tooltip} from 'recharts'
 import {SeleccionarTodasLasOrdenesDeCompra, RecuperarOrdenesDeCompra, EstadoOrdenesDeCompra
 }from '../../Features/RemitoSlice'
-import {SeleccionarTodosLosProveedores, RecuperarProveedores, EstadoProveedores
-} from '../../Features/OrdenCompraSlice'
+import {SeleccionarTodosLosProveedores, RecuperarProveedores, EstadoProveedores, ErroresOrdenesDeCompra,
+ErroresProveedores } from '../../Features/OrdenCompraSlice'
 import { useSelector, useDispatch } from 'react-redux'
 import { useEffect } from 'react'
 
@@ -22,6 +22,8 @@ function ReporteProveedores () {
     const estadoproveedores = useSelector(EstadoProveedores)
     const dispatch = useDispatch()
     const ocs = useSelector(SeleccionarTodasLasOrdenesDeCompra)
+    const erroresocs = useSelector(ErroresOrdenesDeCompra)
+    const erroresproveedores = useSelector(ErroresProveedores)
     console.log(ocs)
     
     const proveedores = useSelector(SeleccionarTodosLosProveedores)
@@ -63,7 +65,8 @@ function ReporteProveedores () {
     console.log(repetidos)
     console.log(ocsxproov)
 
-    return (
+    return erroresocs ? <div className='alert alert-danger'>{erroresocs}</div> :
+    erroresproveedores ? <div className='alert alert-danger'>{erroresproveedores}</div> :
         <div style={{width: '100%', height: 500}}>
             <h1>Mejores Proveedores</h1>
             <h2>A continuación, se enuncia un gráfico de tortas donde se indica
@@ -89,7 +92,6 @@ function ReporteProveedores () {
                 </PieChart>
             </ResponsiveContainer>
         </div>
-    )
 }
 
 export default ReporteProveedores

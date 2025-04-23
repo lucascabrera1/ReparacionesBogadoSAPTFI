@@ -6,7 +6,7 @@ intenta hacer es ingresar a nuevo presupuesto y despues va a mis reparaciones, n
 (debe ser un problema con el estado). Pero si primero pasa por misreparaciones y despues intenta acceder
 a nuevo presupuesto, funciona bien. No se si esta solucionado, pero aparentemente, no cambiando el 
 estadoreparaciones = "completed" funciona
--state.reparaciones.findIndex() is not a function
+-Armar reporte de reparaciones deja seteado el error, cosa que no ocurre con los demas 
 
 
 /API

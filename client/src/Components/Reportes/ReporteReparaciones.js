@@ -2,8 +2,8 @@
 
 import { useSelector, useDispatch } from 'react-redux'
 import { useEffect, useState } from 'react'
-import {ArmarReporteReparaciones, EstadoReparaciones, SeleccionarTodasLasReparaciones,
-  SeleccionarTodasLasMarcas, EstadoMarcas, RecuperarMarcas
+import {ArmarReporteReparaciones, EstadoReparaciones, SeleccionarTodasLasReparaciones, ErroresReparaciones,
+  SeleccionarTodasLasMarcas, EstadoMarcas, RecuperarMarcas, ErroresMarcas
 }from '../../Features/ReparacionesSlice'
 
 import React, { PureComponent } from 'react';
@@ -27,6 +27,8 @@ function FormReporteReparaciones() {
   const reparaciones = useSelector(SeleccionarTodasLasReparaciones)
   const marcas = useSelector(SeleccionarTodasLasMarcas)
   const estadomarcas = useSelector(EstadoMarcas)
+  const erroresreparaciones = useSelector(ErroresReparaciones)
+  const erroresmarcas = useSelector(ErroresMarcas)
 
   useEffect(()=>{
     if (estadoreparaciones === "idle"){
@@ -70,7 +72,8 @@ function FormReporteReparaciones() {
   console.log(marcaymodelos)
   console.log(cantReparaciones)
 
-  return (
+  return erroresreparaciones ? (<div className='alert alert-danger'>{erroresreparaciones}</div>) : 
+  erroresmarcas ? (<div className='alert alert-danger'>{erroresmarcas}</div>) :
     <div>
       <h3>Cantidad de reparaciones por cada equipo por marca y modelo</h3>
       <ResponsiveContainer width={1354} height={357}>
@@ -95,8 +98,6 @@ function FormReporteReparaciones() {
         </BarChart>
       </ResponsiveContainer>
     </div>
-    
-  )
 }
 
 export default FormReporteReparaciones

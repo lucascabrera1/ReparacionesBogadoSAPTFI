@@ -59,7 +59,7 @@ function FormMisReparaciones() {
 
     return (
         erroresreparaciones ? <div className='alert alert-danger'>
-            {erroresreparaciones.response.data.message}
+            {erroresreparaciones}
         </div> : <div>
             <h1>Mis Reparaciones</h1>
             <h2>Podés confirmar o rechazar un presupuesto de reparación de tu equipo</h2>

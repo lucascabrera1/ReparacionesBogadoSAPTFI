@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { useEffect, useState } from 'react'
-import {SeleccionarTodosLosRemitos, EstadoRemitos, RecuperarRemitos}from '../../Features/RemitoSlice'
+import {SeleccionarTodosLosRemitos, EstadoRemitos, RecuperarRemitos, ErroresRemitos}from '../../Features/RemitoSlice'
 import {SeleccionarTodosLosProductos, EstadoProductos, RecuperarProductos}from '../../Features/OrdenCompraSlice'
 import React, { PureComponent } from 'react';
 import {
@@ -23,6 +23,7 @@ function FormReporteRemitos() {
   const remitos = useSelector(SeleccionarTodosLosRemitos)
   const estadoproductos = useSelector(EstadoProductos)
   const productos = useSelector(SeleccionarTodosLosProductos)
+  const erroresremito = useSelector(ErroresRemitos)
 
   let lineas = []
   let faltantes = []
@@ -73,7 +74,7 @@ function FormReporteRemitos() {
 
   console.log(informefxp)
 
-  return (
+  return ( erroresremito ? (<div className='alert alert-danger'>{erroresremito}</div>) :
     <div>
       <h3>Cantidad de unidades faltante por cada producto</h3>
       <ResponsiveContainer width={600} height={300}>

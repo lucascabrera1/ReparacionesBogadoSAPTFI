@@ -1,5 +1,6 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit'
 import axios from 'axios'
+import ReturnError from './ReturnError'
 //import { RecuperarModelos } from './OrdenCompraSlice'
 
 const initialState = {
@@ -75,7 +76,7 @@ export const RecuperarReparaciones = createAsyncThunk('Reparaciones/RecuperarRep
         const result = {error : false, data : response.data}
         return result
     } catch (error) {
-        const result = {error: true, message: error}
+        const result = {error: true, message: ReturnError(error)}
         console.error(error)
         return result
     }
@@ -296,7 +297,7 @@ export const ArmarReporteReparaciones = createAsyncThunk("Reparaciones/ArmarRepo
         return result
     } catch (error) {
         console.log("error al armar reporte de reparaciones")
-        const result = {error: true, message: error}
+        const result = {error: true, message: ReturnError(error)}
         console.error(error)
         return result
     }
@@ -320,6 +321,7 @@ export const ReparacionesSlice = createSlice({
             state.reparaciones.push(action.payload)
         })
         .addCase(RecuperarReparaciones.fulfilled, (state, action) => {
+            state.estadoreparaciones = "completed"
             if (!action.payload.error) {
                 state.reparaciones = action.payload.data
             } else {
@@ -343,7 +345,7 @@ export const ReparacionesSlice = createSlice({
             }
         })
         .addCase(ArmarReporteReparaciones.fulfilled, (state, action) => {
-            //state.estadoreparaciones = "completed"
+            //state.estadoreparaciones = "idle"
             if (!action.payload.error) {
                 state.reparaciones = action.payload.data
             } else {

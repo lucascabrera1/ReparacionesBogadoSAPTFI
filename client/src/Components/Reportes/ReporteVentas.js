@@ -1,7 +1,7 @@
 //reporte de ventas con la cantidad por equipo que se vendieron
 
 import {Cell, Pie, PieChart, ResponsiveContainer, Tooltip} from 'recharts'
-import {SeleccionarTodasLasVentas, RecuperarVentas, EstadoVentas }from '../../Features/VentaSlice'
+import {SeleccionarTodasLasVentas, RecuperarVentas, EstadoVentas, ErroresVentas }from '../../Features/VentaSlice'
 import {SeleccionarTodosLosProductos, RecuperarProductos, EstadoProductos} from '../../Features/OrdenCompraSlice'
 import { useSelector, useDispatch } from 'react-redux'
 import { useEffect } from 'react'
@@ -23,6 +23,7 @@ function FormReporteVentas () {
     const ventas = useSelector(SeleccionarTodasLasVentas)
     const estadoproductos = useSelector(EstadoProductos)
     const productos = useSelector(SeleccionarTodosLosProductos)
+    const erroresventas = useSelector(ErroresVentas)
     console.log(ventas)
 
     useEffect(()=>{
@@ -61,7 +62,7 @@ function FormReporteVentas () {
     console.log(informe)
 
 
-    return (
+    return ( erroresventas ? (<div className='alert alert-danger'>{erroresventas}</div>) :
         <div style={{width: '100%', height: 500}}>
             <h1>Productos más vendidos</h1>
             <h2>A continuación, se enuncia un gráfico de tortas donde se indica
