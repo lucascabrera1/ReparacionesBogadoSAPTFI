@@ -22,7 +22,8 @@ function FormFinalizarReparacion() {
     console.log(params)
 
     const estadoreparaciones = useSelector(EstadoReparaciones)
-    const presupuesto = useSelector(SeleccionarTodasLasReparaciones)
+    //const presupuesto = useSelector(SeleccionarTodasLasReparaciones)
+    const [presupuesto, setPresupuesto] = useState({})
     const fps = useSelector(SeleccionarTodasLasFormasDePago)
     const estadofps = useSelector(EstadoFormasDePago)
     console.log(fps)
@@ -40,6 +41,7 @@ function FormFinalizarReparacion() {
             if (estadoreparaciones === "idle") {
                 const result = await dispatch(RecuperarPresupuestoReparado(params.id)).unwrap()
                 console.log(result)
+                setPresupuesto(result.data)
             }
         }
         RecuperarPresupuesto()

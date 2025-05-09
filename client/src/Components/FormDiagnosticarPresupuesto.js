@@ -17,8 +17,10 @@ function FormDiagnosticarPresupuesto() {
     console.log(params)
 
     const estadoreparaciones = useSelector(EstadoReparaciones)
-    const presupuesto = useSelector(SeleccionarTodasLasReparaciones)
+    //const presupuesto = useSelector(SeleccionarTodasLasReparaciones)
+    const [presupuesto, setPresupuesto] = useState({})
 
+    console.log(estadoreparaciones)
     console.log(presupuesto)
 
     useEffect(() => {
@@ -26,10 +28,13 @@ function FormDiagnosticarPresupuesto() {
             if (estadoreparaciones === "idle") {
                 const result = await dispatch(RecuperarPresupuestoIngresado(params.id)).unwrap()
                 console.log(result)
+                setPresupuesto(result.data)
             }
         }
         RecuperarPresupuesto()
     }, [params.id])
+
+    console.log(presupuesto)
 
     const handleSubmitPresupuesto = async (data, e) => {
         try {

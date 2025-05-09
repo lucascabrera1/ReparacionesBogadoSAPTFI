@@ -9,16 +9,31 @@ const initialState = {
     marcas : [],
     modelos : [],
     formasdepago : [],
+    reportes : [],
+    presupuestosconfirmados : [],
+    presupuestosingresados : [],
+    presupuestosreparados : [],
+    presupuestos : [],
     estadoreparaciones : "idle",
     estadousuarios : "idle",
     estadomarcas : "idle",
     estadomodelos : "idle",
+    estadoreportes : "idle",
     estadoformasdepago : "idle",
+    estadopresupuestosingresados : "idle",
+    estadopresupuestosconfirmados : "idle",
+    estadopresupuestosreparados : "idle",
+    estadopresupuestos : "idle",
     erroresreparaciones : null,
     erroresusuarios : null,
     erroresmarcas : null,
     erroresmodelos : null,
-    erroresformasdepago : null
+    erroresformasdepago : null,
+    erroresreporte : null,
+    errorespresupuestosingresados : null,
+    errorespresupuestosconfirmados : null,
+    errorespresupuestosreparados : null,
+    errorespresupuestos : null
 }
 
 const URL_BASE_REPARACIONES = process.env.REACT_APP_URI_API + '/reparaciones'
@@ -61,7 +76,7 @@ export const RecuperarUsuarios = createAsyncThunk('Reparaciones/RecuperarUsuario
     } catch (error) {
         const result = {
             error : true,
-            message : error.message
+            message : ReturnError(error.message)
         }
         console.error(error.message)
         return result
@@ -90,7 +105,7 @@ export const RecuperarMarcas = createAsyncThunk('Reparaciones/RecuperarMarcas', 
         const result = {error : false, data : response.data}
         return result
     } catch (error) {
-        const result = {error: true, message: error}
+        const result = {error: true, message: ReturnError(error)}
         console.error(error)
         return result
     }
@@ -104,7 +119,7 @@ export const RecuperarModelos = createAsyncThunk('Reparaciones/RecuperarModelos'
         const result = {error : false, data : response.data}
         return result
     } catch (error) {
-        const result = {error: true, message: error}
+        const result = {error: true, message: ReturnError(error)}
         console.error(error)
         return result
     }
@@ -118,7 +133,7 @@ export const RecuperarPresupuestosIngresados = createAsyncThunk("Reparaciones/Re
         const result = {error : false, data : response.data}
         return result
     } catch (error) {
-        const result = {error: true, message: error}
+        const result = {error: true, message: ReturnError(error)}
         console.error(error)
         return result
     }
@@ -132,7 +147,7 @@ export const RecuperarPresupuestoIngresado = createAsyncThunk("Reparaciones/Recu
         const result = {error : false, data : response.data}
         return result
     } catch (error) {
-        const result = {error: true, message: error}
+        const result = {error: true, message: ReturnError(error)}
         console.error(error)
         return result
     }
@@ -146,7 +161,7 @@ export const RecuperarPresupuestoConfirmado = createAsyncThunk("Reparaciones/Rec
         const result = {error : false, data : response.data}
         return result
     } catch (error) {
-        const result = {error: true, message: error}
+        const result = {error: true, message: ReturnError(error)}
         console.error(error)
         return result
     }
@@ -160,7 +175,7 @@ export const RecuperarPresupuestoReparado = createAsyncThunk("Reparaciones/Recup
         const result = {error : false, data : response.data}
         return result
     } catch (error) {
-        const result = {error: true, message: error}
+        const result = {error: true, message: ReturnError(error)}
         console.error(error)
         return result
     }
@@ -175,7 +190,7 @@ export const DiagnosticarPresupuesto = createAsyncThunk("Reparaciones/Diagnostic
         const result = {error : false, data : response.data}
         return result
     } catch (error) {
-        const result = {error: true, message: error}
+        const result = {error: true, message: ReturnError(error)}
         console.error(error)
         return result
     }
@@ -190,7 +205,7 @@ export const ConfirmarPresupuesto = createAsyncThunk("Reparaciones/ConfirmarPres
         const result = {error : false, data : response.data}
         return result
     } catch (error) {
-        const result = {error: true, message: error}
+        const result = {error: true, message: ReturnError(error)}
         console.error(error)
         return result
     }
@@ -205,7 +220,7 @@ export const DescartarPresupuesto = createAsyncThunk("Reparaciones/DescartarPres
         const result = {error : false, data : response.data}
         return result
     } catch (error) {
-        const result = {error: true, message: error}
+        const result = {error: true, message: ReturnError(error)}
         console.error(error)
         return result
     }
@@ -222,7 +237,7 @@ export const IngresarReparacion = createAsyncThunk("Reparaciones/IngresarReparac
         const result = {error : false, data : response.data}
         return result
     } catch (error) {
-        const result = {error: true, message: error}
+        const result = {error: true, message: ReturnError(error)}
         console.error(error)
         return result
     }
@@ -239,7 +254,7 @@ export const FinalizarReparacion = createAsyncThunk("Reparaciones/FinalizarRepar
         const result = {error : false, data : response.data}
         return result
     } catch (error) {
-        const result = {error: true, message: error}
+        const result = {error: true, message: ReturnError(error)}
         console.error(error)
         return result
     }
@@ -253,7 +268,7 @@ export const RecuperarPresupuestosConfirmados = createAsyncThunk("Reparaciones/R
         const result = {error : false, data : response.data}
         return result
     } catch (error) {
-        const result = {error: true, message: error}
+        const result = {error: true, message: ReturnError(error)}
         console.error(error)
         return result
     }
@@ -267,7 +282,7 @@ export const RecuperarPresupuestosReparados = createAsyncThunk("Reparaciones/Rec
         const result = {error : false, data : response.data}
         return result
     } catch (error) {
-        const result = {error: true, message: error}
+        const result = {error: true, message: ReturnError(error)}
         console.error(error)
         return result
     }
@@ -281,7 +296,21 @@ export const RecuperarFormasDePago = createAsyncThunk("Reparaciones/RecuperarFor
         const result = {error : false, data : response.data}
         return result
     } catch (error) {
-        const result = {error: true, message: error}
+        const result = {error: true, message: ReturnError(error)}
+        console.error(error)
+        return result
+    }
+})
+
+export const RecuperarTodosLosPresupuestos = createAsyncThunk("Reparaciones/RecuperarTodosLosPresupuestos", async() => {
+    try {
+        const url = URL_BASE_REPARACIONES + "/todoslospresupuestos"
+        const response = await axios.get(url)
+        console.log(response)
+        const result = {error : false, data : response.data}
+        return result
+    } catch (error) {
+        const result = {error: true, message: ReturnError(error)}
         console.error(error)
         return result
     }
@@ -345,11 +374,11 @@ export const ReparacionesSlice = createSlice({
             }
         })
         .addCase(ArmarReporteReparaciones.fulfilled, (state, action) => {
-            //state.estadoreparaciones = "idle"
+            state.estadoreportes = "completed"
             if (!action.payload.error) {
-                state.reparaciones = action.payload.data
+                state.reportes = action.payload.data
             } else {
-                state.erroresreparaciones = action.payload.message
+                state.erroresreporte = action.payload.message
             }
         })
         .addCase(RecuperarMarcas.fulfilled, (state, action) => {
@@ -369,45 +398,48 @@ export const ReparacionesSlice = createSlice({
             }
         })
         .addCase(RecuperarPresupuestosIngresados.fulfilled, (state, action) => {
+            state.estadopresupuestosconfirmados = "completed"
             if (!action.payload.error) {
-                state.reparaciones = action.payload.data
+                state.presupuestosingresados = action.payload.data
             } else {
-                state.erroresreparaciones = action.payload.message
+                state.errorespresupuestosingresados = action.payload.message
             }
         })
         .addCase(RecuperarPresupuestosConfirmados.fulfilled, (state, action) => {
+            state.estadopresupuestosconfirmados = "completed"
             if (!action.payload.error) {
-                state.reparaciones = action.payload.data
+                state.presupuestosconfirmados = action.payload.data
             } else {
-                state.erroresreparaciones = action.payload.message
+                state.errorespresupuestosconfirmados = action.payload.message
             }
         })
         .addCase(RecuperarPresupuestosReparados.fulfilled, (state, action) => {
+            state.estadopresupuestosreparados = "completed"
             if (!action.payload.error) {
-                state.reparaciones = action.payload.data
+                state.presupuestosreparados = action.payload.data
             } else {
-                state.erroresreparaciones = action.payload.message
+                state.errorespresupuestosreparados = action.payload.message
             }
         })
         .addCase(RecuperarPresupuestoIngresado.fulfilled, (state, action) => {
             if (!action.payload.error) {
-                state.reparaciones = action.payload.data
+                state.presupuestosingresados = action.payload.data
             } else {
-                state.erroresreparaciones = action.payload.message
+                state.errorespresupuestosingresados = action.payload.message
             }
         })
         .addCase(RecuperarPresupuestoConfirmado.fulfilled, (state, action) => {
             if (!action.payload.error) {
-                state.reparaciones = action.payload.data
+                state.presupuestosconfirmados = action.payload.data
             } else {
                 state.erroresreparaciones = action.payload.message
             }
         })
         .addCase(RecuperarPresupuestoReparado.fulfilled, (state, action) => {
             if (!action.payload.error) {
-                state.reparaciones = action.payload.data
+                state.presupuestosreparados = action.payload.data
             } else {
-                state.erroresreparaciones = action.payload.message
+                state.errorespresupuestosreparados = action.payload.message
             }
         })
         .addCase(DiagnosticarPresupuesto.fulfilled, (state, action) => {
@@ -436,6 +468,14 @@ export const ReparacionesSlice = createSlice({
                 state.reparaciones[index] = action.payload.data; // Actualiza el elemento
             }
         })
+        .addCase(RecuperarTodosLosPresupuestos.fulfilled, (state, action) => {
+            state.estadopresupuestos = "completed"
+            if (!action.payload.error) {
+                state.presupuestos = action.payload.data
+            } else {
+                state.errorespresupuestos = action.payload.message
+            }
+        })
     }
 })
 
@@ -454,7 +494,6 @@ export const SeleccionarTodasLasMarcas = (state) => {
     return state.reparaciones.marcas
 }
 
-
 export const SeleccionarModelos = (state) => {
     return state.reparaciones.modelos
 }
@@ -463,14 +502,45 @@ export const SeleccionarTodasLasFormasDePago = (state) => {
     return state.reparaciones.formasdepago
 }
 
+export const SeleccionarTodosLosPresupuestosIngresados = (state) => {
+    return state.reparaciones.presupuestosingresados
+}
+
+
+export const SeleccionarTodosLosPresupuestosConfirmados = (state) => {
+    return state.reparaciones.presupuestosconfirmados
+}
+
+export const SeleccionarTodosLosPresupuestosReparados = (state) => {
+    return state.reparaciones.presupuestosreparados
+}
+
+export const SeleccionarTodosLosPresupuestos = (state) => {
+    return state.reparaciones.presupuestos
+}
+
+export const SeleccionarReporte = (state) => {
+    return state.reparaciones.reportes
+}
+
 export const EstadoReparaciones = (state) => state.reparaciones.estadoreparaciones
 export const EstadoUsuarios = (state) => state.reparaciones.estadousuarios
 export const EstadoMarcas = (state) => state.reparaciones.estadomarcas
 export const EstadoModelos = (state) => state.reparaciones.estadomodelos
 export const EstadoFormasDePago = (state) => state.reparaciones.estadoformasdepago
+export const EstadoReportes = (state) => state.reparaciones.estadoreportes
+export const EstadoPresupuestosIngresados = (state) => state.reparaciones.estadopresupuestosingresados
+export const EstadoPresupuestosConfirmados = (state) => state.reparaciones.estadopresupuestosconfirmados
+export const EstadoPresupuestosReparados = (state) => state.reparaciones.estadopresupuestosreparados
+export const EstadoPresupuestos = (state) => state.reparaciones.estadopresupuestos
 
 export const ErroresReparaciones = (state) => state.reparaciones.erroresreparaciones
 export const ErroresUsuarios = (state) => state.reparaciones.erroresusuarios
 export const ErroresMarcas = (state) => state.reparaciones.erroresmarcas
 export const ErroresModelos = (state) => state.reparaciones.erroresmodelos
 export const ErroresFormasDePago = (state) => state.reparaciones.erroresformasdepago
+export const ErroresReportes = (state) => state.reparaciones.erroresreporte
+export const ErroresPresupuestosIngresados = (state) => state.reparaciones.errorespresupuestosingresados
+export const ErroresPresupuestosConfirmados = (state) => state.reparaciones.errorespresupuestosconfirmados
+export const ErroresPresupuestosReparados = (state) => state.reparaciones.errorespresupuestosreparados
+export const ErroresPresupuestos = (state) => state.reparaciones.errorespresupuestos

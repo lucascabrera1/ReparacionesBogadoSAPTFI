@@ -44,5 +44,6 @@ router.route('/modelos/:idMarca').get([verifyToken, isEncargadoDeReparaciones], 
 router.route('/usuarios').get([verifyToken, isEncargadoDeReparaciones], reparaciones.RecuperarUsuarios)
 router.route('/formasdepago').get([verifyToken, isEncargadoDeReparaciones], ocs.RecuperarFormasDePago)
 router.route('/todaslasreparaciones').get([verifyToken, isEncargadoDeReparaciones], reparaciones.RecuperarReparacionesParaReporte)
+router.route('/todoslospresupuestos').get([verifyToken, isEncargadoDeReparaciones], reparaciones.RecuperarTodosLosPresupuestos)
 
 export default router

@@ -1,4 +1,4 @@
-import { RecuperarPresupuestosReparados, EstadoReparaciones, SeleccionarTodasLasReparaciones
+import { RecuperarPresupuestosReparados, EstadoPresupuestosReparados, SeleccionarTodosLosPresupuestosReparados
 } from "../Features/ReparacionesSlice";
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -12,16 +12,16 @@ function FormPresupuestosReparados() {
 
    const dispatch = useDispatch()
    const navigate = useNavigate()
-   const estadoreparaciones = useSelector(EstadoReparaciones)
-   const presupuestosreparados = useSelector(SeleccionarTodasLasReparaciones)
+   const estadopresupuestosreparados = useSelector(EstadoPresupuestosReparados)
+   const presupuestosreparados = useSelector(SeleccionarTodosLosPresupuestosReparados)
 
    console.log(presupuestosreparados)
 
    useEffect(() => {
-       if (estadoreparaciones === "idle") {
+       if (estadopresupuestosreparados === "idle") {
            dispatch(RecuperarPresupuestosReparados())
        }
-   }, [estadoreparaciones])
+   }, [estadopresupuestosreparados])
 
    const userlogged = useSelector(selectCurrentUser)
    let iser = false

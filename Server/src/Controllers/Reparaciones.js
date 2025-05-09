@@ -470,6 +470,7 @@ const RecuperarPresupuestosPorCliente = async (req, res) => {
                         marca: nombremarca, 
                         modelo : nombremodelo,
                     }
+                    break;
                 case "Confirmado" :
                 case "Presupuestado" :
                 case "Descartado" :
@@ -488,6 +489,7 @@ const RecuperarPresupuestosPorCliente = async (req, res) => {
                         precioAproximado,  
                         diagnostico
                     }
+                    break;
                 case "Reparado" : 
                     console.log("Ingresa por donde el presupuesto fue Reparado")
                     console.log(estado)
@@ -506,6 +508,7 @@ const RecuperarPresupuestosPorCliente = async (req, res) => {
                         fechaEntrega, 
                         precio
                     }
+                    break;
                 case "Reparado y Entregado" || "Descartado y Entregado" : 
                     console.log("entra donde el estado es entregado y reparado")
                     console.log(estado)
@@ -530,6 +533,112 @@ const RecuperarPresupuestosPorCliente = async (req, res) => {
                         fechaRetiro,
                         //formaDePago : descripcion
                     }
+                    break;
+                default : console.log("no se encontró ningún presupuesto con el estado " + estado)
+            }
+            presupuestosrecuperados.push(newPresupuesto)
+        }
+        return res.status(200).json(presupuestosrecuperados)
+    } catch (error) {
+        return res.status(500).json({message : error.message})
+    }
+}
+
+const RecuperarTodosLosPresupuestos = async (req, res) => {
+    try {
+        const presupuestos = await Presupuesto.find()
+        let presupuestosrecuperados = []
+        for (const elem of presupuestos) {
+            const {_id, codigo, cliente, estado, falla, fechaIngreso, marca, modelo, diagnostico,
+                fechaAproxEntrega, precioAproximado, fechaEntrega, precio, formaDePago, fechaRetiro
+            } = elem
+            console.log('inicio elem')
+            console.log(elem)
+            console.log('fin elem')
+            const {nombreUsuario} = await User.findById({_id : cliente})
+            const {nombre : nombremarca} = await Marca.findById({_id: marca})
+            const {nombre : nombremodelo} = await Modelo.findById({_id: modelo})
+            
+            let newPresupuesto = {}
+            switch(estado) {
+                case "Ingresado" : 
+                    console.log("Ingresa por donde el presupuesto fue ingresado")
+                    console.log(estado)
+                    newPresupuesto = { 
+                        _id,
+                        codigo, 
+                        cliente : nombreUsuario, 
+                        estado, 
+                        falla, 
+                        fechaIngreso,
+                        marca: nombremarca, 
+                        modelo : nombremodelo,
+                    }
+                    break;
+                case "Confirmado" :
+                case "Presupuestado" :
+                case "Descartado" :
+                    console.log("Ingresa por donde el presupuesto fue presupuestado confirmado o descartado")
+                    console.log(estado)
+                    newPresupuesto = {
+                        _id,
+                        codigo, 
+                        cliente : nombreUsuario, 
+                        estado, 
+                        falla, 
+                        fechaIngreso,
+                        marca: nombremarca, 
+                        modelo : nombremodelo,
+                        fechaAproxEntrega, 
+                        precioAproximado,  
+                        diagnostico
+                    }
+                    break;
+                case "Reparado" : 
+                    console.log("Ingresa por donde el presupuesto fue Reparado")
+                    console.log(estado)
+                    newPresupuesto = {
+                        _id,
+                        codigo, 
+                        cliente : nombreUsuario, 
+                        estado, 
+                        falla, 
+                        fechaIngreso,
+                        marca: nombremarca, 
+                        modelo : nombremodelo,
+                        fechaAproxEntrega, 
+                        precioAproximado,  
+                        diagnostico,
+                        fechaEntrega, 
+                        precio
+                    }
+                    break ;
+                case "Reparado y Entregado" || "Descartado y Entregado" : 
+                    console.log("entra donde el estado es entregado y reparado")
+                    console.log(estado)
+                    console.log(formaDePago)
+                    console.log("arriba estado y forma de pago")
+                    const {descripcion} = await FormaDePago.findById({_id : formaDePago})
+                    //const {descripcion} = await FormaDePago.findById({_id : formaDePago})
+                    //console.log(descripcion)
+                    newPresupuesto = {
+                        _id,
+                        codigo, 
+                        cliente : nombreUsuario, 
+                        estado, 
+                        falla, 
+                        fechaIngreso,
+                        marca: nombremarca, 
+                        modelo : nombremodelo,
+                        fechaAproxEntrega, 
+                        precioAproximado,  
+                        diagnostico,
+                        fechaEntrega, 
+                        precio,
+                        fechaRetiro,
+                        formaDePago : descripcion
+                    }
+                    break;
                 default : console.log("no se encontró ningún presupuesto con el estado " + estado)
             }
             presupuestosrecuperados.push(newPresupuesto)
@@ -587,5 +696,6 @@ export default {
     RecuperarPresupuestosPorCliente,
     RecuperarUsuarios,
     FinalizarReparacion,
-    RecuperarReparacionesParaReporte
+    RecuperarReparacionesParaReporte,
+    RecuperarTodosLosPresupuestos
 }

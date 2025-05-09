@@ -2,7 +2,7 @@
 
 import { useSelector, useDispatch } from 'react-redux'
 import { useEffect, useState } from 'react'
-import {ArmarReporteReparaciones, EstadoReparaciones, SeleccionarTodasLasReparaciones, ErroresReparaciones,
+import {ArmarReporteReparaciones, EstadoReportes, SeleccionarReporte, ErroresReportes,
   SeleccionarTodasLasMarcas, EstadoMarcas, RecuperarMarcas, ErroresMarcas
 }from '../../Features/ReparacionesSlice'
 
@@ -23,18 +23,18 @@ import {
 function FormReporteReparaciones() {
 
   const dispatch = useDispatch()
-  const estadoreparaciones = useSelector(EstadoReparaciones)
-  const reparaciones = useSelector(SeleccionarTodasLasReparaciones)
+  const estadoreportes = useSelector(EstadoReportes)
+  const reparaciones = useSelector(SeleccionarReporte)
   const marcas = useSelector(SeleccionarTodasLasMarcas)
   const estadomarcas = useSelector(EstadoMarcas)
-  const erroresreparaciones = useSelector(ErroresReparaciones)
+  const erroresreportes = useSelector(ErroresReportes)
   const erroresmarcas = useSelector(ErroresMarcas)
 
   useEffect(()=>{
-    if (estadoreparaciones === "idle"){
+    if (estadoreportes === "idle"){
       dispatch(ArmarReporteReparaciones())
     }
-  },[estadoreparaciones])
+  },[estadoreportes])
 
 
   useEffect(() => {
@@ -43,7 +43,7 @@ function FormReporteReparaciones() {
     }
   }, [estadomarcas])
 
-  console.log(estadoreparaciones)
+  console.log(estadoreportes)
   console.log(reparaciones)
   console.log(marcas)
 
@@ -71,8 +71,10 @@ function FormReporteReparaciones() {
 
   console.log(marcaymodelos)
   console.log(cantReparaciones)
+  console.log(erroresreportes)
+  console.log(erroresmarcas)
 
-  return erroresreparaciones ? (<div className='alert alert-danger'>{erroresreparaciones}</div>) : 
+  return erroresreportes ? (<div className='alert alert-danger'>{erroresreportes}</div>) : 
   erroresmarcas ? (<div className='alert alert-danger'>{erroresmarcas}</div>) :
     <div>
       <h3>Cantidad de reparaciones por cada equipo por marca y modelo</h3>

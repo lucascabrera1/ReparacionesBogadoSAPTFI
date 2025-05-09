@@ -1,5 +1,8 @@
 //la idea es, en este formulario, ver los presupuestos ingresados para diagnosticarlos
-import { RecuperarPresupuestosIngresados, EstadoReparaciones, SeleccionarTodasLasReparaciones
+import { RecuperarPresupuestosIngresados, 
+    EstadoPresupuestosIngresados, 
+    SeleccionarTodosLosPresupuestosIngresados,
+    ErroresPresupuestosIngresados
  } from "../Features/ReparacionesSlice";
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -13,16 +16,17 @@ function FormPresupuestosIngresados() {
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const estadoreparaciones = useSelector(EstadoReparaciones)
-    const presupuestosingresados = useSelector(SeleccionarTodasLasReparaciones)
+    const estadopresupuestosingresados = useSelector(EstadoPresupuestosIngresados)
+    const presupuestosingresados = useSelector(SeleccionarTodosLosPresupuestosIngresados)
+    const errores = useSelector(ErroresPresupuestosIngresados)
 
     console.log(presupuestosingresados)
 
     useEffect(() => {
-        if (estadoreparaciones === "idle") {
+        if (estadopresupuestosingresados === "idle") {
             dispatch(RecuperarPresupuestosIngresados())
         }
-    }, [estadoreparaciones])
+    }, [estadopresupuestosingresados])
 
     const userlogged = useSelector(selectCurrentUser)
     let iser = false
@@ -32,7 +36,12 @@ function FormPresupuestosIngresados() {
     })
 
     return (
-        iser ? <div>
+        !iser ? <div className='alert alert-danger'>
+            {userlogged.nombreUsuario} no tiene el rol de encargado de reparaciones
+        </div> :
+        errores ? <div className='alert alert-danger'>
+            {errores} 
+        </div> : <div>
             <Table className= 'table table-success table-bordered border-dark'>
                 <thead>
                     <tr>
@@ -82,8 +91,6 @@ function FormPresupuestosIngresados() {
             >
                     Atrás
             </Button>
-        </div> : <div className='alert alert-danger'>
-            {userlogged.nombreUsuario} no tiene el rol de encargado de reparaciones
         </div>
     )
 }

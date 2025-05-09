@@ -1,5 +1,6 @@
 //la idea es, en este formulario, ver los presupuestos ingresados para diagnosticarlos
-import { RecuperarPresupuestosConfirmados, EstadoReparaciones, SeleccionarTodasLasReparaciones
+import { RecuperarPresupuestosConfirmados, EstadoPresupuestosConfirmados, 
+    SeleccionarTodosLosPresupuestosConfirmados, ErroresPresupuestosConfirmados
 } from "../Features/ReparacionesSlice";
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -13,16 +14,18 @@ function FormPresupuestosConfirmados() {
 
    const dispatch = useDispatch()
    const navigate = useNavigate()
-   const estadoreparaciones = useSelector(EstadoReparaciones)
-   const presupuestosconfirmados = useSelector(SeleccionarTodasLasReparaciones)
+   const estadopresupuestosconfirmados = useSelector(EstadoPresupuestosConfirmados)
+   const presupuestosconfirmados = useSelector(SeleccionarTodosLosPresupuestosConfirmados)
+   const errores = useSelector(ErroresPresupuestosConfirmados)
 
    console.log(presupuestosconfirmados)
+   console.log(estadopresupuestosconfirmados)
 
    useEffect(() => {
-       if (estadoreparaciones === "idle") {
+       //if (estadopresupuestosconfirmados === "idle") {
            dispatch(RecuperarPresupuestosConfirmados())
-       }
-   }, [estadoreparaciones])
+       //}
+   }, [estadopresupuestosconfirmados])
 
    const userlogged = useSelector(selectCurrentUser)
    let iser = false
@@ -32,7 +35,13 @@ function FormPresupuestosConfirmados() {
    })
 
    return (
-       iser ? <div>
+        !iser ? <div className='alert alert-danger'>
+            {userlogged.nombreUsuario} no tiene el rol de encargado de reparaciones
+        </div> :
+        errores ?  <div className='alert alert-danger'>
+            {errores}
+        </div> :
+        <div>
            <Table className= 'table table-success table-bordered border-dark'>
                <thead>
                    <tr>
@@ -91,9 +100,7 @@ function FormPresupuestosConfirmados() {
            >
                    Atrás
            </Button>
-       </div> : <div className='alert alert-danger'>
-           {userlogged.nombreUsuario} no tiene el rol de encargado de reparaciones
-       </div>
+       </div> 
    )
 }
 

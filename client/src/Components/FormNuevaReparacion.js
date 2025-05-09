@@ -18,10 +18,11 @@ function FormDiagnosticarPresupuesto() {
             fechaEntrega : new Date()
         }
     })
+    const [presupuesto, setPresupuesto] = useState({})
     console.log(params)
 
     const estadoreparaciones = useSelector(EstadoReparaciones)
-    const presupuesto = useSelector(SeleccionarTodasLasReparaciones)
+    //const presupuesto = useSelector(SeleccionarTodasLasReparaciones)
 
     console.log(presupuesto)
 
@@ -30,6 +31,7 @@ function FormDiagnosticarPresupuesto() {
             if (estadoreparaciones === "idle") {
                 const result = await dispatch(RecuperarPresupuestoConfirmado(params.id)).unwrap()
                 console.log(result)
+                setPresupuesto(result.data);
             }
         }
         RecuperarPresupuesto()
@@ -53,7 +55,7 @@ function FormDiagnosticarPresupuesto() {
 
     return (
         <div>
-            <h1>Presupuesto a diagnosticar</h1>
+            <h1>Nueva Reparación</h1>
             <p>codigo: {presupuesto.codigo}</p>
             <p>cliente: {presupuesto.cliente}</p>
             <p>estado: {presupuesto.estado}</p>
