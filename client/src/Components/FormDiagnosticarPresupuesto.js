@@ -7,18 +7,28 @@ import Input from "./Common/Input";
 import { useForm } from "react-hook-form";
 import Form from "react-bootstrap/Form"
 import { useEffect, useState } from "react";
+import TextArea from "./Common/TextArea";
+import { selectCurrentUser } from "../Features/AuthSlice";
 
 function FormDiagnosticarPresupuesto() {
 
+    const userlogged = useSelector(selectCurrentUser)
     const params = useParams()
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    const {register, handleSubmit, formState : {errors}} = useForm()
+    const [presupuesto, setPresupuesto] = useState({})
+
+    const {register, handleSubmit, formState : {errors}} = useForm({
+        defaultValues : {
+            user : userlogged._id,
+            codigo : presupuesto.codigo
+        }
+    })
+    
     console.log(params)
 
     const estadoreparaciones = useSelector(EstadoReparaciones)
     //const presupuesto = useSelector(SeleccionarTodasLasReparaciones)
-    const [presupuesto, setPresupuesto] = useState({})
 
     console.log(estadoreparaciones)
     console.log(presupuesto)
@@ -34,10 +44,13 @@ function FormDiagnosticarPresupuesto() {
         RecuperarPresupuesto()
     }, [params.id])
 
+    
+
     console.log(presupuesto)
 
     const handleSubmitPresupuesto = async (data, e) => {
         try {
+            console.log(data)
             const result = await dispatch(DiagnosticarPresupuesto(data)).unwrap()
             if (result.error) {
                 alert(result.message)
@@ -63,9 +76,10 @@ function FormDiagnosticarPresupuesto() {
             <p>modelo: {presupuesto.modelo}</p>
             
             <Form onSubmit={handleSubmit(handleSubmitPresupuesto)}>
-                <Input
+                <TextArea
                     type="text"
                     name="diagnostico"
+                    rows={3}
                     placeholder="Diagnóstico del equipo"
                     register={register}
                     registerOptions= {{
@@ -113,6 +127,13 @@ function FormDiagnosticarPresupuesto() {
                     register={register}
                     errors={errors}
                     value={params.id}
+                />
+                <Input
+                    type="hidden"
+                    name="codigo"
+                    register={register}
+                    errors={errors}
+                    value={presupuesto.codigo}
                 />
                 <Button variant="primary" type="submit">Confirmar Diagnóstico</Button>
                 <Button 

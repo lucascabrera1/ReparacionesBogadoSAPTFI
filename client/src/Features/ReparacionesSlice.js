@@ -184,6 +184,7 @@ export const RecuperarPresupuestoReparado = createAsyncThunk("Reparaciones/Recup
 export const DiagnosticarPresupuesto = createAsyncThunk("Reparaciones/DiagnosticarPresupuesto", async (pres) => {
     try {
         const url = URL_BASE_REPARACIONES + "/diagnosticar/" + pres.id
+        console.log(url)
         console.log(pres)
         const response = await axios.patch(url, pres)
         console.log(response)
@@ -347,6 +348,7 @@ export const ReparacionesSlice = createSlice({
         })
         .addCase(AgregarPresupuesto.fulfilled, (state, action) => {
             state.estadoreparaciones = "idle"
+            state.estadopresupuestos = "idle"
             state.reparaciones.push(action.payload)
         })
         .addCase(RecuperarReparaciones.fulfilled, (state, action) => {
@@ -443,18 +445,21 @@ export const ReparacionesSlice = createSlice({
             }
         })
         .addCase(DiagnosticarPresupuesto.fulfilled, (state, action) => {
+            state.estadopresupuestos = "idle"
             const index = state.reparaciones.reparaciones.findIndex(item => item._id === action.payload.data._id);
             if (index !== -1) {
                 state.reparaciones[index] = action.payload.data; // Actualiza el elemento
             }
         })
         .addCase(ConfirmarPresupuesto.fulfilled, (state, action) => {
+            state.estadopresupuestos = "idle"
             const index = state.reparaciones.findIndex(item => item._id === action.payload.data._id);
             if (index !== -1) {
                 state.reparaciones[index] = action.payload.data; // Actualiza el elemento
             }
         })
         .addCase(DescartarPresupuesto.fulfilled, (state, action) => {
+            state.estadopresupuestos = "idle"
             const index = state.reparaciones.findIndex(item => item._id === action.payload.data._id);
             if (index !== -1) {
                 state.reparaciones[index] = action.payload.data; // Actualiza el elemento
@@ -462,6 +467,7 @@ export const ReparacionesSlice = createSlice({
         })
         .addCase(IngresarReparacion.fulfilled, (state, action) => {
            state.estadoreparaciones = "idle"
+           state.estadopresupuestos = "idle"
            console.log(state.reparaciones)
             const index = state.reparaciones.findIndex(item => item._id === action.payload.data._id);
             if (index !== -1) {

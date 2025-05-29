@@ -1,6 +1,7 @@
 import express from 'express'
 import ocs from '../Controllers/OrdenesDeCompra.js'
 import reparaciones from '../Controllers/Reparaciones.js'
+import auditoria from '../Controllers/Auditoria.js'
 import verifyToken from "../Middlewares/VerifyToken.js"
 import {isEncargadoDeReparaciones, isUser} from '../Middlewares/authJwt.js'
 import { CheckDuplicateUser } from '../Middlewares/verifiSignUp.js'
@@ -21,7 +22,7 @@ router.use(morgan('short'))
     next()
 })
 
-router.route('/ingresar').post([verifyToken, isEncargadoDeReparaciones, ValidarPresupuesto], reparaciones.AgregarPresupuesto)
+router.route('/ingresar').post([verifyToken, isEncargadoDeReparaciones, ValidarPresupuesto],  reparaciones.AgregarPresupuesto)
 router.route('/presupuestosingresados').get([verifyToken, isEncargadoDeReparaciones], reparaciones.RecuperarPresupuestosIngresados)
 router.route('/presupuestosdcyd').get([verifyToken, isEncargadoDeReparaciones], reparaciones.RecuperarPresupuestosDiagnosticadosConfimadosYDescartados)
 router.route('/presupuestosconfirmados').get([verifyToken, isEncargadoDeReparaciones], reparaciones.RecuperarPresupuestosConfirmados)

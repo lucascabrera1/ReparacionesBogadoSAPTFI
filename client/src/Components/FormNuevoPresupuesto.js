@@ -10,18 +10,21 @@ import { selectCurrentUser } from "../Features/AuthSlice";
 import Button from "react-bootstrap/esm/Button";
 import Form from 'react-bootstrap/Form'
 import Input from '../Components/Common/Input'
+import TextArea from "./Common/TextArea";
 
 function FormNuevoPresupuesto() {
 
+    const userlogged = useSelector(selectCurrentUser)
+
     const {register, handleSubmit, formState : {errors}} = useForm({
         defaultValues : {
-            fechaIngreso : new Date()
+            fechaIngreso : new Date(),
+            //userlogged : userlogged._id
         }
     })
     const dispatch = useDispatch()
     const navigate = useNavigate()
-
-    const userlogged = useSelector(selectCurrentUser)
+    
     //iser = acronimo de is encargado de reparaciones
     //const [iser, setIser] = useState(false)
     let iser = false
@@ -136,9 +139,9 @@ function FormNuevoPresupuesto() {
                     {optionUsuarios}
                 </Form.Select>
                 <div style={{width: "1000px"}}>
-                    <Input
-                        type="textarea"
+                    <TextArea
                         name="falla"
+                        rows={3}
                         label="Falla"
                         register={register}
                         registerOptions= {{
@@ -179,6 +182,13 @@ function FormNuevoPresupuesto() {
                 <Input
                     type="hidden"
                     name="fechaIngreso"
+                    register={register}
+                    errors={errors}
+                />
+                <Input
+                    type="hidden"
+                    name="userlogged"
+                    value={userlogged._id}
                     register={register}
                     errors={errors}
                 />

@@ -6,8 +6,10 @@ intenta hacer es ingresar a nuevo presupuesto y despues va a mis reparaciones, n
 (debe ser un problema con el estado). Pero si primero pasa por misreparaciones y despues intenta acceder
 a nuevo presupuesto, funciona bien. No se si esta solucionado, pero aparentemente, no cambiando el 
 estadoreparaciones = "completed" funciona
--Armar reporte de reparaciones deja seteado el error, cosa que no ocurre con los demas 
+-Armar reporte de reparaciones deja seteado el error, cosa que no ocurre con los demas
 
+-Cuando descartas el presupuesto, no te actualiza el estado
+-Cuando cargas una marca, e inmediatamentemente vas a nuevo presupuesto, no te aparece la marca
 
 /API
 -En el metodo recuperarreparacionesporcliente el switch case pasa por todos los casos

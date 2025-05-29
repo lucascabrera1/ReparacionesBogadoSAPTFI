@@ -5,6 +5,7 @@ import auth from './auth.js'
 import remitos from './Remitos.js'
 import ventas from './ventas.js'
 import reparaciones from './Reparaciones.js'
+import auditoria from './Auditoria.js'
 
 const router = Router()
 
@@ -17,5 +18,6 @@ router.use('/auth', auth)
 router.use('/remitos/', remitos)
 router.use('/ventas', ventas)
 router.use('/reparaciones', reparaciones)
+router.use('/auditoria', auditoria)
 
 export default router
