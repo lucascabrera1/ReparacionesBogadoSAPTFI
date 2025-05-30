@@ -20,7 +20,7 @@ function FormDiagnosticarPresupuesto() {
 
     const {register, handleSubmit, formState : {errors}} = useForm({
         defaultValues : {
-            user : userlogged._id,
+            user : userlogged.nombreUsuario,
             codigo : presupuesto.codigo
         }
     })

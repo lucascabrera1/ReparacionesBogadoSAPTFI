@@ -1,5 +1,6 @@
 import AuditoriaPresupuestos from '../Models/AuditoriaPresupuestos.js'
 //import AuditoriaLoginLogout from '../Models/AuditoriaLoginLogout.js'
+import AuditoriaLoginLogout from '../Models/AuditoriaLoginLogout.js'
 import { convertirFecha } from '../Middlewares/validateEntryData.js'
 import Presupuesto from '../Models/Presupuesto.js'
 import User from '../Models/User.js'
@@ -7,7 +8,7 @@ import User from '../Models/User.js'
 const today = new Date()
 const fechahora = convertirFecha(today)
 
-const AgregarAuditoriaPresupuestos = async (req, res) => {
+/* const AgregarAuditoriaPresupuestos = async (req, res) => {
     console.log("entra al metodo agregar auditoria de presupuesto")
     try {
         console.log("entra al try del metodo agregar auditoria de presupuesto")
@@ -48,12 +49,24 @@ const AgregarAuditoriaPresupuestos = async (req, res) => {
         console.error(error)
         return res.status(500).json({message : error.message})
     }
+} */
+
+export async function auditarSesion({ user, action, ip, userAgent }) {
+    if (!['login', 'logout'].includes(action)) {
+        throw new Error('Acción inválida para auditoría de sesión');
+    }
+    await AuditoriaLoginLogout.create({
+        user,
+        action,
+        ip,
+        userAgent,
+    });
 }
 
 const RecuperarAuditoriasPresupuesto = async (req, res) => {
     try {
         const auditorias = await AuditoriaPresupuestos.find()
-        let auditoriaspresupuestos = []
+        /* let auditoriaspresupuestos = []
         for (const elem of auditorias) {
             const {user, presupuesto, operacion, fechahora} = elem
             const {nombreUsuario} = await User.findById({_id : user})
@@ -65,8 +78,8 @@ const RecuperarAuditoriasPresupuesto = async (req, res) => {
                 fechahora
             }
             auditoriaspresupuestos.push(newAuditoria)
-        }
-        return res.status(200).json(auditoriaspresupuestos)
+        } */
+        return res.status(200).json(auditorias)
     } catch (error) {
         console.error(error.message)
         return res.status(500).json({
@@ -76,4 +89,17 @@ const RecuperarAuditoriasPresupuesto = async (req, res) => {
     }
 }
 
-export default {AgregarAuditoriaPresupuestos, RecuperarAuditoriasPresupuesto}
+const RecuperarAuditoriasLoginLogout = async (req, res) => {
+    try {
+        const auditorias = await AuditoriaLoginLogout.find()
+        return res.status(200).json(auditorias)
+    } catch (error) {
+        console.error(error.message)
+        return res.status(500).json({
+            error : true,
+            message : error.message
+        })
+    }
+}
+
+export default {RecuperarAuditoriasPresupuesto, RecuperarAuditoriasLoginLogout}

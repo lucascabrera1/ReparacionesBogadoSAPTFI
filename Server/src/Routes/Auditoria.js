@@ -1,5 +1,5 @@
 import express from 'express'
-import auditoria from '../Controllers/Auditoria.js'
+import auditoria, {auditarSesion} from '../Controllers/Auditoria.js'
 import verifyToken from "../Middlewares/VerifyToken.js"
 import { isAdmin } from '../Middlewares/authJwt.js'
 import morgan from 'morgan'
@@ -18,5 +18,7 @@ router.use(morgan('short'))
 })
 
 router.route('/presupuestos').get([verifyToken, isAdmin], auditoria.RecuperarAuditoriasPresupuesto)
-
+router.route('/loginlogout')
+    .get([verifyToken, isAdmin], auditoria.RecuperarAuditoriasLoginLogout)
+    .post([verifyToken, isAdmin], auditarSesion)
 export default router

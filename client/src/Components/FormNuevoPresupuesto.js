@@ -18,8 +18,8 @@ function FormNuevoPresupuesto() {
 
     const {register, handleSubmit, formState : {errors}} = useForm({
         defaultValues : {
-            fechaIngreso : new Date(),
-            //userlogged : userlogged._id
+            user : userlogged._id,
+            fechaIngreso : new Date()
         }
     })
     const dispatch = useDispatch()

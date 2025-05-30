@@ -3,6 +3,7 @@ import Role from "../Models/Role.js"
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 import { RandomPassword } from "../Utils/Random.js"
+import { auditarSesion } from "./Auditoria.js"
 import sendmail from "../Utils/SendMail.js"
 dotenv.config({path: './.env'})
 const stoken = process.env.SECRET
@@ -22,6 +23,15 @@ const SignIn = async (req, res, next) => {
         const token = jwt.sign({id: user._id}, stoken, {
             expiresIn: "10h"
         })
+        const newal = await auditarSesion({
+            user: user.nombreUsuario,
+            action: 'login',
+            ip: req.ip,
+            userAgent: req.headers['user-agent'],
+        });
+        console.log("inicio newauditorialogin")
+        console.log(newal)
+        console.log("fin newauditorialogin")
         res.json({user, token})
     } catch (error) {
         console.error(error)

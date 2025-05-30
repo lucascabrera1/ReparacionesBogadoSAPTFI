@@ -73,9 +73,9 @@ schemaPresupuesto.pre(['findOneAndUpdate', 'findOneAndDelete'], async function (
 
 schemaPresupuesto.post('findOneAndUpdate', async function (res) {
   if (res && this._original) {
-    console.log("this")
+    console.log("this y req")
     console.log(this)
-    console.log("fin this")
+    console.log("fin this y req")
     const newauditoriapresupuesto = await AuditoriaPresupuestos.create({
       user: this.options._user || 'sistema', // Pasás el usuario como opción
       action: 'update',
@@ -109,7 +109,7 @@ schemaPresupuesto.post('save', async function () {
         console.log(this)
         console.log("fin this")
         const newauditoriapresupuesto = await AuditoriaPresupuestos.create({
-            user: this._user || 'sistema', // `_user` debe ser seteado antes de guardar
+            user: this.userlogged || 'sistema', // `_user` debe ser seteado antes de guardar
             action: 'create',
             collectionname: 'User',
             documentId: this._id,
