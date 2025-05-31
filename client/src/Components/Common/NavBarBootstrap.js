@@ -10,6 +10,7 @@ import { reinicializar as reinicializarRemito} from '../../Features/RemitoSlice'
 import { reinicializar as reinicializarUsuario} from '../../Features/UsersSlice';
 import { reinicializar as reinicializarVenta } from '../../Features/VentaSlice';
 import { reinicializar as reinicializarReparacion } from '../../Features/ReparacionesSlice';
+import { reinicializar as reinicializarAuditoria, AgregarAuditoriaLogout } from '../../Features/AuditoriaSlice';
 
 export default function NavBarBootstrap() {
     const navigate = useNavigate();
@@ -24,6 +25,7 @@ export default function NavBarBootstrap() {
         dispatch(reinicializarUsuario())
         dispatch(reinicializarVenta())
         dispatch(reinicializarReparacion())
+        dispatch(reinicializarAuditoria())
     }
     const userlogged = useSelector(selectCurrentUser)
 
@@ -69,9 +71,19 @@ export default function NavBarBootstrap() {
                 </Navbar.Collapse>
                 {userlogged ? 
                     <li>
-                        <NavLink to="/" onClick={()=>{
-                            ReinicializarEstado()
-                        }}>
+                        <NavLink   
+                            to="/" 
+                            onClick={async (e)=>{
+                                console.log("onclick")
+                                e.preventDefault()
+                                ReinicializarEstado()
+                                const newaud = await dispatch(AgregarAuditoriaLogout({
+                                    user : userlogged.nombreUsuario,
+                                    action : 'logout'
+                                })).unwrap() 
+                                console.log(newaud)
+                            }}
+                        >
                             <a >Salir</a>
                         </NavLink>
                         <p>{userlogged.nombreUsuario}</p>

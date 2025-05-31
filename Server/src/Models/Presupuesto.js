@@ -111,7 +111,7 @@ schemaPresupuesto.post('save', async function () {
         const newauditoriapresupuesto = await AuditoriaPresupuestos.create({
             user: this.userlogged || 'sistema', // `_user` debe ser seteado antes de guardar
             action: 'create',
-            collectionname: 'User',
+            collectionname: 'Presupuesto',
             documentId: this._id,
             before: null,
             after: this.toObject()

@@ -52,6 +52,10 @@ const fechahora = convertirFecha(today)
 } */
 
 export async function auditarSesion({ user, action, ip, userAgent }) {
+    console.log("inicio action y user")
+    console.log(action)
+    console.log(user)
+    console.log("fin action y user")
     if (!['login', 'logout'].includes(action)) {
         throw new Error('Acción inválida para auditoría de sesión');
     }

@@ -5,6 +5,7 @@ import AuthSlice from '../Features/AuthSlice'
 import UsersSlice from '../Features/UsersSlice'
 import VentaSlice from '../Features/VentaSlice'
 import ReparacionesSlice from '../Features/ReparacionesSlice'
+import AuditoriaSlice from '../Features/AuditoriaSlice'
 
 export const store = configureStore ({
     reducer : {
@@ -13,7 +14,8 @@ export const store = configureStore ({
         auth: AuthSlice,
         users: UsersSlice,
         ventas: VentaSlice,
-        reparaciones : ReparacionesSlice
+        reparaciones : ReparacionesSlice,
+        auditorias : AuditoriaSlice
     }
     //+ window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 })
