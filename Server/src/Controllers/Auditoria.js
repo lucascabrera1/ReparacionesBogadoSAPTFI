@@ -51,7 +51,24 @@ const fechahora = convertirFecha(today)
     }
 } */
 
-export async function auditarSesion({ user, action, ip, userAgent }) {
+const AgregarAuditoriaLogout = async (req, res) => {
+    try {
+        const newlogout = {
+            user: req.body.user,
+            action: req.body.action,
+            ip: req.ip,
+            userAgent: req.headers['user-agent']
+        }
+        const newaudlogout = new AuditoriaLoginLogout(newlogout)
+        const audsaved = await newaudlogout.save()
+        return res.status(200).json(audsaved)
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({message: error})
+    }
+}
+
+export async function auditarSesion( {user, action, ip, userAgent}) {
     console.log("inicio action y user")
     console.log(action)
     console.log(user)
@@ -59,12 +76,13 @@ export async function auditarSesion({ user, action, ip, userAgent }) {
     if (!['login', 'logout'].includes(action)) {
         throw new Error('Acción inválida para auditoría de sesión');
     }
-    await AuditoriaLoginLogout.create({
+    const newaud = await AuditoriaLoginLogout.create({
         user,
         action,
         ip,
         userAgent,
     });
+    console.log(newaud)
 }
 
 const RecuperarAuditoriasPresupuesto = async (req, res) => {
@@ -106,4 +124,4 @@ const RecuperarAuditoriasLoginLogout = async (req, res) => {
     }
 }
 
-export default {RecuperarAuditoriasPresupuesto, RecuperarAuditoriasLoginLogout}
+export default {RecuperarAuditoriasPresupuesto, RecuperarAuditoriasLoginLogout, AgregarAuditoriaLogout}

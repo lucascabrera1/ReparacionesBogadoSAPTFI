@@ -20,5 +20,5 @@ router.use(morgan('short'))
 router.route('/presupuestos').get([verifyToken, isAdmin], auditoria.RecuperarAuditoriasPresupuesto)
 router.route('/loginlogout')
     .get([verifyToken, isAdmin], auditoria.RecuperarAuditoriasLoginLogout)
-    .post(auditarSesion)
+    .post(auditoria.AgregarAuditoriaLogout)
 export default router

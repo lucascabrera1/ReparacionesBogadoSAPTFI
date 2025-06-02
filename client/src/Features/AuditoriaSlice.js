@@ -10,7 +10,7 @@ const initialState = {
 
 const URL_BASE_AUDITORIA = process.env.REACT_APP_URI_API_AUDITORIA
 
-export const AgregarAuditoriaLogout = createAsyncThunk('/AgregarAuditoriaLogout', async (newaud) => {
+export const AgregarAuditoriaLogout = createAsyncThunk('/auditoria/AgregarAuditoriaLogout', async (newaud) => {
     try {
         console.log("entra a agregar auditoria log out")
         const url = URL_BASE_AUDITORIA + "/loginlogout"

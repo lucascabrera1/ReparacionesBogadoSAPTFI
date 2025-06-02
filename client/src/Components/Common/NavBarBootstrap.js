@@ -77,11 +77,13 @@ export default function NavBarBootstrap() {
                                 console.log("onclick")
                                 e.preventDefault()
                                 ReinicializarEstado()
-                                const newaud = await dispatch(AgregarAuditoriaLogout({
+                                const newaud = {
                                     user : userlogged.nombreUsuario,
                                     action : 'logout'
-                                })).unwrap() 
+                                }
+                                const newaudsaved = await dispatch(AgregarAuditoriaLogout(newaud)).unwrap() 
                                 console.log(newaud)
+                                console.log(newaudsaved)
                             }}
                         >
                             <a >Salir</a>
