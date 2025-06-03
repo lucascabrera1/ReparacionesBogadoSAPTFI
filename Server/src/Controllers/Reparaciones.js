@@ -659,7 +659,7 @@ const RecuperarUsuarios = async (req, res) => {
         const usuarios = await User.find({roles : roluser._id})
         return res.send(usuarios)
     } catch (error) {
-        return res.status(500).json({message : error.message})
+        return res.status(500).json({message : error})
     }
 }
 

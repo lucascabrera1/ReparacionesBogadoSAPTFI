@@ -1,5 +1,6 @@
 import {model, Schema} from "mongoose"
 import AuditoriaPresupuestos from "./AuditoriaPresupuestos.js";
+import { getUserId } from "../utils/request-context.js";
 
 const schemaPresupuesto = new Schema ({
     //al ingresar un equipo al taller siempre se deberan registrar estos campos
@@ -73,9 +74,10 @@ schemaPresupuesto.pre(['findOneAndUpdate', 'findOneAndDelete'], async function (
 
 schemaPresupuesto.post('findOneAndUpdate', async function (res) {
   if (res && this._original) {
-    console.log("this y req")
+    console.log("this y res")
     console.log(this)
-    console.log("fin this y req")
+    console.log(res)
+    console.log("fin this y res")
     const newauditoriapresupuesto = await AuditoriaPresupuestos.create({
       user: this.options._user || 'sistema', // Pasás el usuario como opción
       action: 'update',
@@ -105,17 +107,17 @@ schemaPresupuesto.post('findOneAndUpdate', async function (res) {
 
 // Middleware para "create"
 schemaPresupuesto.post('save', async function () {
-        console.log("this")
-        console.log(this)
-        console.log("fin this")
-        const newauditoriapresupuesto = await AuditoriaPresupuestos.create({
-            user: this.userlogged || 'sistema', // `_user` debe ser seteado antes de guardar
-            action: 'create',
-            collectionname: 'Presupuesto',
-            documentId: this._id,
-            before: null,
-            after: this.toObject()
-        });
+    console.log("this")
+    console.log(this)
+    console.log("fin this")
+    const newauditoriapresupuesto = await AuditoriaPresupuestos.create({
+        user: getUserId() || 'sistema', // `_user` debe ser seteado antes de guardar
+        action: 'create',
+        collectionname: 'User',
+        documentId: this._id,
+        before: null,
+        after: this.toObject()
+    });
     console.log("inicio newauditoriapresupuesto")
     console.log(newauditoriapresupuesto)
     console.log("fin newauditoriapresupuesto")
