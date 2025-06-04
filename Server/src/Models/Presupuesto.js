@@ -1,6 +1,6 @@
 import {model, Schema} from "mongoose"
 import AuditoriaPresupuestos from "./AuditoriaPresupuestos.js";
-import { getUserId } from "../utils/request-context.js";
+import { getUserId } from "../Utils/request-context.js";
 
 const schemaPresupuesto = new Schema ({
     //al ingresar un equipo al taller siempre se deberan registrar estos campos

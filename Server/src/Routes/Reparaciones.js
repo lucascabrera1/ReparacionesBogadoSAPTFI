@@ -8,6 +8,7 @@ import { CheckDuplicateUser } from '../Middlewares/verifiSignUp.js'
 import auth from '../Controllers/Auth.js'
 import { ValidarPresupuesto } from '../Middlewares/validateEntryData.js'
 import morgan from 'morgan'
+import { requestContextMiddleware } from '../Middlewares/request-context.js'
 
 const router = express()
 
@@ -22,7 +23,7 @@ router.use(morgan('short'))
     next()
 })
 
-router.route('/ingresar').post([verifyToken, isEncargadoDeReparaciones, ValidarPresupuesto],  reparaciones.AgregarPresupuesto)
+router.route('/ingresar').post([requestContextMiddleware, verifyToken, isEncargadoDeReparaciones, ValidarPresupuesto],  reparaciones.AgregarPresupuesto)
 router.route('/presupuestosingresados').get([verifyToken, isEncargadoDeReparaciones], reparaciones.RecuperarPresupuestosIngresados)
 router.route('/presupuestosdcyd').get([verifyToken, isEncargadoDeReparaciones], reparaciones.RecuperarPresupuestosDiagnosticadosConfimadosYDescartados)
 router.route('/presupuestosconfirmados').get([verifyToken, isEncargadoDeReparaciones], reparaciones.RecuperarPresupuestosConfirmados)
@@ -40,11 +41,11 @@ router.route('/finalizar/:id')
     .get([verifyToken, isEncargadoDeReparaciones], reparaciones.RecuperarPresupuestoReparado)
 router.route('/registrarme').post([CheckDuplicateUser], auth.SignUp)
 router.route('/misreparaciones/:idCliente').get([verifyToken, isUser], reparaciones.RecuperarPresupuestosPorCliente)
-router.route('/marcas').get([verifyToken, isEncargadoDeReparaciones], ocs.ObtenerMarcas)
-router.route('/modelos/:idMarca').get([verifyToken, isEncargadoDeReparaciones], ocs.RecuperarModelos)
-router.route('/usuarios').get([verifyToken, isEncargadoDeReparaciones], reparaciones.RecuperarUsuarios)
+router.route('/marcas').get([requestContextMiddleware, verifyToken, isEncargadoDeReparaciones], ocs.ObtenerMarcas)
+router.route('/modelos/:idMarca').get([requestContextMiddleware, verifyToken, isEncargadoDeReparaciones], ocs.RecuperarModelos)
+router.route('/usuarios').get([requestContextMiddleware, verifyToken, isEncargadoDeReparaciones], reparaciones.RecuperarUsuarios)
 router.route('/formasdepago').get([verifyToken, isEncargadoDeReparaciones], ocs.RecuperarFormasDePago)
 router.route('/todaslasreparaciones').get([verifyToken, isEncargadoDeReparaciones], reparaciones.RecuperarReparacionesParaReporte)
-router.route('/todoslospresupuestos').get([verifyToken, isEncargadoDeReparaciones], reparaciones.RecuperarTodosLosPresupuestos)
+router.route('/todoslospresupuestos').get([requestContextMiddleware, verifyToken, isEncargadoDeReparaciones], reparaciones.RecuperarTodosLosPresupuestos)
 
 export default router

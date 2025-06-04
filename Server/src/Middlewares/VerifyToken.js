@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 dotenv.config({path: './.env'})
 const stoken = process.env.SECRET
-import { namespace, setUserId } from '../Utils/request-context.js'
+import { setUserId } from '../Utils/request-context.js'
 
 function verifyToken  (req, res, next)  {
     const bearer = req.headers["authorization"]
@@ -21,15 +21,9 @@ function verifyToken  (req, res, next)  {
     }
     try {
         const decoded = jwt.verify(token, stoken)
-        const namespacerun = namespace.run(() => {
-            setUserId(decoded.id); // o el campo que uses
-            next();
-        })
+        setUserId(decoded.id); // o el campo que uses
         console.log(decoded)
         req.userId = decoded.id
-        console.log("inicio namespacerun")
-        console.log(namespacerun)
-        console.log("fin namespacerun")
         next();
     } catch (error) {
         res.status(400).json({
