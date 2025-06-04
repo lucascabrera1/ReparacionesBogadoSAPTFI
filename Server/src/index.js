@@ -4,7 +4,7 @@ import {connect} from './Connection.js'
 import cors from 'cors'
 import dotenv from 'dotenv'
 //import verifyToken from './Middlewares/VerifyToken.js';
-//import { requestContextMiddleware } from './Middlewares/request-context.js';
+import { requestContextMiddleware } from './Middlewares/request-context.js';
 
 dotenv.config({path: '../.env'})
 
@@ -14,7 +14,7 @@ const app = express()
 const port = process.env.PORT
 
 //uses
-//app.use(requestContextMiddleware)
+app.use(requestContextMiddleware)
 //app.use(verifyToken)
 app.use(cors())
 app.use(express.json())

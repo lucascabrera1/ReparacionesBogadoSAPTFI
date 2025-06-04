@@ -79,7 +79,7 @@ schemaPresupuesto.post('findOneAndUpdate', async function (res) {
     console.log(res)
     console.log("fin this y res")
     const newauditoriapresupuesto = await AuditoriaPresupuestos.create({
-      user: this.options._user || 'sistema', // Pasás el usuario como opción
+      user: getUserId() || 'sistema', // Pasás el usuario como opción
       action: 'update',
       collectionname: 'User',
       documentId: res._id,

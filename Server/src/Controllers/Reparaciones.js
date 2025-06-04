@@ -64,10 +64,7 @@ const validarReparacion = async (reparacion) => {
 const AgregarPresupuesto = async (req, res, next) => {
     try {
         console.log("entra a agregar presupuesto, despues deberia entrar a la de auditoria")
-        console.log("inicio req del agregar presupuesto")
-        console.log(req)
-        console.log("fin req del agregar presupuesto")
-        const presupuesto = new Presupuesto(req.body, req.userId)
+        const presupuesto = new Presupuesto(req.body)
         const pressaved = await presupuesto.save()
         return res.status(200).json(pressaved)
     } catch (error) {
