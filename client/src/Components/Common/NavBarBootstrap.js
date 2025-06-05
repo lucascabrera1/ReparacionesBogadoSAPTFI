@@ -67,6 +67,10 @@ export default function NavBarBootstrap() {
                             <NavDropdown.Item onClick={() => {navegar('/registerclient')}}>Registrarme</NavDropdown.Item>
                             <NavDropdown.Item onClick={() => {navegar('/misreparaciones')}}>Ver mis Reparaciones</NavDropdown.Item>
                         </NavDropdown>
+                        <NavDropdown title="Auditoría" id="basic-nav-dropdown">
+                            <NavDropdown.Item onClick={() => {navegar('/auditorialoginlogout')}}>Login y logout</NavDropdown.Item>
+                            <NavDropdown.Item onClick={() => {navegar('/auditoriapresupuestos')}}>Presupuestos</NavDropdown.Item>
+                        </NavDropdown>
                     </Nav>
                 </Navbar.Collapse>
                 {userlogged ? 

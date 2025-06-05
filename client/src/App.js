@@ -47,6 +47,8 @@ import FormFinalizarReparacion from './Components/FormFinalizarReparacion.js'
 import FormReporteVentas from './Components/Reportes/ReporteVentas.js'
 import FormReporteReparaciones from './Components/Reportes/ReporteReparaciones.js'
 import FormReparaciones from './Components/FormReparaciones.js'
+import FormAuditoriaLoginLogout from './Components/Auditoria/FormAuditoriaLoginLogout.js'
+import FormAuditoriaPresupuestos from './Components/Auditoria/FormAuditoriaPresupuestos.js'
 
 function App() {
   return <div  className="container-fluid">
@@ -103,6 +105,8 @@ function App() {
             <Route path='/finalizarreparacion' element = {<ProtectedRoute><FormPresupuestosReparados/></ProtectedRoute>}></Route>
             <Route path='/finalizarreparacion/:id' element = {<ProtectedRoute><FormFinalizarReparacion/></ProtectedRoute>}></Route>
             <Route path='/todaslasreparaciones' element = {<ProtectedRoute><FormReparaciones/></ProtectedRoute>}></Route>
+            <Route path='/auditorialoginlogout' element= {<ProtectedRoute><FormAuditoriaLoginLogout/></ProtectedRoute>}></Route>
+            <Route path='/auditoriapresupuestos' element= {<ProtectedRoute><FormAuditoriaPresupuestos/></ProtectedRoute>}></Route>
             {/*<Route path='/' element={<FormTodasLasOC/>} />
             <Route path='/home' element={<Home/>} />
                                                                                                                 

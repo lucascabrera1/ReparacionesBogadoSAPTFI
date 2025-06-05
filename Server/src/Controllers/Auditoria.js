@@ -4,6 +4,10 @@ import AuditoriaLoginLogout from '../Models/AuditoriaLoginLogout.js'
 import { convertirFecha } from '../Middlewares/validateEntryData.js'
 import Presupuesto from '../Models/Presupuesto.js'
 import User from '../Models/User.js'
+import Marca from '../Models/Marca.js'
+import Modelo from '../Models/Modelo.js'
+import FormaDePago from '../Models/FormaDePago.js'
+import { isValidObjectId } from 'mongoose'
 
 const today = new Date()
 const fechahora = convertirFecha(today)
@@ -69,10 +73,6 @@ const AgregarAuditoriaLogout = async (req, res) => {
 }
 
 export async function auditarSesion( {user, action, ip, userAgent}) {
-    console.log("inicio action y user")
-    console.log(action)
-    console.log(user)
-    console.log("fin action y user")
     if (!['login', 'logout'].includes(action)) {
         throw new Error('Acción inválida para auditoría de sesión');
     }
@@ -85,9 +85,86 @@ export async function auditarSesion( {user, action, ip, userAgent}) {
     console.log(newaud)
 }
 
+ //@param {string} idUsuario
+ //@returns {Promise<string>} nombre del usuario o "sistema"
+export async function obtenerUsuarioSeguro(idUsuario) {
+  if (!idUsuario ||typeof idUsuario !== 'string' || idUsuario.toLowerCase() === 'sistema') {
+    return 'sistema';
+  }
+
+  // Validar que sea un ObjectId válido antes de buscar
+  if (!isValidObjectId(idUsuario)) {
+    return '(ID inválido)';
+  }
+
+  try {
+    const usuario = await User.findById(idUsuario).lean();
+    console.log(usuario?.nombreUsuario)
+    return usuario?.nombreUsuario || '(usuario no encontrado)';
+  } catch (err) {
+    console.error('Error buscando usuario:', err);
+    return '(error al buscar usuario)';
+  }
+}
+
 const RecuperarAuditoriasPresupuesto = async (req, res) => {
     try {
         const auditorias = await AuditoriaPresupuestos.find()
+        let auditoriasrecuperadas = []
+        for (const elem of auditorias) {
+            const {user, collectionname, action, documentId, after, before, timestamp} = elem
+            console.log("inicio before")
+            console.log(before)
+            console.log("fin before")
+            let marcaDocbefore = null;
+            let modeloDocbefore = null;
+            if (before?.marca) marcaDocbefore = await Marca.findById(before.marca);
+            if (before?.modelo) modeloDocbefore = await Modelo.findById(before.modelo);
+            let marcaDocafter = null;
+            let modeloDocafter = null;
+            if (after?.marca) marcaDocafter = await Marca.findById(after.marca);
+            if (after?.modelo) modeloDocafter = await Modelo.findById(after.modelo);
+            let newauditoria = {
+                usuario : await obtenerUsuarioSeguro(user),//faltaria un await
+                action,
+                timestamp,
+                antes : before ? {
+                    //implementar logica con anibal del before
+                    codigo : before.codigo?before.codigo:"",
+                    cliente :await obtenerUsuarioSeguro(before.cliente.toString()),
+                    estado : before.estado?before.estado:"",
+                    falla : before.falla?before.falla:"",
+                    fechaIngreso : before.fechaIngreso?before.fechaIngreso:"",
+                    marca: marcaDocbefore?.nombre || "",
+                    modelo: modeloDocbefore?.nombre || "",
+                    diagnostico: before.diagnostico?before.diagnostico:"",
+                    fechaAproxEntrega: before.fechaAproxEntrega?before.fechaAproxEntrega:"",
+                    precioAproximado: before.precioAproximado?before.precioAproximado:"",
+                    fechaEntrega: before.fechaEntrega?before.fechaEntrega:"",
+                    precio: before.precio?before.precio:"",
+                    fechaRetiro: before.fechaRetiro?before.fechaRetiro:"",
+                    formaDePago: before.formaDePago?before.formaDePago:""
+                } : "",
+                despues : after ? {
+                    //implementar logica del after con anibal
+                    codigo : after.codigo?after.codigo:"",
+                    cliente : after.cliente? await obtenerUsuarioSeguro(after.cliente.toString()) :"",
+                    estado : after.estado?after.estado:"",
+                    falla : after.falla?after.falla:"",
+                    fechaIngreso : after.fechaIngreso?after.fechaIngreso:"",
+                    marca: marcaDocafter?.nombre || "",
+                    modelo: modeloDocafter?.nombre || "",
+                    diagnostico: after.diagnostico?after.diagnostico:"",
+                    fechaAproxEntrega: after.fechaAproxEntrega?after.fechaAproxEntrega:"",
+                    precioAproximado: after.precioAproximado?after.precioAproximado:"",
+                    fechaEntrega: after.fechaEntrega?after.fechaEntrega:"",
+                    precio: after.precio?after.precio:"",
+                    fechaRetiro: after.fechaRetiro?after.fechaRetiro:"",
+                    //formaDePago: after.formaDePago?await FormaDePago.findById({_id:formaDePago}):""
+                } : ""
+            }
+            auditoriasrecuperadas.push(newauditoria)
+        }
         /* let auditoriaspresupuestos = []
         for (const elem of auditorias) {
             const {user, presupuesto, operacion, fechahora} = elem
@@ -101,7 +178,7 @@ const RecuperarAuditoriasPresupuesto = async (req, res) => {
             }
             auditoriaspresupuestos.push(newAuditoria)
         } */
-        return res.status(200).json(auditorias)
+        return res.status(200).json(auditoriasrecuperadas)
     } catch (error) {
         console.error(error.message)
         return res.status(500).json({
@@ -114,6 +191,16 @@ const RecuperarAuditoriasPresupuesto = async (req, res) => {
 const RecuperarAuditoriasLoginLogout = async (req, res) => {
     try {
         const auditorias = await AuditoriaLoginLogout.find()
+       /*  let auditoriasrecuperadas = []
+        for (const elem of auditorias) {
+            const {user, action, timestamp} = elem
+            const newaud = {
+                user,
+                action,
+                timestamp
+            }
+            auditoriasrecuperadas.push(newaud)
+        } */
         return res.status(200).json(auditorias)
     } catch (error) {
         console.error(error.message)
