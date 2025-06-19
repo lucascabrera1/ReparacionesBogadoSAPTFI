@@ -7,3 +7,10 @@ export function RandomPassword (length) {
     }
     return password
 }
+
+export function aHoraArgentina(fechaUTC) {
+  // Convertimos a milisegundos, restamos 3 horas (UTC−3)
+  const offset = 3 * 60 * 60 * 1000;
+  const argentinaTime = new Date(fechaUTC.getTime() - offset);
+  return argentinaTime;
+}

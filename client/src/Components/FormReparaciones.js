@@ -48,8 +48,7 @@ function FormReparaciones() {
         !iser ? <div className='alert alert-danger'>
             {userlogged.nombreUsuario} no tiene el rol de encargado de reparaciones
         </div> : <div>
-            <h1>Mis Reparaciones</h1>
-            <h2>Podés confirmar o rechazar un presupuesto de reparación de tu equipo</h2>
+            <h2>Todos los presupuestos y reparaciones hasta el momento</h2>
             <Form className='d-flex flex-column justify-content-md-center align-items-center text-center'>
                 <Table className= 'table table-success table-bordered border-dark'>
                     <thead>

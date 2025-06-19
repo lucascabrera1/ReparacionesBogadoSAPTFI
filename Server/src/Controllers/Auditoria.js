@@ -8,6 +8,7 @@ import Marca from '../Models/Marca.js'
 import Modelo from '../Models/Modelo.js'
 import FormaDePago from '../Models/FormaDePago.js'
 import { isValidObjectId } from 'mongoose'
+import { aHoraArgentina } from '../Utils/Random.js'
 
 const today = new Date()
 const fechahora = convertirFecha(today)
@@ -113,17 +114,16 @@ const RecuperarAuditoriasPresupuesto = async (req, res) => {
         let auditoriasrecuperadas = []
         for (const elem of auditorias) {
             const {user, collectionname, action, documentId, after, before, timestamp} = elem
-            console.log("inicio before")
-            console.log(before)
-            console.log("fin before")
             let marcaDocbefore = null;
             let modeloDocbefore = null;
             if (before?.marca) marcaDocbefore = await Marca.findById(before.marca);
             if (before?.modelo) modeloDocbefore = await Modelo.findById(before.modelo);
             let marcaDocafter = null;
             let modeloDocafter = null;
+            let fpago = null;
             if (after?.marca) marcaDocafter = await Marca.findById(after.marca);
             if (after?.modelo) modeloDocafter = await Modelo.findById(after.modelo);
+            if (after?.formaDePago) fpago = await FormaDePago.findById(after.formaDePago);
             let newauditoria = {
                 usuario : await obtenerUsuarioSeguro(user),//faltaria un await
                 action,
@@ -143,7 +143,7 @@ const RecuperarAuditoriasPresupuesto = async (req, res) => {
                     fechaEntrega: before.fechaEntrega?before.fechaEntrega:"",
                     precio: before.precio?before.precio:"",
                     fechaRetiro: before.fechaRetiro?before.fechaRetiro:"",
-                    formaDePago: before.formaDePago?before.formaDePago:""
+                    formaDePago: before.formaDePago?before.formaDePago : ""
                 } : "",
                 despues : after ? {
                     //implementar logica del after con anibal
@@ -160,7 +160,7 @@ const RecuperarAuditoriasPresupuesto = async (req, res) => {
                     fechaEntrega: after.fechaEntrega?after.fechaEntrega:"",
                     precio: after.precio?after.precio:"",
                     fechaRetiro: after.fechaRetiro?after.fechaRetiro:"",
-                    //formaDePago: after.formaDePago?await FormaDePago.findById({_id:formaDePago}):""
+                    formaDePago: fpago?.descripcion || ""
                 } : ""
             }
             auditoriasrecuperadas.push(newauditoria)
@@ -191,17 +191,19 @@ const RecuperarAuditoriasPresupuesto = async (req, res) => {
 const RecuperarAuditoriasLoginLogout = async (req, res) => {
     try {
         const auditorias = await AuditoriaLoginLogout.find()
-       /*  let auditoriasrecuperadas = []
+        let auditoriasrecuperadas = []
         for (const elem of auditorias) {
-            const {user, action, timestamp} = elem
+            const {user, action, timestamp, ip, userAgent} = elem
             const newaud = {
                 user,
                 action,
-                timestamp
+                timestamp,
+                ip,
+                userAgent
             }
             auditoriasrecuperadas.push(newaud)
-        } */
-        return res.status(200).json(auditorias)
+        } 
+        return res.status(200).json(auditoriasrecuperadas)
     } catch (error) {
         console.error(error.message)
         return res.status(500).json({

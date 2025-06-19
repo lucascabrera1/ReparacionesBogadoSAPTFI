@@ -52,7 +52,7 @@ function FormAuditoriaPresupuestos() {
                             log.despues.estado === "Confirmado" ? <strong>Confirmó un presupuesto</strong> :
                             log.despues.estado === "Descartado" ? <strong>Descartó un presupuesto</strong> :
                             log.despues.estado === "Reparado" ? <strong>Ingresó una nueva reparación</strong> :
-                            log.despues.estado === "Reparado y retirado" ? <strong>Finalizó la reparación</strong> :
+                            log.despues.estado === "Reparado y Entregado" ? <strong>Finalizó la reparación</strong> :
                             log.despues.estado === "Reparado y descartado" ? <strong>Devolvio un equipo que no fue reparado</strong> :
                             ""
                         }
