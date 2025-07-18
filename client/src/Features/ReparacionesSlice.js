@@ -446,6 +446,7 @@ export const ReparacionesSlice = createSlice({
         })
         .addCase(DiagnosticarPresupuesto.fulfilled, (state, action) => {
             state.estadopresupuestos = "idle"
+            state.estadoreparaciones = "idle"
             const index = state.reparaciones.reparaciones.findIndex(item => item._id === action.payload.data._id);
             if (index !== -1) {
                 state.reparaciones[index] = action.payload.data; // Actualiza el elemento

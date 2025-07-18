@@ -72,7 +72,7 @@ function FormFinalizarReparacion() {
 
     return (
         <div>
-            <h1>Presupuesto a diagnosticar</h1>
+            <h1>Presupuesto a finalizar</h1>
             <p>codigo: {presupuesto.codigo}</p>
             <p>cliente: {presupuesto.cliente}</p>
             <p>estado: {presupuesto.estado}</p>

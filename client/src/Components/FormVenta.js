@@ -54,17 +54,20 @@ function FormVenta() {
   console.log(clientes)
   console.log(productos)
 
-  const [descripcion, setDescripcion] = useState("")
-  const [precioventa, setPrecioVenta] = useState()
-  const [id, setId] = useState("")
+  //const [descripcion, setDescripcion] = useState("")
+  //const [precioventa, setPrecioVenta] = useState()
+  //const [id, setId] = useState("")
   const [idMarca, setIdMarca] = useState("")
   const [idCategoria, setIdCategoria] = useState("")
   const [cantidad, setCantidad] = useState(1)
+  
   const [productosFiltrados, setProductosFiltrados] = useState([])
+  const [productoSeleccionado, setProductoSeleccionado] = useState({})
+
   /* const [productosFiltradosPorMarca, setProductosFiltradosPorMarca] = useState([])
   const [productosFiltradosPorCategoria, setProductosFiltradosPorCategoria] = useState([]) */
 
-  console.log(descripcion, cantidad, id, precioventa)
+  //console.log(descripcion, cantidad, id, precioventa)
 
   useEffect(()=> {
     if (estadoclientes === "idle") {
@@ -84,6 +87,12 @@ function FormVenta() {
     }
   }, [estadoproductos])
 
+  useEffect(()=> {
+    if (productos && productos.length > 0) {
+      setProductosFiltrados(productos)
+    }
+  }, [productos])
+ 
   useEffect(() => {
     if (estadomarcas === "idle") {
       dispatch(RecuperarMarcas())
@@ -129,22 +138,38 @@ function FormVenta() {
 
   optionCategorias.unshift(<option value="" key="">Todas</option>)
 
-  const AgregarLineaVenta = (id, descripcion, precioventa, cantidad) => {
+  const AgregarLineaVenta = (id, cantidad) => {
     if (!cantidad || cantidad< 1) {
       alert("la cantidad es obligatoria y debe ser mayor o igual a 1")
       return false
     }
-    if (!descripcion) {
+    if (!productoSeleccionado.descripcion) {
       alert("no hay ningun producto seleccionado")
       return false
     }
-    let subtotal = parseFloat(precioventa * cantidad)
+    
+    
+    let subtotal = parseFloat(productoSeleccionado.precioventa * cantidad)
+    console.log(id)
     let item = fields.find(x => x.id_producto === id)
+    console.log(productoSeleccionado)
+    console.log(item)
+    //if (item) {
+      if (productoSeleccionado.stock<cantidad + (item?item.cantidad:0)) {
+        alert ("stock insuficiente")
+        return false
+      } 
+    /*} else {
+      if (productoSeleccionado.stock < cantidad) {
+        alert ("stock insuficiente")
+        return false
+      }
+    }*/
     if (item === undefined) {
       append({
         id_producto: id,
-        descripcion : descripcion, 
-        precioventa: precioventa, 
+        descripcion : productoSeleccionado.descripcion, 
+        precioventa: productoSeleccionado.precioventa, 
         cantidad : parseInt(cantidad), 
         subtotal: subtotal
       })
@@ -158,7 +183,7 @@ function FormVenta() {
       let fechaEmision = (getValues()["fechEemision"]===undefined?Date():Date())
       reset({
         ...getValues(),
-        total : total + cantidad * precioventa,
+        total : total + cantidad * productoSeleccionado.precioventa,
         proveedor : proveedor,
         fechaEmision : fechaEmision
       })
@@ -186,9 +211,10 @@ function FormVenta() {
 
   const LimpiarGrilla = (id_proveedor) => {
     remove()
-    setDescripcion("")
-    setPrecioVenta()
-    setId("")
+    //setDescripcion("")
+    //setPrecioVenta()
+    //setId("")
+    setProductoSeleccionado({})
     reset({
       ...getValues(),
       total : 0,
@@ -237,9 +263,9 @@ function FormVenta() {
 
   const filtros = {idCategoria, idMarca}
 
-  const filtrarProductos = () => {
-    return productos
-    /* console.log(marcas)
+  const filtrarProductos = (idMarca, idCategoria) => {
+    //return productos
+    console.log(marcas)
     console.log(idMarca, idCategoria)
     if (idCategoria) {
       //pfxc = productos filtrados por categoria
@@ -259,7 +285,7 @@ function FormVenta() {
       const {nombre} = marcas.find(marca => marca._id === idMarca)
       const pfxmyc = productos.filter(producto =>  producto.marca === nombre & producto.categoria === descripcion)
       return pfxmyc
-    } else return productos */
+    } else return productos
   }
 
   return erroresclientes?<div className='alert alert-danger'>{erroresclientes}</div>:
@@ -313,9 +339,9 @@ function FormVenta() {
           onChange={(e) => {
             e.preventDefault()
             setIdMarca(e.target.value)
-            const productosfiltrados = filtrarProductos(e.target.value, idCategoria)
-            console.log(productosfiltrados)
-            setProductosFiltrados(productosfiltrados)
+            const productosfiltradospormarca = filtrarProductos(e.target.value, idCategoria)
+            console.log(productosfiltradospormarca)
+            setProductosFiltrados(productosfiltradospormarca)
           }}
         >
           {optionMarcas}
@@ -330,7 +356,7 @@ function FormVenta() {
           onChange={(e) => {
             e.preventDefault()
             setIdCategoria(e.target.value)
-            const productosfiltrados = filtrarProductos(idCategoria, e.target.value)
+            const productosfiltrados = filtrarProductos(idMarca, e.target.value)
             setProductosFiltrados(productosfiltrados)
           }}
         >
@@ -359,9 +385,10 @@ function FormVenta() {
               key={producto._id} 
               onClick={e=> {
                 e.preventDefault()
-                setDescripcion(producto.descripcion)
-                setPrecioVenta(producto.precioventa)
-                setId(producto._id)
+                //setDescripcion(producto.descripcion)
+                //setPrecioVenta(producto.precioventa)
+                //setId(producto._id)
+                setProductoSeleccionado(producto)
             }}>
               <td>{producto.descripcion}</td>
               <td>{producto.categoria}</td>
@@ -381,7 +408,7 @@ function FormVenta() {
           }) : <div>no hay ningun producto para la marca y categoria seleccionadas</div>}
         </tbody>
       </Table>
-      <p>Producto seleccionado: {descripcion}</p>
+      <p>Producto seleccionado: {productoSeleccionado.descripcion}</p>
       <input
         style={{width: '300px'}}
         type="number" 
@@ -398,7 +425,7 @@ function FormVenta() {
       <Button
         onClick={(e)=>{
           e.preventDefault()
-          AgregarLineaVenta(id, descripcion, precioventa, cantidad);
+          AgregarLineaVenta(productoSeleccionado._id, cantidad);
       }}>
         Agregar línea de venta
       </Button>

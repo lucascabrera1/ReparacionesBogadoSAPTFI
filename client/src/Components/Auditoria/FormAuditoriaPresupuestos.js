@@ -37,7 +37,7 @@ function FormAuditoriaPresupuestos() {
     console.log(auditorias)
     return (
         loading ? <div>cargando auditorias...</div>:
-        erroresauditorias ? <div>{erroresauditorias}</div> :
+        erroresauditorias ? <div className='alert alert-danger'>{erroresauditorias}</div> :
         <div className="p-4 border rounded shadow-sm">
         <h2 className="text-lg font-bold mb-2">Historial de Auditoría</h2>
         <Accordion className="space-y-4">
